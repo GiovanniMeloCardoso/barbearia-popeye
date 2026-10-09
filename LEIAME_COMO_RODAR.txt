@@ -1,0 +1,46 @@
+========================================================================
+    BARBEARIA POPEYE - GUIA DE INSTALAÇÃO E EXECUÇÃO
+    Desenvolvido por: Giovanni de Melo Cardoso
+========================================================================
+
+Este backup contém todo o projeto pronto para rodar em outro computador.
+O banco de dados SQLite (db.sqlite3) já está com todos os 10 serviços 
+oficiais cadastrados e a lógica de horários e agendamentos pronta.
+
+------------------------------------------------------------------------
+PASSO A PASSO PARA RODAR NO OUTRO COMPUTADOR:
+------------------------------------------------------------------------
+
+1. Abra o terminal (Prompt de Comando ou PowerShell) na pasta deste projeto:
+   cd "caminho\onde\voce\extraiu\o\projeto"
+
+2. Crie um novo ambiente virtual Python:
+   python -m venv venv
+
+3. Ative o ambiente virtual:
+   - No Windows (PowerShell):
+     .\venv\Scripts\Activate.ps1
+   - No Windows (Prompt de Comando / CMD):
+     venv\Scripts\activate.bat
+   - No Linux/Mac:
+     source venv/bin/activate
+
+4. Instale as dependências:
+   pip install -r requirements.txt
+
+5. Inicie o servidor Django:
+   python manage.py runserver
+
+6. Acesse no navegador:
+   - Site do Cliente (Agendamento Online):
+     http://127.0.0.1:8000/
+
+   - Painel do Barbeiro Henrique:
+     http://127.0.0.1:8000/painel/
+
+   - Painel Administrativo Django:
+     http://127.0.0.1:8000/admin/
+
+------------------------------------------------------------------------
+PRONTO! Qualquer alteração feita fica salva automaticamente no db.sqlite3.
+========================================================================
