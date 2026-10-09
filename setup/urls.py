@@ -1,7 +1,10 @@
 from django.contrib import admin
-from django.urls import path, include  # <-- Precisamos importar o 'include'
+from django.urls import path, include, re_path
+from django.conf import settings
+from django.views.static import serve
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('agendamento.urls')),  # <-- Esta linha faz a mágica!
+    path('', include('agendamento.urls')),
+    re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.BASE_DIR / 'agendamento' / 'static'}),
 ]

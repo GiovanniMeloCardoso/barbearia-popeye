@@ -868,6 +868,524 @@
         .footer-bottom strong {
             color: var(--primary-gold);
         }
+
+        /* ========================================================
+           MODAL DE CONFIRMAÇÃO DE AGENDAMENTO
+           ======================================================== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 16px;
+            opacity: 0;
+            transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border-gold);
+            border-radius: var(--radius-lg);
+            max-width: 480px;
+            width: 100%;
+            padding: 26px 22px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 30px rgba(212, 175, 55, 0.2);
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            transform: scale(0.96) translateY(10px);
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-close-icon {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-muted);
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            line-height: 1;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .modal-close-icon:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--primary-gold);
+        }
+
+        .modal-success-icon {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            background: rgba(34, 197, 94, 0.15);
+            border: 2px solid var(--accent-green);
+            color: var(--accent-green);
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 14px;
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+        }
+
+        .modal-title {
+            text-align: center;
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+
+        .modal-subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 18px;
+        }
+
+        .modal-summary-box {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            font-size: 0.88rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .modal-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .modal-info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .modal-info-item.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .modal-info-label {
+            font-size: 0.76rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .modal-info-val {
+            font-size: 0.92rem;
+            color: #fff;
+            word-break: break-word;
+        }
+
+        .modal-services-box {
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .modal-services-header {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .modal-service-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 0;
+            font-size: 0.88rem;
+            color: #e5e7eb;
+        }
+
+        .modal-service-row strong {
+            color: var(--primary-gold);
+            font-weight: 700;
+        }
+
+        .modal-total-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding-top: 4px;
+            font-size: 0.95rem;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .modal-total-price {
+            font-size: 1.4rem;
+            font-family: 'Cinzel', serif;
+            color: var(--primary-gold);
+            font-weight: 800;
+        }
+
+        .modal-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn-whatsapp-send {
+            background: linear-gradient(135deg, #25d366 0%, #1ea952 100%);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            font-weight: 700;
+            font-size: 0.96rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.35);
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .btn-whatsapp-send:hover {
+            background: linear-gradient(135deg, #29e26e 0%, #20b859 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.5);
+        }
+
+        .btn-whatsapp-send:active {
+            transform: translateY(0);
+        }
+
+        .btn-modal-close {
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-muted);
+            border-radius: var(--radius-sm);
+            padding: 11px;
+            font-weight: 600;
+            font-size: 0.88rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .btn-modal-close:hover {
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* ========================================================
+           RESPONSIVIDADE TOTAL PARA CELULARES DE TODOS OS TAMANHOS
+           ======================================================== */
+        
+        /* Tablets e Telas Médias (<= 980px) */
+        @media (max-width: 980px) {
+            .main-wrapper {
+                grid-template-columns: 1fr;
+                gap: 26px;
+                padding: 0 16px;
+                margin: 20px auto;
+            }
+
+            .summary-sidebar {
+                position: static;
+                top: auto;
+            }
+
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+        }
+
+        /* Celulares Maiores e Tablets Pequenos (<= 768px) */
+        @media (max-width: 768px) {
+            .hero {
+                padding: 32px 16px 24px;
+            }
+
+            .hero-title {
+                font-size: 1.85rem;
+                letter-spacing: 0.5px;
+            }
+
+            .hero-subtitle {
+                font-size: 0.92rem;
+                margin-bottom: 16px;
+            }
+
+            .hero-meta-strip {
+                gap: 12px;
+                font-size: 0.82rem;
+            }
+
+            .services-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                gap: 14px;
+            }
+
+            .date-picker-row {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+
+            .slots-grid {
+                grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+            }
+
+            footer.app-footer {
+                margin-top: 40px;
+                padding: 32px 16px 20px;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+                gap: 8px;
+            }
+        }
+
+        /* Celulares Médios e Padrão (<= 580px) */
+        @media (max-width: 580px) {
+            .nav-container {
+                padding: 10px 14px;
+            }
+
+            .brand-name {
+                font-size: 1.05rem;
+            }
+
+            .brand-logo-wrap {
+                width: 38px;
+                height: 38px;
+                min-width: 38px;
+            }
+
+            .hero {
+                padding: 24px 14px 20px;
+            }
+
+            .hero-title {
+                font-size: 1.55rem;
+            }
+
+            .hero-subtitle {
+                font-size: 0.86rem;
+                padding: 0 4px;
+            }
+
+            .main-wrapper {
+                padding: 0 12px;
+                margin: 16px auto;
+                gap: 20px;
+            }
+
+            .content-flow {
+                gap: 24px;
+            }
+
+            .section-header {
+                margin-bottom: 12px;
+            }
+
+            .section-title {
+                font-size: 1.05rem;
+            }
+
+            .category-tabs {
+                gap: 6px;
+                padding-bottom: 6px;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+            }
+
+            .category-tabs::-webkit-scrollbar {
+                display: none;
+            }
+
+            .tab-btn {
+                padding: 7px 14px;
+                font-size: 0.8rem;
+            }
+
+            /* Em celular, cards de serviço ocupam 100% da largura de forma elegante */
+            .services-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .service-card {
+                padding: 15px 14px;
+                border-radius: var(--radius-sm);
+            }
+
+            .service-title {
+                font-size: 0.95rem;
+            }
+
+            .service-desc {
+                font-size: 0.8rem;
+                margin-bottom: 10px;
+            }
+
+            .service-price {
+                font-size: 1.1rem;
+            }
+
+            /* Previne zoom automático e indesejado no iOS / Safari */
+            .input-control {
+                font-size: 16px !important;
+                padding: 12px;
+                border-radius: var(--radius-sm);
+            }
+
+            .datetime-card {
+                padding: 16px 14px;
+                border-radius: var(--radius-md);
+            }
+
+            /* Grade de horários com 4 colunas perfeitas no celular */
+            .slots-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 6px;
+            }
+
+            .slot-chip {
+                padding: 8px 2px;
+                font-size: 0.82rem;
+                min-height: 38px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .summary-card {
+                padding: 18px 14px;
+                border-radius: var(--radius-md);
+            }
+
+            .total-value {
+                font-size: 1.5rem;
+            }
+
+            .btn-confirm {
+                padding: 14px;
+                font-size: 0.92rem;
+            }
+
+            /* Modal em telas mobile */
+            .modal-content {
+                padding: 22px 16px;
+                border-radius: var(--radius-md);
+            }
+
+            .modal-info-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .modal-title {
+                font-size: 1.2rem;
+            }
+
+            .modal-success-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+                margin-bottom: 10px;
+            }
+        }
+
+        /* Celulares Pequenos e Compactos (<= 380px) */
+        @media (max-width: 380px) {
+            .brand-name {
+                font-size: 0.95rem;
+            }
+
+            .status-badge span {
+                display: none; /* Mantém apenas a luz verde piscante para não espremer a barra */
+            }
+
+            .status-badge {
+                padding: 6px;
+            }
+
+            .hero-title {
+                font-size: 1.35rem;
+            }
+
+            /* 3 colunas em telas muito estreitas */
+            .slots-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 5px;
+            }
+
+            .slot-chip {
+                font-size: 0.8rem;
+                padding: 6px 2px;
+            }
+
+            .modal-content {
+                padding: 18px 12px;
+            }
+
+            .modal-summary-box {
+                padding: 12px 10px;
+                font-size: 0.84rem;
+            }
+
+            .btn-whatsapp-send {
+                font-size: 0.88rem;
+                padding: 12px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1174,6 +1692,33 @@
         </form>
     </main>
 
+    <!-- Modal de Confirmação de Agendamento -->
+    <div class="modal-overlay" id="modal-agendamento" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
+        <div class="modal-content">
+            <button type="button" class="modal-close-icon" onclick="fecharModal()" title="Fechar">&times;</button>
+            <div class="modal-success-icon">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h3 class="modal-title" id="modal-titulo">Confirmar Agendamento</h3>
+            <p class="modal-subtitle">Revise todos os detalhes abaixo antes de finalizar seu horário.</p>
+
+            <div class="modal-summary-box" id="modal-detalhes-texto">
+                <!-- Preenchido dinamicamente pelo JavaScript -->
+            </div>
+
+            <div class="modal-buttons">
+                <button type="button" id="modal-btn-confirmar-whats" class="btn-whatsapp-send">
+                    <i class="fa-brands fa-whatsapp" style="font-size: 1.25rem;"></i>
+                    Confirmar e Enviar no WhatsApp
+                </button>
+                <button type="button" class="btn-modal-close" onclick="fecharModal()">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    Voltar e Alterar Dados
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Rodapé -->
     <footer class="app-footer">
         <div class="footer-container">
@@ -1420,7 +1965,7 @@
             totalDisplay.textContent = `R$ ${somaTotal.toFixed(2).replace('.', ',')}`;
         }
 
-        // Submissão do Formulário com Token e Disparo de WhatsApp
+        // Submissão do Formulário com Validação e Abertura da Modal de Confirmação
         const formAgendamento = document.getElementById('form-agendamento');
         formAgendamento.addEventListener('submit', function (e) {
             e.preventDefault();
@@ -1432,24 +1977,53 @@
 
             if (servicosSelecionados.length === 0) {
                 alert('Por favor, selecione pelo menos um serviço para agendar.');
+                const secServicos = document.getElementById('grid-servicos');
+                if (secServicos) secServicos.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 return;
             }
             if (!data) {
                 alert('Por favor, selecione a data do agendamento.');
+                document.getElementById('data').focus();
                 return;
             }
             if (!hora) {
                 alert('Por favor, escolha um horário disponível na grade.');
+                const containerHorarios = document.getElementById('container-horarios');
+                if (containerHorarios) containerHorarios.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 return;
             }
             if (!nome) {
                 alert('Por favor, preencha o seu nome completo.');
+                document.getElementById('nome').focus();
                 return;
             }
             if (tel.replace(/\D/g, '').length < 10) {
                 alert('Por favor, informe um número de WhatsApp válido com DDD.');
+                document.getElementById('telefone').focus();
                 return;
             }
+
+            // Formatação das informações para exibição na modal
+            const partes = data.split('-');
+            const dataFmt = `${partes[2]}/${partes[1]}/${partes[0]}`;
+            const diasSemana = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+            const dataObj = new Date(parseInt(partes[0]), parseInt(partes[1]) - 1, parseInt(partes[2]));
+            const diaSemanaTexto = diasSemana[dataObj.getDay()];
+
+            const barbeiroSelect = document.getElementById('select-barbeiro');
+            const barbeiroNome = barbeiroSelect ? barbeiroSelect.options[barbeiroSelect.selectedIndex].text : 'Henrique (Barbeiro Chefe)';
+
+            let somaTotal = 0;
+            let servicosHtml = '';
+            servicosSelecionados.forEach(s => {
+                somaTotal += s.preco;
+                servicosHtml += `
+                    <div class="modal-service-row">
+                        <span><i class="fa-solid fa-scissors" style="color: var(--primary-gold); font-size: 0.75rem; margin-right: 6px;"></i>${s.nome}</span>
+                        <strong>R$ ${s.preco.toFixed(2).replace('.', ',')}</strong>
+                    </div>
+                `;
+            });
 
             // Geração de token único para link de cancelamento
             const tokenCancelamento = crypto.randomUUID();
@@ -1457,15 +2031,84 @@
 
             const linkCancelamento = `${window.location.origin}/cancelar-cliente/${tokenCancelamento}/`;
             const nomesServicos = servicosSelecionados.map(s => s.nome).join(' + ');
-            const p = data.split('-');
-            const dataFmt = `${p[2]}/${p[1]}/${p[0]}`;
 
-            // Mensagem formatada enviada ao WhatsApp da barbearia
+            const htmlDetalhes = `
+                <div class="modal-info-grid">
+                    <div class="modal-info-item">
+                        <span class="modal-info-label"><i class="fa-regular fa-user"></i> Cliente</span>
+                        <strong class="modal-info-val">${nome}</strong>
+                    </div>
+                    <div class="modal-info-item">
+                        <span class="modal-info-label"><i class="fa-brands fa-whatsapp" style="color: #25d366;"></i> WhatsApp</span>
+                        <strong class="modal-info-val">${tel}</strong>
+                    </div>
+                    <div class="modal-info-item">
+                        <span class="modal-info-label"><i class="fa-regular fa-calendar"></i> Data</span>
+                        <strong class="modal-info-val">${dataFmt} (${diaSemanaTexto})</strong>
+                    </div>
+                    <div class="modal-info-item">
+                        <span class="modal-info-label"><i class="fa-regular fa-clock"></i> Horário</span>
+                        <strong class="modal-info-val" style="color: var(--primary-gold);">${hora}</strong>
+                    </div>
+                    <div class="modal-info-item full-width">
+                        <span class="modal-info-label"><i class="fa-solid fa-user-tie"></i> Barbeiro</span>
+                        <strong class="modal-info-val">${barbeiroNome}</strong>
+                    </div>
+                </div>
+
+                <div class="modal-services-box">
+                    <div class="modal-services-header">Serviços Selecionados:</div>
+                    ${servicosHtml}
+                </div>
+
+                <div class="modal-total-box">
+                    <span>Total a Pagar:</span>
+                    <span class="modal-total-price">R$ ${somaTotal.toFixed(2).replace('.', ',')}</span>
+                </div>
+            `;
+
+            document.getElementById('modal-detalhes-texto').innerHTML = htmlDetalhes;
+
+            // Disparo de mensagem no WhatsApp ao confirmar
             const mensagemWhats = `Olá! Meu nome é ${nome}.\nAcabei de agendar: *${nomesServicos}*\nDia *${dataFmt}* às *${hora}*.\nBarbeiro: *Henrique*\n\n❌ *Se eu precisar desmarcar, clicarei neste link:*\n${linkCancelamento}`;
             const numeroBarbeiro = "553491395770";
-            
-            window.open(`https://wa.me/${numeroBarbeiro}?text=${encodeURIComponent(mensagemWhats)}`, '_blank');
-            this.submit();
+            const urlWhats = `https://wa.me/${numeroBarbeiro}?text=${encodeURIComponent(mensagemWhats)}`;
+
+            const btnConfirmarWhats = document.getElementById('modal-btn-confirmar-whats');
+            btnConfirmarWhats.onclick = function () {
+                window.open(urlWhats, '_blank');
+                formAgendamento.submit();
+            };
+
+            // Abrir a tela de confirmação (modal)
+            abrirModal();
+        });
+
+        // Controles de Abertura e Fechamento da Modal
+        function abrirModal() {
+            const modal = document.getElementById('modal-agendamento');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function fecharModal() {
+            const modal = document.getElementById('modal-agendamento');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Fechar ao clicar fora da caixa do modal
+        document.getElementById('modal-agendamento').addEventListener('click', function (e) {
+            if (e.target === this) {
+                fecharModal();
+            }
+        });
+
+        // Fechar ao pressionar a tecla ESC
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                fecharModal();
+            }
         });
     </script>
 </body>
