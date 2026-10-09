@@ -520,6 +520,240 @@
         .footer-content strong {
             color: var(--primary-gold);
         }
+
+        /* ========================================================
+           RESPONSIVIDADE TOTAL PARA CELULARES (GALAXY, IPHONE, ETC)
+           ======================================================== */
+        html, body {
+            width: 100%;
+            max-width: 100vw;
+            overflow-x: hidden !important;
+            position: relative;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        /* Garante que NENHUM ícone redondo fique oval em nenhuma tela */
+        .brand-logo-wrap {
+            width: 40px !important;
+            height: 40px !important;
+            min-width: 40px !important;
+            min-height: 40px !important;
+            flex-shrink: 0 !important;
+            aspect-ratio: 1 / 1 !important;
+            border-radius: 50% !important;
+        }
+
+        .avatar-circle {
+            width: 28px !important;
+            height: 28px !important;
+            min-width: 28px !important;
+            min-height: 28px !important;
+            flex-shrink: 0 !important;
+            aspect-ratio: 1 / 1 !important;
+            border-radius: 50% !important;
+        }
+
+        .client-avatar {
+            width: 32px !important;
+            height: 32px !important;
+            min-width: 32px !important;
+            min-height: 32px !important;
+            flex-shrink: 0 !important;
+            aspect-ratio: 1 / 1 !important;
+            border-radius: 50% !important;
+        }
+
+        .btn-action-whats,
+        .btn-action-delete {
+            width: 36px !important;
+            height: 36px !important;
+            min-width: 36px !important;
+            min-height: 36px !important;
+            flex-shrink: 0 !important;
+            aspect-ratio: 1 / 1 !important;
+            border-radius: 50% !important;
+        }
+
+        .stat-icon-wrap {
+            width: 50px !important;
+            height: 50px !important;
+            min-width: 50px !important;
+            min-height: 50px !important;
+            flex-shrink: 0 !important;
+            aspect-ratio: 1 / 1 !important;
+            border-radius: 12px !important;
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 10px 14px;
+                flex-wrap: wrap;
+                gap: 10px;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .brand-group {
+                gap: 10px;
+                flex-shrink: 0;
+            }
+
+            .brand-name {
+                font-size: 1rem;
+            }
+
+            .badge-painel {
+                display: none;
+            }
+
+            .user-nav-actions {
+                gap: 8px;
+                flex-shrink: 0;
+            }
+
+            .barber-avatar-pill {
+                padding: 5px 10px 5px 6px;
+                font-size: 0.8rem;
+                gap: 6px;
+                max-width: 170px;
+            }
+
+            .barber-avatar-pill span {
+                max-width: 110px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .btn-logout {
+                padding: 6px 10px;
+                font-size: 0.8rem;
+            }
+
+            .painel-container {
+                padding: 0 12px;
+                margin: 18px auto;
+                width: 100%;
+                max-width: 100%;
+                box-sizing: border-box;
+                overflow-x: hidden;
+            }
+
+            .painel-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 14px;
+                margin-bottom: 20px;
+                width: 100%;
+            }
+
+            .painel-title {
+                font-size: 1.35rem;
+                line-height: 1.25;
+            }
+
+            .painel-subtitle {
+                font-size: 0.85rem;
+            }
+
+            .painel-actions {
+                flex-direction: column;
+                width: 100%;
+                gap: 8px;
+            }
+
+            .btn-quick {
+                width: 100%;
+                justify-content: center;
+                padding: 11px;
+                font-size: 0.86rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+                margin-bottom: 22px;
+                width: 100%;
+            }
+
+            .stat-card {
+                padding: 16px;
+                border-radius: var(--radius-sm);
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .section-box {
+                padding: 16px 12px;
+                border-radius: var(--radius-md);
+                margin-bottom: 20px;
+                width: 100%;
+                box-sizing: border-box;
+                overflow-x: hidden;
+            }
+
+            .section-header {
+                margin-bottom: 14px;
+                padding-bottom: 10px;
+            }
+
+            .section-title {
+                font-size: 1.05rem;
+            }
+
+            .table-responsive {
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                border-radius: var(--radius-sm);
+            }
+
+            table.app-table {
+                min-width: 580px;
+            }
+
+            table.app-table th, 
+            table.app-table td {
+                padding: 10px 12px;
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-container {
+                padding: 8px 10px;
+                justify-content: space-between;
+            }
+
+            .brand-logo-wrap {
+                width: 36px !important;
+                height: 36px !important;
+                min-width: 36px !important;
+                min-height: 36px !important;
+            }
+
+            .brand-name {
+                font-size: 0.92rem;
+            }
+
+            .barber-avatar-pill {
+                max-width: 140px;
+            }
+
+            .barber-avatar-pill span {
+                max-width: 85px;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 6px;
+                font-size: 0.8rem;
+            }
+        }
     </style>
 </head>
 <body>

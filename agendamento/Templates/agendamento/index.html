@@ -41,15 +41,39 @@
             padding: 0;
         }
 
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            max-width: 100vw;
+            overflow-x: hidden !important;
+            position: relative;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
             background-color: var(--bg-body);
             color: var(--text-main);
             min-height: 100vh;
             line-height: 1.6;
-            overflow-x: hidden;
             display: flex;
             flex-direction: column;
+        }
+
+        /* Prevenção absoluta: NENHUM ícone ou indicador redondo pode ficar oval */
+        .brand-logo-wrap,
+        .btn-ghost-social,
+        .service-icon-wrap,
+        .check-indicator,
+        .step-number,
+        .modal-success-icon,
+        .modal-close-icon {
+            flex-shrink: 0 !important;
+            aspect-ratio: 1 / 1 !important;
         }
 
         /* Barra de Navegação Superior */
@@ -60,15 +84,20 @@
             position: sticky;
             top: 0;
             z-index: 50;
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
         }
 
         .nav-container {
             max-width: 1200px;
+            width: 100%;
             margin: 0 auto;
             padding: 14px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-sizing: border-box;
         }
 
         .brand-group {
@@ -80,8 +109,10 @@
         }
 
         .brand-logo-wrap {
-            width: 44px;
-            height: 44px;
+            width: 42px;
+            height: 42px;
+            min-width: 42px;
+            min-height: 42px;
             border-radius: 50%;
             border: 2px solid var(--primary-gold);
             background: #000;
@@ -290,6 +321,8 @@
             gap: 30px;
             flex: 1;
             width: 100%;
+            box-sizing: border-box;
+            overflow-x: hidden;
         }
 
         @media (max-width: 980px) {
@@ -302,6 +335,10 @@
             display: flex;
             flex-direction: column;
             gap: 32px;
+            min-width: 0;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
         }
 
         .section-header {
@@ -1122,7 +1159,7 @@
         }
 
         /* ========================================================
-           RESPONSIVIDADE TOTAL PARA CELULARES DE TODOS OS TAMANHOS
+           RESPONSIVIDADE TOTAL PARA CELULARES (GALAXY A55, IPHONE, ETC)
            ======================================================== */
         
         /* Tablets e Telas Médias (<= 980px) */
@@ -1132,11 +1169,13 @@
                 gap: 26px;
                 padding: 0 16px;
                 margin: 20px auto;
+                width: 100%;
             }
 
             .summary-sidebar {
                 position: static;
                 top: auto;
+                width: 100%;
             }
 
             .footer-container {
@@ -1148,17 +1187,17 @@
         /* Celulares Maiores e Tablets Pequenos (<= 768px) */
         @media (max-width: 768px) {
             .hero {
-                padding: 32px 16px 24px;
+                padding: 30px 16px 22px;
             }
 
             .hero-title {
-                font-size: 1.85rem;
+                font-size: 1.8rem;
                 letter-spacing: 0.5px;
             }
 
             .hero-subtitle {
-                font-size: 0.92rem;
-                margin-bottom: 16px;
+                font-size: 0.9rem;
+                margin-bottom: 14px;
             }
 
             .hero-meta-strip {
@@ -1182,7 +1221,8 @@
 
             footer.app-footer {
                 margin-top: 40px;
-                padding: 32px 16px 20px;
+                padding: 30px 16px 20px;
+                width: 100%;
             }
 
             .footer-bottom {
@@ -1192,43 +1232,88 @@
             }
         }
 
-        /* Celulares Médios e Padrão (<= 580px) */
-        @media (max-width: 580px) {
+        /* Celulares em Geral (<= 640px) - Inclui Galaxy A55 (384px-412px), iPhones, etc */
+        @media (max-width: 640px) {
             .nav-container {
-                padding: 10px 14px;
+                padding: 10px 12px;
+                width: 100%;
+                box-sizing: border-box;
             }
 
-            .brand-name {
-                font-size: 1.05rem;
+            .brand-group {
+                gap: 8px;
+                flex-shrink: 1;
+                min-width: 0;
             }
 
             .brand-logo-wrap {
-                width: 38px;
-                height: 38px;
-                min-width: 38px;
+                width: 36px !important;
+                height: 36px !important;
+                min-width: 36px !important;
+                min-height: 36px !important;
+            }
+
+            .brand-name {
+                font-size: 0.92rem;
+                letter-spacing: 0.5px;
+                white-space: nowrap;
+            }
+
+            .nav-actions {
+                gap: 6px;
+                flex-shrink: 0;
+            }
+
+            .status-badge {
+                padding: 5px 8px;
+                gap: 4px;
+            }
+
+            /* Libera largura crucial para evitar qualquer rolagem horizontal no topo */
+            .status-badge span {
+                display: none !important;
+            }
+
+            .btn-ghost-social {
+                width: 32px !important;
+                height: 32px !important;
+                min-width: 32px !important;
+                min-height: 32px !important;
+                font-size: 0.88rem;
             }
 
             .hero {
-                padding: 24px 14px 20px;
+                padding: 22px 12px 18px;
+                width: 100%;
             }
 
             .hero-title {
-                font-size: 1.55rem;
+                font-size: 1.45rem;
+                line-height: 1.25;
             }
 
             .hero-subtitle {
-                font-size: 0.86rem;
+                font-size: 0.85rem;
                 padding: 0 4px;
+                margin-bottom: 12px;
+            }
+
+            .hero-meta-strip {
+                gap: 8px 12px;
+                font-size: 0.78rem;
             }
 
             .main-wrapper {
-                padding: 0 12px;
-                margin: 16px auto;
-                gap: 20px;
+                padding: 0 10px;
+                margin: 14px auto;
+                gap: 18px;
+                width: 100%;
             }
 
             .content-flow {
-                gap: 24px;
+                gap: 20px;
+                min-width: 0;
+                width: 100%;
             }
 
             .section-header {
@@ -1244,6 +1329,7 @@
                 padding-bottom: 6px;
                 scrollbar-width: none;
                 -ms-overflow-style: none;
+                width: 100%;
             }
 
             .category-tabs::-webkit-scrollbar {
@@ -1253,17 +1339,20 @@
             .tab-btn {
                 padding: 7px 14px;
                 font-size: 0.8rem;
+                flex-shrink: 0;
             }
 
-            /* Em celular, cards de serviço ocupam 100% da largura de forma elegante */
+            /* Cards de serviço em coluna única ocupando 100% da tela */
             .services-grid {
                 grid-template-columns: 1fr;
                 gap: 12px;
+                width: 100%;
             }
 
             .service-card {
-                padding: 15px 14px;
+                padding: 14px 12px;
                 border-radius: var(--radius-sm);
+                width: 100%;
             }
 
             .service-title {
@@ -1279,7 +1368,7 @@
                 font-size: 1.1rem;
             }
 
-            /* Previne zoom automático e indesejado no iOS / Safari */
+            /* Previne zoom automático do iOS / Safari ao tocar no input */
             .input-control {
                 font-size: 16px !important;
                 padding: 12px;
@@ -1287,14 +1376,16 @@
             }
 
             .datetime-card {
-                padding: 16px 14px;
+                padding: 16px 12px;
                 border-radius: var(--radius-md);
+                width: 100%;
             }
 
-            /* Grade de horários com 4 colunas perfeitas no celular */
+            /* Grade de horários com 4 colunas alinhadas no celular */
             .slots-grid {
                 grid-template-columns: repeat(4, 1fr);
                 gap: 6px;
+                width: 100%;
             }
 
             .slot-chip {
@@ -1307,8 +1398,9 @@
             }
 
             .summary-card {
-                padding: 18px 14px;
+                padding: 18px 12px;
                 border-radius: var(--radius-md);
+                width: 100%;
             }
 
             .total-value {
@@ -1320,10 +1412,11 @@
                 font-size: 0.92rem;
             }
 
-            /* Modal em telas mobile */
+            /* Modal em telas de celular */
             .modal-content {
-                padding: 22px 16px;
+                padding: 22px 14px;
                 border-radius: var(--radius-md);
+                width: 94%;
             }
 
             .modal-info-grid {
@@ -1336,53 +1429,41 @@
             }
 
             .modal-success-icon {
-                width: 50px;
-                height: 50px;
+                width: 50px !important;
+                height: 50px !important;
+                min-width: 50px !important;
+                min-height: 50px !important;
                 font-size: 1.5rem;
                 margin-bottom: 10px;
             }
         }
 
-        /* Celulares Pequenos e Compactos (<= 380px) */
-        @media (max-width: 380px) {
+        /* Telas Muito Estreitas (<= 360px) */
+        @media (max-width: 360px) {
             .brand-name {
-                font-size: 0.95rem;
-            }
-
-            .status-badge span {
-                display: none; /* Mantém apenas a luz verde piscante para não espremer a barra */
-            }
-
-            .status-badge {
-                padding: 6px;
+                font-size: 0.86rem;
             }
 
             .hero-title {
-                font-size: 1.35rem;
+                font-size: 1.3rem;
             }
 
-            /* 3 colunas em telas muito estreitas */
             .slots-grid {
                 grid-template-columns: repeat(3, 1fr);
                 gap: 5px;
             }
 
             .slot-chip {
-                font-size: 0.8rem;
+                font-size: 0.78rem;
                 padding: 6px 2px;
             }
 
             .modal-content {
-                padding: 18px 12px;
-            }
-
-            .modal-summary-box {
-                padding: 12px 10px;
-                font-size: 0.84rem;
+                padding: 18px 10px;
             }
 
             .btn-whatsapp-send {
-                font-size: 0.88rem;
+                font-size: 0.86rem;
                 padding: 12px;
             }
         }
