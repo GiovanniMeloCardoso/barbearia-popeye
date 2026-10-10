@@ -26,7 +26,6 @@ SECRET_KEY = 'django-insecure-q7+=waleb425#rp7jn1g+0^%490(9laf(glz!jv4sa9c_7uxr)
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-
 CSRF_TRUSTED_ORIGINS = ['https://agendamentobarbearia.pythonanywhere.com']
 
 # Application definition

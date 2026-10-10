@@ -2079,6 +2079,18 @@
             totalDisplay.textContent = `R$ ${somaTotal.toFixed(2).replace('.', ',')}`;
         }
 
+        // Geração segura de UUID para o token de cancelamento (compatível com HTTP e HTTPS)
+        function gerarUUID() {
+            if (window.crypto && window.crypto.randomUUID) {
+                return window.crypto.randomUUID();
+            }
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                const r = Math.random() * 16 | 0;
+                const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
         // Submissão do Formulário com Validação e Abertura da Modal de Confirmação
         const formAgendamento = document.getElementById('form-agendamento');
         formAgendamento.addEventListener('submit', function (e) {
@@ -2140,7 +2152,7 @@
             });
 
             // Geração de token único para link de cancelamento
-            const tokenCancelamento = crypto.randomUUID();
+            const tokenCancelamento = gerarUUID();
             document.getElementById('token').value = tokenCancelamento;
 
             const linkCancelamento = `${window.location.origin}/cancelar-cliente/${tokenCancelamento}/`;
@@ -2189,9 +2201,42 @@
             const urlWhats = `https://wa.me/${numeroBarbeiro}?text=${encodeURIComponent(mensagemWhats)}`;
 
             const btnConfirmarWhats = document.getElementById('modal-btn-confirmar-whats');
-            btnConfirmarWhats.onclick = function () {
-                window.open(urlWhats, '_blank');
-                formAgendamento.submit();
+            btnConfirmarWhats.onclick = async function () {
+                const btnOriginalHtml = btnConfirmarWhats.innerHTML;
+                btnConfirmarWhats.disabled = true;
+                btnConfirmarWhats.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Salvando agendamento...';
+
+                const formData = new FormData(formAgendamento);
+
+                try {
+                    const response = await fetch(formAgendamento.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    const dataRes = await response.json();
+
+                    if (response.ok && dataRes.sucesso) {
+                        btnConfirmarWhats.innerHTML = '<i class="fa-solid fa-check"></i> Agendado com Sucesso!';
+                        // Redireciona para o WhatsApp de forma compatível com mobile e desktop
+                        window.location.href = urlWhats;
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
+                    } else {
+                        alert(dataRes.mensagem || 'Não foi possível confirmar o agendamento.');
+                        btnConfirmarWhats.disabled = false;
+                        btnConfirmarWhats.innerHTML = btnOriginalHtml;
+                    }
+                } catch (err) {
+                    console.error('Erro ao enviar requisição assíncrona:', err);
+                    // Fallback para envio padrão se fetch falhar
+                    formAgendamento.submit();
+                }
             };
 
             // Abrir a tela de confirmação (modal)

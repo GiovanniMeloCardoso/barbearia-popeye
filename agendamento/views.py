@@ -16,17 +16,23 @@ def index(request):
         hora = request.POST.get('hora')
         token = request.POST.get('token')
         
+        is_ajax = request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.headers.get('accept') == 'application/json'
+        
         try:
             data_obj = datetime.strptime(data, '%Y-%m-%d').date()
             hoje = date.today()
             
             if data_obj < hoje or data_obj.weekday() == 6:
+                if is_ajax:
+                    return JsonResponse({'sucesso': False, 'mensagem': 'Data inválida ou domingo.'}, status=400)
                 messages.error(request, 'Data inválida ou domingo.')
                 return redirect('index')
 
             se_ocupado = Agendamento.objects.filter(data=data, hora=hora).exists()
             
             if se_ocupado:
+                if is_ajax:
+                    return JsonResponse({'sucesso': False, 'mensagem': 'Este horário acabou de ser reservado. Escolha outro.'}, status=400)
                 messages.error(request, 'Este horário acabou de ser reservado. Escolha outro.')
             else:
                 agendamento = Agendamento.objects.create(
@@ -39,9 +45,13 @@ def index(request):
                 for s_id in servicos_ids:
                     agendamento.servicos.add(s_id)
                     
+                if is_ajax:
+                    return JsonResponse({'sucesso': True, 'mensagem': 'Agendamento realizado com sucesso! Te esperamos.'})
                 messages.success(request, 'Agendamento realizado com sucesso! Te esperamos.')
             return redirect('index')
         except Exception as e:
+            if is_ajax:
+                return JsonResponse({'sucesso': False, 'mensagem': 'Ocorreu um erro ao agendar. Tente novamente.'}, status=500)
             messages.error(request, 'Ocorreu um erro ao agendar. Tente novamente.')
 
     return render(request, 'agendamento/index.html', {'servicos': servicos})
