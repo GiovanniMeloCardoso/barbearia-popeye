@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Barbearia Popeye | Agendamento Online</title>
-    
+
     <!-- Tipografia e Iconografia -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
+
     <style>
         :root {
             --bg-body: #0d0e12;
@@ -41,11 +44,14 @@
             padding: 0;
         }
 
-        *, *::before, *::after {
+        *,
+        *::before,
+        *::after {
             box-sizing: border-box;
         }
 
-        html, body {
+        html,
+        body {
             width: 100%;
             max-width: 100vw;
             overflow-x: hidden !important;
@@ -169,9 +175,20 @@
         }
 
         @keyframes pulse {
-            0% { transform: scale(0.95); opacity: 0.8; }
-            50% { transform: scale(1.2); opacity: 1; }
-            100% { transform: scale(0.95); opacity: 0.8; }
+            0% {
+                transform: scale(0.95);
+                opacity: 0.8;
+            }
+
+            50% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(0.95);
+                opacity: 0.8;
+            }
         }
 
         .btn-ghost-social {
@@ -196,7 +213,7 @@
         /* Seção Hero e Boas-Vindas */
         .hero {
             background: radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.12) 0%, rgba(13, 14, 18, 0) 70%),
-                        linear-gradient(180deg, #14161d 0%, #0d0e12 100%);
+                linear-gradient(180deg, #14161d 0%, #0d0e12 100%);
             border-bottom: 1px solid var(--border-subtle);
             padding: 44px 20px 32px;
             text-align: center;
@@ -1161,7 +1178,7 @@
         /* ========================================================
            RESPONSIVIDADE TOTAL PARA CELULARES (GALAXY A55, IPHONE, ETC)
            ======================================================== */
-        
+
         /* Tablets e Telas Médias (<= 980px) */
         @media (max-width: 980px) {
             .main-wrapper {
@@ -1469,6 +1486,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <!-- Navegação Superior -->
@@ -1491,7 +1509,8 @@
                 <a href="https://wa.me/553491395770" target="_blank" class="btn-ghost-social" title="WhatsApp Oficial">
                     <i class="fa-brands fa-whatsapp" style="color: #25d366;"></i>
                 </a>
-                <a href="https://www.instagram.com/popeyebarbeariaofc" target="_blank" class="btn-ghost-social" title="Instagram Oficial">
+                <a href="https://www.instagram.com/popeyebarbeariaofc" target="_blank" class="btn-ghost-social"
+                    title="Instagram Oficial">
                     <i class="fa-brands fa-instagram" style="color: #e1306c;"></i>
                 </a>
             </div>
@@ -1503,15 +1522,16 @@
         <div class="hero-inner">
             <span class="hero-date" id="data-atual-banner">Hoje</span>
             <h1 class="hero-title">Barbearia Popeye</h1>
-            <p class="hero-subtitle">Corte clássico, estilo contemporâneo e atendimento premium. Reserve o seu horário em poucos segundos.</p>
-            
+            <p class="hero-subtitle">Corte clássico, estilo contemporâneo e atendimento premium. Reserve o seu horário
+                em poucos segundos.</p>
+
             <div class="hero-meta-strip">
 
                 <div class="hero-meta-item">
                     <i class="fa-solid fa-location-dot"></i>
                     <span>Uberlândia - MG</span>
                 </div>
-                
+
                 <div class="hero-meta-item">
                     <i class="fa-solid fa-clock"></i>
                     <span>Seg a Sáb: 09h às 20h</span>
@@ -1523,12 +1543,13 @@
     <!-- Mensagens de Retorno do Servidor -->
     <div class="system-alerts" id="mensagens-sistema">
         {% if messages %}
-            {% for message in messages %}
-                <div class="alert-box {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}">
-                    <span>{{ message }}</span>
-                    <button type="button" style="background:none; border:none; color:inherit; cursor:pointer;" onclick="this.parentElement.remove();">&times;</button>
-                </div>
-            {% endfor %}
+        {% for message in messages %}
+        <div class="alert-box {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}">
+            <span>{{ message }}</span>
+            <button type="button" style="background:none; border:none; color:inherit; cursor:pointer;"
+                onclick="this.parentElement.remove();">&times;</button>
+        </div>
+        {% endfor %}
         {% endif %}
     </div>
 
@@ -1548,71 +1569,73 @@
                             <span class="step-number">1</span>
                             Escolha os Serviços
                         </h2>
-                        <span style="font-size: 0.85rem; color: var(--text-muted);" id="contador-selecionados">0 selecionado(s)</span>
+                        <span style="font-size: 0.85rem; color: var(--text-muted);" id="contador-selecionados">0
+                            selecionado(s)</span>
                     </div>
 
                     <!-- Filtro Rápido de Categorias -->
                     <div class="category-tabs">
-                        <button type="button" class="tab-btn active" onclick="filtrarCategoria('todos', this)">Todos</button>
+                        <button type="button" class="tab-btn active"
+                            onclick="filtrarCategoria('todos', this)">Todos</button>
                         <button type="button" class="tab-btn" onclick="filtrarCategoria('cabelo', this)">Cabelo</button>
                         <button type="button" class="tab-btn" onclick="filtrarCategoria('barba', this)">Barba</button>
-                        <button type="button" class="tab-btn" onclick="filtrarCategoria('estetica', this)">Tratamentos & Estética</button>
+                        <button type="button" class="tab-btn" onclick="filtrarCategoria('estetica', this)">Tratamentos &
+                            Estética</button>
                     </div>
 
                     <!-- Lista Dinâmica de Serviços Cadastrados -->
                     <div class="services-grid" id="grid-servicos">
                         {% for servico in servicos %}
-                        <div class="service-card" 
-                             data-id="{{ servico.id }}" 
-                             data-nome="{{ servico.nome }}" 
-                             data-preco="{{ servico.preco }}"
-                             data-cat="{% if 'Barba' in servico.nome %}barba{% elif 'Corte' in servico.nome or 'Acabamento' in servico.nome %}cabelo{% else %}estetica{% endif %}"
-                             onclick="toggleServicoCard(this)">
-                            
-                            <input type="checkbox" name="servicos" value="{{ servico.id }}" id="chk_serv_{{ servico.id }}">
+                        <div class="service-card" data-id="{{ servico.id }}" data-nome="{{ servico.nome }}"
+                            data-preco="{{ servico.preco }}"
+                            data-cat="{% if 'Barba' in servico.nome %}barba{% elif 'Corte' in servico.nome or 'Acabamento' in servico.nome %}cabelo{% else %}estetica{% endif %}"
+                            onclick="toggleServicoCard(this)">
+
+                            <input type="checkbox" name="servicos" value="{{ servico.id }}"
+                                id="chk_serv_{{ servico.id }}">
 
                             <div class="service-top">
                                 <div class="service-icon-wrap">
                                     {% if 'Barba' in servico.nome %}
-                                        <i class="fa-solid fa-user-tie"></i>
+                                    <i class="fa-solid fa-user-tie"></i>
                                     {% elif 'Corte' in servico.nome %}
-                                        <i class="fa-solid fa-scissors"></i>
+                                    <i class="fa-solid fa-scissors"></i>
                                     {% elif 'Sobrancelhas' in servico.nome %}
-                                        <i class="fa-regular fa-eye"></i>
+                                    <i class="fa-regular fa-eye"></i>
                                     {% elif 'Selagem' in servico.nome or 'Alisamento' in servico.nome %}
-                                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
                                     {% else %}
-                                        <i class="fa-solid fa-spa"></i>
+                                    <i class="fa-solid fa-spa"></i>
                                     {% endif %}
                                 </div>
                                 <div class="check-indicator"><i class="fa-solid fa-check"></i></div>
                             </div>
-                            
+
                             <div>
                                 <h3 class="service-title">{{ servico.nome }}</h3>
                                 <p class="service-desc">
                                     {% if 'Barba' in servico.nome %}
-                                        Alinhamento, toalha quente e acabamento na navalha.
+                                    Alinhamento, toalha quente e acabamento na navalha.
                                     {% elif 'Corte' in servico.nome %}
-                                        Corte masculino detalhado na tesoura e máquina com acabamento.
+                                    Corte masculino detalhado na tesoura e máquina com acabamento.
                                     {% elif 'Sobrancelhas' in servico.nome %}
-                                        Design e limpeza harmônica com navalhete.
+                                    Design e limpeza harmônica com navalhete.
                                     {% elif 'Pigmentação' in servico.nome %}
-                                        Cobertura de falhas e realce das linhas faciais.
+                                    Cobertura de falhas e realce das linhas faciais.
                                     {% elif 'Selagem' in servico.nome %}
-                                        Reconstrução térmica para alinhamento e redução de volume.
+                                    Reconstrução térmica para alinhamento e redução de volume.
                                     {% elif 'Higienização' in servico.nome %}
-                                        Remoção higiênica e rápida com cera ou tesoura própria.
+                                    Remoção higiênica e rápida com cera ou tesoura própria.
                                     {% elif 'Alisamento' in servico.nome %}
-                                        Alinhamento capilar fio a fio com resultado duradouro.
+                                    Alinhamento capilar fio a fio com resultado duradouro.
                                     {% elif 'Acabamento' in servico.nome %}
-                                        Alinhamento de linhas do pezinho, costeletas e nuca.
+                                    Alinhamento de linhas do pezinho, costeletas e nuca.
                                     {% else %}
-                                        Procedimento especializado com produtos profissionais.
+                                    Procedimento especializado com produtos profissionais.
                                     {% endif %}
                                 </p>
                             </div>
-                            
+
                             <div class="service-bottom">
                                 <span class="service-price">R$ {{ servico.preco|floatformat:2 }}</span>
                                 <span class="service-duration"><i class="fa-regular fa-clock"></i> 30 min</span>
@@ -1638,7 +1661,8 @@
                                     <i class="fa-regular fa-calendar" style="color: var(--primary-gold);"></i>
                                     Selecione a Data
                                 </label>
-                                <input type="date" id="data" name="data" class="input-control" required onchange="carregarHorariosDisponiveis(this.value)">
+                                <input type="date" id="data" name="data" class="input-control" required
+                                    onchange="carregarHorariosDisponiveis(this.value)">
                             </div>
                             <div class="input-group">
                                 <label class="input-label" for="select-barbeiro">
@@ -1654,8 +1678,9 @@
 
                         <!-- Grade de Horários Dinâmica -->
                         <div id="container-horarios">
-                            <p class="slots-loading-msg" id="msg-horarios">Escolha uma data acima para carregar a grade de horários disponíveis.</p>
-                            
+                            <p class="slots-loading-msg" id="msg-horarios">Escolha uma data acima para carregar a grade
+                                de horários disponíveis.</p>
+
                             <div id="grade-slots-turnos" style="display: none;">
                                 <div class="slots-period-label">
                                     <i class="fa-regular fa-sun"></i> Manhã
@@ -1692,19 +1717,22 @@
                                     <i class="fa-regular fa-user" style="color: var(--primary-gold);"></i>
                                     Nome Completo
                                 </label>
-                                <input type="text" id="nome" name="nome" class="input-control" placeholder="Ex: João da Silva" required>
+                                <input type="text" id="nome" name="nome" class="input-control"
+                                    placeholder="Ex: João da Silva" required>
                             </div>
                             <div class="input-group">
                                 <label class="input-label" for="telefone">
                                     <i class="fa-brands fa-whatsapp" style="color: #25d366;"></i>
                                     WhatsApp (com DDD)
                                 </label>
-                                <input type="tel" id="telefone" name="telefone" class="input-control" placeholder="(34) 90000-0000" maxlength="15" required>
+                                <input type="tel" id="telefone" name="telefone" class="input-control"
+                                    placeholder="(34) 90000-0000" maxlength="15" required>
                             </div>
                         </div>
                         <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: -6px;">
                             <i class="fa-solid fa-shield-halved" style="color: var(--primary-gold);"></i>
-                            Seus dados são protegidos e usados apenas para confirmação e envio do lembrete de atendimento.
+                            Seus dados são protegidos e usados apenas para confirmação e envio do lembrete de
+                            atendimento.
                         </p>
                     </div>
                 </section>
@@ -1755,7 +1783,8 @@
                         <i class="fa-solid fa-location-dot"></i>
                         <div>
                             <strong style="color: #fff; display: block; margin-bottom: 2px;">Barbearia Popeye</strong>
-                            <a href="https://www.google.com/maps/search/?api=1&query=Av.+Cleantro+Vieira+Goncalves,+1387+-+Pacaembu,+Uberlandia+MG" target="_blank">
+                            <a href="https://www.google.com/maps/search/?api=1&query=Av.+Cleantro+Vieira+Goncalves,+1387+-+Pacaembu,+Uberlandia+MG"
+                                target="_blank">
                                 Av. Cleantro Vieira Gonçalves, 1387 - Pacaembu, Uberlândia MG
                             </a>
                         </div>
@@ -1805,10 +1834,13 @@
         <div class="footer-container">
             <div class="footer-brand">
                 <h4>POPEYE BARBERSHOP</h4>
-                <p>Uma nova experiência para uma antiga tradição. O cuidado que o seu estilo merece com pontualidade e excelência.</p>
+                <p>Uma nova experiência para uma antiga tradição. O cuidado que o seu estilo merece com pontualidade e
+                    excelência.</p>
                 <div class="footer-socials">
-                    <a href="https://wa.me/553491395770" target="_blank" class="btn-ghost-social" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
-                    <a href="https://www.instagram.com/popeyebarbeariaofc" target="_blank" class="btn-ghost-social" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://wa.me/553491395770" target="_blank" class="btn-ghost-social" title="WhatsApp"><i
+                            class="fa-brands fa-whatsapp"></i></a>
+                    <a href="https://www.instagram.com/popeyebarbeariaofc" target="_blank" class="btn-ghost-social"
+                        title="Instagram"><i class="fa-brands fa-instagram"></i></a>
                 </div>
             </div>
 
@@ -1824,7 +1856,8 @@
             <div class="footer-links">
                 <h5>Endereço</h5>
                 <ul>
-                    <li><a href="https://www.google.com/maps/search/?api=1&query=Av.+Cleantro+Vieira+Goncalves,+1387+-+Pacaembu,+Uberlandia+MG" target="_blank">Av. Cleantro Vieira Gonçalves, 1387</a></li>
+                    <li><a href="https://www.google.com/maps/search/?api=1&query=Av.+Cleantro+Vieira+Goncalves,+1387+-+Pacaembu,+Uberlandia+MG"
+                            target="_blank">Av. Cleantro Vieira Gonçalves, 1387</a></li>
                     <li><a href="#">Bairro Pacaembu</a></li>
                     <li><a href="#">Uberlândia - MG</a></li>
                 </ul>
@@ -1846,7 +1879,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             const dataInput = document.getElementById('data');
             const hoje = new Date();
-            
+
             // Formatador de data por extenso
             const opcoesData = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
             const dataExtenso = hoje.toLocaleDateString('pt-BR', opcoesData);
@@ -1859,7 +1892,7 @@
             const hojeFormatado = `${yyyy}-${mm}-${dd}`;
             dataInput.min = hojeFormatado;
             dataInput.value = hojeFormatado;
-            
+
             atualizarTextoData(hojeFormatado);
             carregarHorariosDisponiveis(hojeFormatado);
 
@@ -2193,4 +2226,5 @@
         });
     </script>
 </body>
+
 </html>
