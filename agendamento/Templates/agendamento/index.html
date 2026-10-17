@@ -1152,6 +1152,75 @@
             transform: translateY(0);
         }
 
+        .btn-confirm-modal {
+            background: linear-gradient(135deg, #d4af37 0%, #f3c94b 100%);
+            color: #0b0c10;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            font-weight: 800;
+            font-size: 0.98rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.35);
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .btn-confirm-modal:hover {
+            background: linear-gradient(135deg, #e5bd3b 0%, #ffd65d 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+        }
+
+        .btn-confirm-modal:active {
+            transform: translateY(0);
+        }
+
+        .btn-confirm-modal:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .modal-whatsapp-instruction {
+            background: rgba(37, 211, 102, 0.1);
+            border: 1px solid rgba(37, 211, 102, 0.35);
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-align: left;
+        }
+
+        .modal-whatsapp-instruction .instruction-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(37, 211, 102, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: #25d366;
+            flex-shrink: 0;
+        }
+
+        .modal-whatsapp-instruction .instruction-text {
+            font-size: 0.94rem;
+            color: #f3f4f6;
+            line-height: 1.45;
+            font-weight: 600;
+        }
+
         .btn-modal-close {
             background: transparent;
             border: 1px solid var(--border-subtle);
@@ -1479,7 +1548,8 @@
                 padding: 18px 10px;
             }
 
-            .btn-whatsapp-send {
+            .btn-whatsapp-send,
+            .btn-confirm-modal {
                 font-size: 0.86rem;
                 padding: 12px;
             }
@@ -1806,25 +1876,64 @@
     <div class="modal-overlay" id="modal-agendamento" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
         <div class="modal-content">
             <button type="button" class="modal-close-icon" onclick="fecharModal()" title="Fechar">&times;</button>
-            <div class="modal-success-icon">
-                <i class="fa-solid fa-check"></i>
-            </div>
-            <h3 class="modal-title" id="modal-titulo">Confirmar Agendamento</h3>
-            <p class="modal-subtitle">Revise todos os detalhes abaixo antes de finalizar seu horário.</p>
 
-            <div class="modal-summary-box" id="modal-detalhes-texto">
-                <!-- Preenchido dinamicamente pelo JavaScript -->
+            <!-- ETAPA 1: REVISÃO E CONFIRMAÇÃO DO AGENDAMENTO NO BANCO -->
+            <div id="modal-step-review">
+                <div class="modal-success-icon">
+                    <i class="fa-solid fa-calendar-check"></i>
+                </div>
+                <h3 class="modal-title" id="modal-titulo">Confirmar Agendamento</h3>
+                <p class="modal-subtitle">Revise todos os detalhes abaixo antes de finalizar seu horário.</p>
+
+                <div class="modal-summary-box" id="modal-detalhes-texto">
+                    <!-- Preenchido dinamicamente pelo JavaScript -->
+                </div>
+
+                <div class="modal-buttons">
+                    <button type="button" id="modal-btn-confirmar-agendamento" class="btn-confirm-modal">
+                        <i class="fa-solid fa-calendar-check"></i>
+                        Confirmar Agendamento
+                    </button>
+                    <button type="button" class="btn-modal-close" onclick="fecharModal()">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        Voltar e Alterar Dados
+                    </button>
+                </div>
             </div>
 
-            <div class="modal-buttons">
-                <button type="button" id="modal-btn-confirmar-whats" class="btn-whatsapp-send">
-                    <i class="fa-brands fa-whatsapp" style="font-size: 1.25rem;"></i>
-                    Confirmar e Enviar no WhatsApp
-                </button>
-                <button type="button" class="btn-modal-close" onclick="fecharModal()">
-                    <i class="fa-solid fa-arrow-left"></i>
-                    Voltar e Alterar Dados
-                </button>
+            <!-- ETAPA 2: AGENDADO COM SUCESSO & AVISO PARA ENVIAR NO WHATSAPP -->
+            <div id="modal-step-success" style="display: none;">
+                <div class="modal-success-icon" style="background: rgba(34, 197, 94, 0.2); border-color: #22c55e; color: #22c55e;">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <h3 class="modal-title" style="color: #22c55e;">Agendamento Confirmado!</h3>
+                <p class="modal-subtitle" style="color: #e5e7eb; font-size: 0.92rem; margin-bottom: 14px;">
+                    Seu horário foi reservado com sucesso em nosso sistema.
+                </p>
+
+                <div class="modal-whatsapp-instruction">
+                    <div class="instruction-icon">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </div>
+                    <div class="instruction-text">
+                        Envie uma mensagem ao barbeiro para informá-lo sobre o agendamento
+                    </div>
+                </div>
+
+                <div class="modal-summary-box" id="modal-detalhes-sucesso" style="margin-bottom: 16px;">
+                    <!-- Preenchido dinamicamente pelo JavaScript -->
+                </div>
+
+                <div class="modal-buttons">
+                    <a href="#" id="modal-btn-enviar-whats" target="_blank" rel="noopener noreferrer" class="btn-whatsapp-send">
+                        <i class="fa-brands fa-whatsapp" style="font-size: 1.25rem;"></i>
+                        Enviar no WhatsApp
+                    </a>
+                    <button type="button" class="btn-modal-close" onclick="concluirAgendamento()">
+                        <i class="fa-solid fa-check-double"></i>
+                        Concluir
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -2195,47 +2304,81 @@
 
             document.getElementById('modal-detalhes-texto').innerHTML = htmlDetalhes;
 
-            // Disparo de mensagem no WhatsApp ao confirmar
-            const mensagemWhats = `Olá! Meu nome é ${nome}.\nAcabei de agendar: *${nomesServicos}*\nDia *${dataFmt}* às *${hora}*.\nBarbeiro: *Henrique*\n\n❌ *Se eu precisar desmarcar, clicarei neste link:*\n${linkCancelamento}`;
+            // Preparação do resumo para a tela pós-agendamento (Etapa 2)
+            const htmlSucesso = `
+                <div class="modal-info-grid" style="border-bottom: none; padding-bottom: 0;">
+                    <div class="modal-info-item">
+                        <span class="modal-info-label"><i class="fa-regular fa-user"></i> Cliente</span>
+                        <strong class="modal-info-val">${nome}</strong>
+                    </div>
+                    <div class="modal-info-item">
+                        <span class="modal-info-label"><i class="fa-solid fa-user-tie"></i> Barbeiro</span>
+                        <strong class="modal-info-val">${barbeiroNome}</strong>
+                    </div>
+                    <div class="modal-info-item">
+                        <span class="modal-info-label"><i class="fa-regular fa-calendar"></i> Data</span>
+                        <strong class="modal-info-val">${dataFmt} (${diaSemanaTexto})</strong>
+                    </div>
+                    <div class="modal-info-item">
+                        <span class="modal-info-label"><i class="fa-regular fa-clock"></i> Horário</span>
+                        <strong class="modal-info-val" style="color: var(--primary-gold);">${hora}</strong>
+                    </div>
+                    <div class="modal-info-item full-width">
+                        <span class="modal-info-label"><i class="fa-solid fa-scissors"></i> Serviços</span>
+                        <strong class="modal-info-val">${nomesServicos}</strong>
+                    </div>
+                </div>
+            `;
+            document.getElementById('modal-detalhes-sucesso').innerHTML = htmlSucesso;
+
+            // Disparo de mensagem no WhatsApp após salvar
+            const mensagemWhats = `Olá! Meu nome é ${nome}.\nAcabei de agendar: *${nomesServicos}*\nDia *${dataFmt}* às *${hora}*.\nBarbeiro: *${barbeiroNome}*\n\n❌ *Se eu precisar desmarcar, clicarei neste link:*\n${linkCancelamento}`;
             const numeroBarbeiro = "553491395770";
             const urlWhats = `https://wa.me/${numeroBarbeiro}?text=${encodeURIComponent(mensagemWhats)}`;
 
-            const btnConfirmarWhats = document.getElementById('modal-btn-confirmar-whats');
-            btnConfirmarWhats.onclick = async function () {
-                const btnOriginalHtml = btnConfirmarWhats.innerHTML;
-                btnConfirmarWhats.disabled = true;
-                btnConfirmarWhats.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Salvando agendamento...';
+            const btnEnviarWhats = document.getElementById('modal-btn-enviar-whats');
+            btnEnviarWhats.href = urlWhats;
+
+            const btnConfirmar = document.getElementById('modal-btn-confirmar-agendamento');
+            btnConfirmar.disabled = false;
+            btnConfirmar.innerHTML = '<i class="fa-solid fa-calendar-check"></i> Confirmar Agendamento';
+
+            btnConfirmar.onclick = async function () {
+                const btnOriginalHtml = btnConfirmar.innerHTML;
+                btnConfirmar.disabled = true;
+                btnConfirmar.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Agendando horário...';
 
                 const formData = new FormData(formAgendamento);
 
                 try {
-                    const response = await fetch(formAgendamento.action, {
+                    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+                    const response = await fetch(formAgendamento.action || window.location.href, {
                         method: 'POST',
                         body: formData,
                         headers: {
                             'X-Requested-With': 'XMLHttpRequest',
-                            'Accept': 'application/json'
+                            'Accept': 'application/json',
+                            ...(csrfToken ? { 'X-CSRFToken': csrfToken } : {})
                         }
                     });
 
                     const dataRes = await response.json();
 
                     if (response.ok && dataRes.sucesso) {
-                        btnConfirmarWhats.innerHTML = '<i class="fa-solid fa-check"></i> Agendado com Sucesso!';
-                        // Redireciona para o WhatsApp de forma compatível com mobile e desktop
-                        window.location.href = urlWhats;
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 2000);
+                        agendamentoFoiConfirmado = true;
+                        // Exibir a etapa 2 com sucesso e botão do WhatsApp
+                        document.getElementById('modal-step-review').style.display = 'none';
+                        document.getElementById('modal-step-success').style.display = 'block';
                     } else {
                         alert(dataRes.mensagem || 'Não foi possível confirmar o agendamento.');
-                        btnConfirmarWhats.disabled = false;
-                        btnConfirmarWhats.innerHTML = btnOriginalHtml;
+                        btnConfirmar.disabled = false;
+                        btnConfirmar.innerHTML = btnOriginalHtml;
                     }
                 } catch (err) {
-                    console.error('Erro ao enviar requisição assíncrona:', err);
-                    // Fallback para envio padrão se fetch falhar
-                    formAgendamento.submit();
+                    console.error('Erro ao salvar agendamento:', err);
+                    alert('Ocorreu uma falha na conexão ao tentar agendar. Por favor, tente novamente.');
+                    btnConfirmar.disabled = false;
+                    btnConfirmar.innerHTML = btnOriginalHtml;
                 }
             };
 
@@ -2243,17 +2386,30 @@
             abrirModal();
         });
 
-        // Controles de Abertura e Fechamento da Modal
+        // Controle de estado e fechamento da modal
+        let agendamentoFoiConfirmado = false;
+
         function abrirModal() {
+            agendamentoFoiConfirmado = false;
+            document.getElementById('modal-step-review').style.display = 'block';
+            document.getElementById('modal-step-success').style.display = 'none';
             const modal = document.getElementById('modal-agendamento');
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
         }
 
         function fecharModal() {
+            if (agendamentoFoiConfirmado) {
+                window.location.reload();
+                return;
+            }
             const modal = document.getElementById('modal-agendamento');
             modal.classList.remove('active');
             document.body.style.overflow = '';
+        }
+
+        function concluirAgendamento() {
+            window.location.reload();
         }
 
         // Fechar ao clicar fora da caixa do modal

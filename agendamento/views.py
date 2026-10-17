@@ -16,7 +16,7 @@ def index(request):
         hora = request.POST.get('hora')
         token = request.POST.get('token')
         
-        is_ajax = request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.headers.get('accept') == 'application/json'
+        is_ajax = request.headers.get('x-requested-with') == 'XMLHttpRequest' or 'application/json' in request.headers.get('accept', '')
         
         try:
             data_obj = datetime.strptime(data, '%Y-%m-%d').date()

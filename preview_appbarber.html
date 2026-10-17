@@ -959,6 +959,68 @@
             background: #20bd5a;
         }
 
+        .btn-confirm-modal {
+            background: linear-gradient(135deg, #d4af37 0%, #f3c94b 100%);
+            color: #0b0c10;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            font-weight: 800;
+            font-size: 0.98rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.35);
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .btn-confirm-modal:hover {
+            background: linear-gradient(135deg, #e5bd3b 0%, #ffd65d 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+        }
+
+        .btn-confirm-modal:active {
+            transform: translateY(0);
+        }
+
+        .modal-whatsapp-instruction {
+            background: rgba(37, 211, 102, 0.1);
+            border: 1px solid rgba(37, 211, 102, 0.35);
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-align: left;
+        }
+
+        .modal-whatsapp-instruction .instruction-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(37, 211, 102, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: #25d366;
+            flex-shrink: 0;
+        }
+
+        .modal-whatsapp-instruction .instruction-text {
+            font-size: 0.94rem;
+            color: #f3f4f6;
+            line-height: 1.45;
+            font-weight: 600;
+        }
+
         .btn-modal-close {
             background: transparent;
             border: 1px solid var(--border-subtle);
@@ -1724,22 +1786,61 @@
     <!-- Modal de Confirmação -->
     <div class="modal-overlay" id="modal-agendamento">
         <div class="modal-content">
-            <div class="modal-success-icon">
-                <i class="fa-solid fa-check"></i>
+            <button type="button" class="modal-close-icon" onclick="fecharModal()" title="Fechar" style="position: absolute; top: 14px; right: 14px; background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border-subtle); color: var(--text-muted); width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; cursor: pointer;">&times;</button>
+
+            <!-- ETAPA 1: REVISÃO E CONFIRMAÇÃO DO AGENDAMENTO -->
+            <div id="modal-step-review">
+                <div class="modal-success-icon">
+                    <i class="fa-solid fa-calendar-check"></i>
+                </div>
+                <h3 class="modal-title">Confirmar Agendamento</h3>
+                <p class="modal-subtitle">Revise todos os detalhes abaixo antes de finalizar seu horário.</p>
+
+                <div class="modal-summary-box" id="modal-detalhes-texto"></div>
+
+                <div class="modal-buttons">
+                    <button type="button" id="modal-btn-confirmar-agendamento" class="btn-confirm-modal" onclick="confirmarAgendamentoMock()">
+                        <i class="fa-solid fa-calendar-check"></i>
+                        Confirmar Agendamento
+                    </button>
+                    <button type="button" class="btn-modal-close" onclick="fecharModal()">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        Voltar e Alterar Dados
+                    </button>
+                </div>
             </div>
-            <h3 class="modal-title">Horário Pré-Agendado!</h3>
-            <p class="modal-subtitle">Revise os detalhes abaixo para disparar a confirmação pelo WhatsApp.</p>
 
-            <div class="modal-summary-box" id="modal-detalhes-texto"></div>
+            <!-- ETAPA 2: AGENDADO COM SUCESSO & ENVIAR NO WHATSAPP -->
+            <div id="modal-step-success" style="display: none;">
+                <div class="modal-success-icon" style="background: rgba(34, 197, 94, 0.2); border-color: #22c55e; color: #22c55e;">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <h3 class="modal-title" style="color: #22c55e;">Agendamento Confirmado!</h3>
+                <p class="modal-subtitle" style="color: #e5e7eb; font-size: 0.92rem; margin-bottom: 14px;">
+                    Seu horário foi agendado com sucesso no sistema.
+                </p>
 
-            <div class="modal-buttons">
-                <a href="#" id="modal-btn-whatsapp" target="_blank" class="btn-whatsapp-send">
-                    <i class="fa-brands fa-whatsapp"></i>
-                    Enviar Confirmação no WhatsApp
-                </a>
-                <button type="button" class="btn-modal-close" onclick="fecharModal()">
-                    Fechar e Voltar
-                </button>
+                <div class="modal-whatsapp-instruction">
+                    <div class="instruction-icon">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </div>
+                    <div class="instruction-text">
+                        Envie uma mensagem ao barbeiro para informá-lo sobre o agendamento
+                    </div>
+                </div>
+
+                <div class="modal-summary-box" id="modal-detalhes-sucesso" style="margin-bottom: 16px;"></div>
+
+                <div class="modal-buttons">
+                    <a href="#" id="modal-btn-whatsapp" target="_blank" class="btn-whatsapp-send">
+                        <i class="fa-brands fa-whatsapp" style="font-size: 1.25rem;"></i>
+                        Enviar no WhatsApp
+                    </a>
+                    <button type="button" class="btn-modal-close" onclick="fecharModal()">
+                        <i class="fa-solid fa-check-double"></i>
+                        Concluir
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -1901,6 +2002,7 @@
                 <p><strong>Valor Total:</strong> R$ ${total.toFixed(2).replace('.', ',')}</p>
             `;
             document.getElementById('modal-detalhes-texto').innerHTML = htmlDetalhes;
+            document.getElementById('modal-detalhes-sucesso').innerHTML = htmlDetalhes;
 
             const linkCancelamento = `http://127.0.0.1:8000/cancelar-cliente/${tokenMock}/`;
             const mensagemWhats = `Olá! Meu nome é ${nome}.\nAcabei de agendar: *${nomesServicos}*\nDia *${dataFmt}* às *${horarioSelecionado}*.\nBarbeiro: *Henrique*\n\n❌ *Se eu precisar desmarcar, clicarei neste link:*\n${linkCancelamento}`;
@@ -1908,7 +2010,21 @@
             const urlWhats = `https://wa.me/${numeroBarbeiro}?text=${encodeURIComponent(mensagemWhats)}`;
 
             document.getElementById('modal-btn-whatsapp').href = urlWhats;
+            document.getElementById('modal-step-review').style.display = 'block';
+            document.getElementById('modal-step-success').style.display = 'none';
             document.getElementById('modal-agendamento').classList.add('active');
+        }
+
+        function confirmarAgendamentoMock() {
+            const btn = document.getElementById('modal-btn-confirmar-agendamento');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Agendando horário...';
+            btn.disabled = true;
+            setTimeout(() => {
+                document.getElementById('modal-step-review').style.display = 'none';
+                document.getElementById('modal-step-success').style.display = 'block';
+                btn.innerHTML = '<i class="fa-solid fa-calendar-check"></i> Confirmar Agendamento';
+                btn.disabled = false;
+            }, 600);
         }
 
         function fecharModal() {
