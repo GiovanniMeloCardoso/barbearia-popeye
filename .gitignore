@@ -9,6 +9,13 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Banco de dados local
+db.sqlite3
+*.sqlite3
+
+# Arquivos estaticos coletados
+staticfiles/
+
 # Arquivos do sistema e IDEs
 .vscode/
 .idea/

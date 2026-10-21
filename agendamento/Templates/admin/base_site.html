@@ -1,0 +1,14 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | Barbearia Popeye{% endblock %}
+
+{% block branding %}
+<div id="site-name">
+    <a href="{% url 'admin:index' %}" style="display: flex; align-items: center; gap: 10px; font-weight: 700; color: #d4af37;">
+        <span style="font-size: 1.2rem;">✂️</span>
+        <span>POPEYE BARBERSHOP</span>
+    </a>
+</div>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
