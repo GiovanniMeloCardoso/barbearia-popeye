@@ -1392,9 +1392,12 @@
                                     onclick="editarBarbeiroModal('{{ b.id }}', '{{ b.nome|escapejs }}', '{{ b.cargo|escapejs }}', '{{ b.telefone|default:''|escapejs }}', {{ b.ativo|yesno:'true,false' }}, '{{ b.foto_url }}', '{{ b.horario_inicio|time:"H:i" }}', '{{ b.horario_fim|time:"H:i" }}', '{{ b.intervalo_inicio|time:"H:i"|default:'' }}', '{{ b.intervalo_fim|time:"H:i"|default:'' }}')">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </button>
-                            <a href="{% url 'excluir_barbeiro' b.id %}" class="btn-mini-action delete" title="Remover Barbeiro" onclick="return confirm('Deseja realmente remover o barbeiro {{ b.nome }}?');">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </a>
+                            <form method="POST" action="{% url 'excluir_barbeiro' b.id %}" style="display: inline;" onsubmit="return confirm('Deseja realmente remover o barbeiro {{ b.nome }}?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-mini-action delete" title="Remover Barbeiro" style="cursor: pointer;">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </form>
                         </div>
                     </div>
 
@@ -1527,12 +1530,12 @@
                                        title="Chamar cliente no WhatsApp">
                                         <i class="fa-brands fa-whatsapp"></i>
                                     </a>
-                                    <a href="{% url 'cancelar_agendamento' agendamento.id %}" 
-                                       class="btn-action-delete" 
-                                       onclick="return confirm('Deseja realmente desmarcar o agendamento de {{ agendamento.nome_cliente }}?');" 
-                                       title="Cancelar Horário">
-                                        <i class="fa-solid fa-trash-can"></i>
-                                    </a>
+                                    <form method="POST" action="{% url 'cancelar_agendamento' agendamento.id %}" style="display: inline;" onsubmit="return confirm('Deseja realmente desmarcar o agendamento de {{ agendamento.nome_cliente }}?');">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn-action-delete" title="Cancelar Horário" style="cursor: pointer; border: 1px solid rgba(239, 68, 68, 0.3);">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>
@@ -1619,12 +1622,12 @@
                                        title="Chamar cliente no WhatsApp">
                                         <i class="fa-brands fa-whatsapp"></i>
                                     </a>
-                                    <a href="{% url 'cancelar_agendamento' agendamento.id %}" 
-                                       class="btn-action-delete" 
-                                       onclick="return confirm('Deseja realmente desmarcar o agendamento de {{ agendamento.nome_cliente }}?');" 
-                                       title="Cancelar Horário">
-                                        <i class="fa-solid fa-trash-can"></i>
-                                    </a>
+                                    <form method="POST" action="{% url 'cancelar_agendamento' agendamento.id %}" style="display: inline;" onsubmit="return confirm('Deseja realmente desmarcar o agendamento de {{ agendamento.nome_cliente }}?');">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn-action-delete" title="Cancelar Horário" style="cursor: pointer; border: 1px solid rgba(239, 68, 68, 0.3);">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>

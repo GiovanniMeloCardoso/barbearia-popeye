@@ -4,6 +4,13 @@ venv/
 env/
 ENV/
 
+# Arquivos de variaveis de ambiente e segredos
+.env
+.env.*
+*.env
+!.env.example
+
+
 # Cache do Python
 __pycache__/
 *.py[cod]

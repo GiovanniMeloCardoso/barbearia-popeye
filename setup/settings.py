@@ -13,21 +13,58 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 from pathlib import Path
 import dj_database_url
 import os
+import sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Carrega arquivo .env se existir (no diretório do projeto ou no diretório pai)
+def carregar_env():
+    for caminho in [BASE_DIR / '.env', BASE_DIR.parent / '.env']:
+        if caminho.exists():
+            try:
+                with open(caminho, 'r', encoding='utf-8') as f:
+                    for linha in f:
+                        linha = linha.strip()
+                        if linha and not linha.startswith('#') and '=' in linha:
+                            chave, valor = linha.split('=', 1)
+                            chave = chave.strip()
+                            valor = valor.strip().strip("'\"")
+                            os.environ.setdefault(chave, valor)
+                break
+            except Exception:
+                pass
+
+carregar_env()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-q7+=waleb425#rp7jn1g+0^%490(9laf(glz!jv4sa9c_7uxr)'
+# Controle de DEBUG via variável de ambiente (padrão seguro: False se não especificado)
+DEBUG = os.environ.get('DEBUG', 'False').lower() in ('true', '1', 't')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Chave secreta segura carregada do ambiente
+SECRET_KEY = os.environ.get('SECRET_KEY')
+if not SECRET_KEY:
+    if DEBUG:
+        SECRET_KEY = 'django-insecure-dev-only-local-secret-key-popeye-2026'
+    else:
+        raise ValueError("A variável de ambiente SECRET_KEY é obrigatória quando DEBUG=False!")
 
-ALLOWED_HOSTS = ['*']
+# Hosts permitidos
+ALLOWED_HOSTS_ENV = os.environ.get('ALLOWED_HOSTS')
+if ALLOWED_HOSTS_ENV:
+    ALLOWED_HOSTS = [h.strip() for h in ALLOWED_HOSTS_ENV.split(',') if h.strip()]
+else:
+    ALLOWED_HOSTS = [
+        'localhost',
+        '127.0.0.1',
+        '[::1]',
+        'testserver',
+        '.vercel.app',
+        'agendamentobarbearia.pythonanywhere.com',
+    ]
+
 CSRF_TRUSTED_ORIGINS = [
     'https://*.vercel.app',
     'https://agendamentobarbearia.pythonanywhere.com',
@@ -79,17 +116,31 @@ WSGI_APPLICATION = 'setup.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
-# Database configuration (Supabase PostgreSQL / Environment Variable)
-DEFAULT_DB_URL = 'postgresql://postgres.pagowsgiybynlnwbmstm:HggYo885T%40_@aws-0-us-east-1.pooler.supabase.com:6543/postgres'
-DATABASE_URL = os.environ.get('DATABASE_URL', DEFAULT_DB_URL)
+DATABASE_URL = os.environ.get('DATABASE_URL')
+if 'test' in sys.argv:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': ':memory:',
+        }
+    }
+elif DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            ssl_require=True
+        )
+    }
+else:
+    # Fallback seguro para banco local SQLite se DATABASE_URL não for informada
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
-DATABASES = {
-    'default': dj_database_url.config(
-        default=DATABASE_URL,
-        conn_max_age=600,
-        ssl_require=True
-    )
-}
 
 
 # Password validation
@@ -150,3 +201,18 @@ MAILERS = {
 }
 
 LOGIN_URL = '/admin/login/'
+
+# Diretrizes de Segurança HTTP e Proteção de Cookies
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_HTTPONLY = False  # False para permitir leitura pelo JS no cabeçalho X-CSRFToken
+CSRF_COOKIE_SAMESITE = 'Lax'
+
+# Se em produção (DEBUG=False), ativa proteções SSL/HTTPS adicionais
+if not DEBUG:
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
+    SECURE_SSL_REDIRECT = os.environ.get('SECURE_SSL_REDIRECT', 'True').lower() in ('true', '1', 't')

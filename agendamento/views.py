@@ -1,9 +1,18 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseNotAllowed
+from django.urls import reverse
+from django.db import transaction
+from django.views.decorators.http import require_POST
 from datetime import datetime, timedelta, date, time
+from zoneinfo import ZoneInfo
 from django.contrib.auth.decorators import login_required
+import secrets
+import re
 from .models import Servico, Agendamento, Barbeiro
+
+# Fuso horário oficial do negócio (São Paulo / Brasília)
+SP_TZ = ZoneInfo('America/Sao_Paulo')
 
 def calcular_duracao_servicos(servicos_objs):
     """
@@ -74,104 +83,160 @@ def index(request):
     barbeiros = Barbeiro.objects.filter(ativo=True)
     
     if request.method == 'POST':
+        is_ajax = request.headers.get('x-requested-with') == 'XMLHttpRequest' or 'application/json' in request.headers.get('accept', '')
+        
+        def responder_erro(msg, status=400):
+            if is_ajax:
+                return JsonResponse({'sucesso': False, 'mensagem': msg}, status=status)
+            messages.error(request, msg)
+            return redirect('index')
+
         nome = request.POST.get('nome', '').strip()
         telefone = request.POST.get('telefone', '').strip()
         servicos_ids = request.POST.getlist('servicos')
-        data = request.POST.get('data')
-        hora_str = request.POST.get('hora')
-        token = request.POST.get('token')
-        barbeiro_id = request.POST.get('barbeiro')
+        data_str = request.POST.get('data', '').strip()
+        hora_str = request.POST.get('hora', '').strip()
+        barbeiro_id = request.POST.get('barbeiro', '').strip()
+
+        # 1. Validação do Nome do Cliente
+        if not nome or len(nome) < 2 or len(nome) > 100:
+            return responder_erro('Por favor, informe seu nome completo (entre 2 e 100 caracteres).')
         
-        is_ajax = request.headers.get('x-requested-with') == 'XMLHttpRequest' or 'application/json' in request.headers.get('accept', '')
-        
+        # 2. Validação do Telefone/WhatsApp do Cliente
+        tel_digitos = re.sub(r'\D', '', telefone)
+        if len(tel_digitos) < 10 or len(tel_digitos) > 13:
+            return responder_erro('Por favor, informe um número de WhatsApp/telefone válido com DDD (ex: 34991395770).')
+
+        # 3. Validação estrita do formato de Data e Hora
         try:
-            if not servicos_ids:
-                if is_ajax:
-                    return JsonResponse({'sucesso': False, 'mensagem': 'Selecione ao menos um serviço.'}, status=400)
-                messages.error(request, 'Selecione ao menos um serviço.')
-                return redirect('index')
+            data_obj = datetime.strptime(data_str, '%Y-%m-%d').date()
+        except (ValueError, TypeError):
+            return responder_erro('Data inválida. Use o formato AAAA-MM-DD.')
 
-            data_obj = datetime.strptime(data, '%Y-%m-%d').date()
+        try:
             hora_obj = datetime.strptime(hora_str, '%H:%M').time()
-            hoje = date.today()
-            
-            if data_obj < hoje or data_obj.weekday() == 6:
-                if is_ajax:
-                    return JsonResponse({'sucesso': False, 'mensagem': 'Data inválida ou domingo (fechado).'}, status=400)
-                messages.error(request, 'Data inválida ou domingo (fechado).')
-                return redirect('index')
+        except (ValueError, TypeError):
+            return responder_erro('Horário inválido. Use o formato HH:MM.')
 
-            # Carregar serviços selecionados e calcular duração
-            servicos_objs = list(Servico.objects.filter(id__in=servicos_ids))
-            duracao_minutos = calcular_duracao_servicos(servicos_objs)
+        # Fuso horário do estabelecimento
+        agora_sp = datetime.now(SP_TZ)
+        hoje_sp = agora_sp.date()
 
-            # Resolver o barbeiro escolhido
-            barbeiro_escolhido = None
-            barbeiros_ativos = list(Barbeiro.objects.filter(ativo=True))
-            
-            if barbeiro_id and barbeiro_id != 'qualquer':
-                barbeiro_escolhido = Barbeiro.objects.filter(id=barbeiro_id, ativo=True).first()
-                if not barbeiro_escolhido:
-                    if is_ajax:
-                        return JsonResponse({'sucesso': False, 'mensagem': 'Barbeiro selecionado não está disponível.'}, status=400)
-                    messages.error(request, 'Barbeiro selecionado não está disponível.')
-                    return redirect('index')
+        # 4. Proibição de Agendamento em Datas Passadas
+        if data_obj < hoje_sp:
+            return responder_erro('Não é permitido agendar em datas que já passaram.')
 
-                # Valida limite de horário específico do barbeiro escolhido
-                hora_limite_barbeiro = barbeiro_escolhido.horario_fim or time(20, 0)
-                hora_fim_dt = datetime.combine(data_obj, hora_obj) + timedelta(minutes=duracao_minutos)
-                if hora_fim_dt > datetime.combine(data_obj, hora_limite_barbeiro):
-                    if is_ajax:
-                        return JsonResponse({'sucesso': False, 'mensagem': f'Este atendimento ultrapassa o horário de expediente de {barbeiro_escolhido.nome} ({hora_limite_barbeiro.strftime("%H:%M")}). Escolha um horário mais cedo.'}, status=400)
-                    messages.error(request, 'Horário ultrapassa o expediente do barbeiro.')
-                    return redirect('index')
+        # 5. Proibição de Agendamento com mais de 60 dias de antecedência
+        if data_obj > hoje_sp + timedelta(days=60):
+            return responder_erro('Agendamentos só podem ser realizados com até 60 dias de antecedência.')
 
-                if verificar_conflito(data_obj, hora_obj, duracao_minutos, barbeiro_escolhido):
-                    if is_ajax:
-                        return JsonResponse({'sucesso': False, 'mensagem': f'O barbeiro {barbeiro_escolhido.nome} já possui outro agendamento neste horário. Escolha outro horário.'}, status=400)
-                    messages.error(request, 'Horário indisponível para o barbeiro selecionado.')
-                    return redirect('index')
-            else:
-                # Sem preferência: encontrar o primeiro barbeiro ativo livre na sua respectiva agenda
-                for b in barbeiros_ativos:
-                    if not verificar_conflito(data_obj, hora_obj, duracao_minutos, b):
-                        barbeiro_escolhido = b
-                        break
-                
-                if not barbeiro_escolhido:
-                    if barbeiros_ativos:
-                        if is_ajax:
-                            return JsonResponse({'sucesso': False, 'mensagem': 'Nenhum barbeiro disponível para a duração deste atendimento neste horário. Escolha outro horário.'}, status=400)
-                        messages.error(request, 'Nenhum barbeiro disponível neste horário.')
-                        return redirect('index')
+        # 6. Proibição de Domingos (Estabelecimento Fechado)
+        if data_obj.weekday() == 6:
+            return responder_erro('A barbearia não abre aos domingos. Por favor, selecione de segunda a sábado.')
 
-            # Criar agendamento com duração e barbeiro específico
-            agendamento = Agendamento.objects.create(
-                nome_cliente=nome,
-                telefone=telefone,
-                barbeiro=barbeiro_escolhido,
-                data=data_obj,
-                hora=hora_obj,
-                duracao_minutos=duracao_minutos,
-                token=token
-            )
-            agendamento.servicos.set(servicos_objs)
-                
+        # 7. REGRA CRÍTICA DE SEGURANÇA: Se a data for HOJE, o horário NÃO pode estar no passado
+        # Bloqueia qualquer horário anterior ao momento atual + 2 minutos de margem
+        if data_obj == hoje_sp:
+            agendamento_dt = datetime.combine(data_obj, hora_obj).replace(tzinfo=SP_TZ)
+            if agendamento_dt <= agora_sp + timedelta(minutes=2):
+                return responder_erro('Este horário já passou ou é muito próximo do horário atual. Por favor, escolha um horário futuro.')
+
+        # 8. Validação dos Serviços
+        if not servicos_ids:
+            return responder_erro('Selecione ao menos um serviço para agendar.')
+
+        valid_ids = []
+        for s in servicos_ids:
+            if str(s).isdigit():
+                valid_ids.append(int(s))
+
+        servicos_objs = list(Servico.objects.filter(id__in=valid_ids))
+        if not servicos_objs:
+            return responder_erro('Nenhum serviço válido foi selecionado.')
+
+        duracao_minutos = calcular_duracao_servicos(servicos_objs)
+
+        # 9. Verificação de Concorrência e Criação Atômica
+        try:
+            with transaction.atomic():
+                barbeiro_escolhido = None
+                barbeiros_ativos = list(Barbeiro.objects.filter(ativo=True).select_for_update())
+
+                if not barbeiros_ativos:
+                    return responder_erro('No momento não há barbeiros disponíveis para agendamento.')
+
+                if barbeiro_id and barbeiro_id != 'qualquer':
+                    if not str(barbeiro_id).isdigit():
+                        return responder_erro('Barbeiro selecionado inválido.')
+
+                    barbeiro_escolhido = Barbeiro.objects.filter(id=int(barbeiro_id), ativo=True).first()
+                    if not barbeiro_escolhido:
+                        return responder_erro('O barbeiro selecionado não está disponível.')
+
+                    # Checa dia de trabalho do barbeiro
+                    if not barbeiro_escolhido.trabalha_no_dia(data_obj):
+                        return responder_erro(f'{barbeiro_escolhido.nome} não atende no dia da semana selecionado.')
+
+                    # Checa limite de horário do barbeiro
+                    h_ini = barbeiro_escolhido.horario_inicio or time(9, 0)
+                    h_fim = barbeiro_escolhido.horario_fim or time(20, 0)
+                    if hora_obj < h_ini:
+                        return responder_erro(f'Horário anterior ao início do expediente de {barbeiro_escolhido.nome} ({h_ini.strftime("%H:%M")}).')
+
+                    hora_fim_dt = datetime.combine(data_obj, hora_obj) + timedelta(minutes=duracao_minutos)
+                    if hora_fim_dt > datetime.combine(data_obj, h_fim):
+                        return responder_erro(f'Este atendimento ultrapassa o fim do expediente de {barbeiro_escolhido.nome} ({h_fim.strftime("%H:%M")}). Escolha um horário mais cedo.')
+
+                    # Checa intervalo de almoço do barbeiro
+                    if hasattr(barbeiro_escolhido, 'esta_no_horario_trabalho') and not barbeiro_escolhido.esta_no_horario_trabalho(hora_obj, duracao_minutos):
+                        return responder_erro(f'O horário selecionado coincide com o intervalo de descanso de {barbeiro_escolhido.nome}.')
+
+                    # Checa conflito de agendamento na agenda do barbeiro
+                    if verificar_conflito(data_obj, hora_obj, duracao_minutos, barbeiro_escolhido):
+                        return responder_erro(f'O barbeiro {barbeiro_escolhido.nome} já possui outro agendamento neste horário. Escolha outro horário.')
+                else:
+                    # Encontrar o primeiro barbeiro ativo livre na sua respectiva agenda
+                    for b in barbeiros_ativos:
+                        if not verificar_conflito(data_obj, hora_obj, duracao_minutos, b):
+                            barbeiro_escolhido = b
+                            break
+                    
+                    if not barbeiro_escolhido:
+                        return responder_erro('Nenhum barbeiro disponível para a duração deste atendimento neste horário. Escolha outro horário.')
+
+                # 10. Geração de token criptograficamente seguro no backend
+                token_seguro = secrets.token_urlsafe(32)
+
+                # Criar agendamento no banco de dados com lock e token seguro
+                agendamento = Agendamento.objects.create(
+                    nome_cliente=nome,
+                    telefone=tel_digitos,
+                    barbeiro=barbeiro_escolhido,
+                    data=data_obj,
+                    hora=hora_obj,
+                    duracao_minutos=duracao_minutos,
+                    token=token_seguro
+                )
+                agendamento.servicos.set(servicos_objs)
+
             tel_barbeiro = barbeiro_escolhido.telefone if (barbeiro_escolhido and barbeiro_escolhido.telefone) else '34991395770'
-            
+            link_cancelamento = request.build_absolute_uri(reverse('cancelar_cliente', args=[token_seguro]))
+
             if is_ajax:
                 return JsonResponse({
                     'sucesso': True, 
                     'mensagem': 'Agendamento realizado com sucesso! Te esperamos.',
                     'barbeiro_nome': barbeiro_escolhido.nome if barbeiro_escolhido else 'Qualquer Barbeiro',
                     'barbeiro_telefone': tel_barbeiro,
-                    'duracao': duracao_minutos
+                    'duracao': duracao_minutos,
+                    'token': token_seguro,
+                    'link_cancelamento': link_cancelamento
                 })
             messages.success(request, 'Agendamento realizado com sucesso! Te esperamos.')
             return redirect('index')
         except Exception as e:
             if is_ajax:
-                return JsonResponse({'sucesso': False, 'mensagem': f'Ocorreu um erro ao agendar: {str(e)}'}, status=500)
+                return JsonResponse({'sucesso': False, 'mensagem': f'Ocorreu um erro ao processar seu agendamento: {str(e)}'}, status=500)
             messages.error(request, 'Ocorreu um erro ao agendar. Tente novamente.')
 
     return render(request, 'agendamento/index.html', {
@@ -180,27 +245,29 @@ def index(request):
     })
 
 def horarios_disponiveis(request):
-    data_str = request.GET.get('data')
+    data_str = request.GET.get('data', '').strip()
     if not data_str: 
-        return JsonResponse([])
+        return JsonResponse([], safe=False)
         
     try:
         data_obj = datetime.strptime(data_str, '%Y-%m-%d').date()
-    except ValueError:
-        return JsonResponse([])
+    except (ValueError, TypeError):
+        return JsonResponse([], safe=False)
 
-    hoje = date.today()
-    if data_obj < hoje or data_obj.weekday() == 6: 
-        return JsonResponse([])
+    agora_sp = datetime.now(SP_TZ)
+    hoje_sp = agora_sp.date()
+    if data_obj < hoje_sp or data_obj.weekday() == 6: 
+        return JsonResponse([], safe=False)
 
     # Descobrir a duração solicitada
     servicos_ids = request.GET.getlist('servicos[]') or request.GET.getlist('servicos')
     duracao_param = request.GET.get('duracao')
 
     if servicos_ids:
-        servicos_objs = list(Servico.objects.filter(id__in=servicos_ids))
+        valid_ids = [int(s) for s in servicos_ids if str(s).isdigit()]
+        servicos_objs = list(Servico.objects.filter(id__in=valid_ids))
         duracao_minutos = calcular_duracao_servicos(servicos_objs)
-    elif duracao_param and duracao_param.isdigit():
+    elif duracao_param and str(duracao_param).isdigit():
         duracao_minutos = int(duracao_param)
     else:
         duracao_minutos = 45  # Padrão: 45 min (corte)
@@ -210,8 +277,8 @@ def horarios_disponiveis(request):
     barbeiros_ativos = list(Barbeiro.objects.filter(ativo=True))
 
     barbeiro_alvo = None
-    if barbeiro_id and barbeiro_id != 'qualquer':
-        barbeiro_alvo = Barbeiro.objects.filter(id=barbeiro_id, ativo=True).first()
+    if barbeiro_id and barbeiro_id != 'qualquer' and str(barbeiro_id).isdigit():
+        barbeiro_alvo = Barbeiro.objects.filter(id=int(barbeiro_id), ativo=True).first()
 
     # Determinar horário de abertura e fechamento geral ou específico
     if barbeiro_alvo:
@@ -243,12 +310,12 @@ def horarios_disponiveis(request):
             candidatos_set.add(fim_ag)
 
     horarios_ordenados = sorted(list(candidatos_set))
-    agora = datetime.now()
     horarios_validos = []
 
     for cand in horarios_ordenados:
-        # Se for hoje, não pode estar no passado
-        if data_obj == hoje and cand <= agora.time():
+        # Se for hoje, não pode estar no passado nem muito próximo do instante atual (buffer 2 min)
+        cand_dt = datetime.combine(data_obj, cand).replace(tzinfo=SP_TZ)
+        if data_obj == hoje_sp and cand_dt <= agora_sp + timedelta(minutes=2):
             continue
 
         if barbeiro_alvo:
@@ -284,7 +351,7 @@ def horarios_disponiveis(request):
 
 @login_required
 def painel_barbeiro(request):
-    hoje = date.today()
+    hoje = datetime.now(SP_TZ).date()
     barbeiros = Barbeiro.objects.all().order_by('nome')
     barbeiro_filtro_id = request.GET.get('barbeiro_id') or request.GET.get('barbeiro')
     
@@ -408,28 +475,37 @@ def editar_barbeiro(request, id):
     return redirect('painel')
 
 @login_required
+@require_POST
 def excluir_barbeiro(request, id):
     barbeiro = get_object_or_404(Barbeiro, id=id)
     nome = barbeiro.nome
     barbeiro.delete()
-    messages.success(request, f'Barbeiro "{nome}" foi removido da equipe.')
+    messages.success(request, f'Barbeiro "{nome}" foi removido da equipe com sucesso.')
     return redirect('painel')
 
 @login_required
+@require_POST
 def cancelar_agendamento(request, id):
-    Agendamento.objects.filter(id=id).delete()
-    messages.success(request, 'Agendamento cancelado com sucesso.')
+    agendamento = get_object_or_404(Agendamento, id=id)
+    cliente = agendamento.nome_cliente
+    agendamento.delete()
+    messages.success(request, f'Agendamento de {cliente} cancelado com sucesso.')
     return redirect('painel')
 
 def cancelar_cliente(request, token):
-    agendamento = Agendamento.objects.filter(token=token).first()
+    # Proteção: tokens nulos, vazios ou curtos demais são rejeitados de imediato
+    if not token or len(token.strip()) < 16:
+        messages.error(request, 'Link de cancelamento inválido ou expirado.')
+        return redirect('index')
+
+    agendamento = Agendamento.objects.filter(token=token.strip()).first()
     if not agendamento:
         messages.error(request, 'Agendamento não encontrado ou já foi cancelado anteriormente.')
         return redirect('index')
 
     # Proteção essencial contra WhatsApp Crawler / Link Preview:
     # Robôs do WhatsApp/redes sociais fazem GET para gerar preview do link.
-    # O cancelamento DEVE ser confirmado via POST!
+    # O cancelamento DEVE ser confirmado explicitamente via POST!
     if request.method == 'POST':
         cliente = agendamento.nome_cliente
         agendamento.delete()

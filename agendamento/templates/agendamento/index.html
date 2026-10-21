@@ -3239,7 +3239,8 @@
                         // Atualiza os dados do barbeiro e do WhatsApp se retornados pelo servidor
                         const barbeiroFinal = dataRes.barbeiro_nome || barbeiroSelecionadoNome;
                         const telFinal = limparNumTel(dataRes.barbeiro_telefone || barbeiroSelecionadoTelefone);
-                        const msgWhatsFinal = `Olá! Meu nome é ${nome}.\nAcabei de agendar: *${nomesServicos}*\nDia *${dataFmt}* às *${hora}* (${duracaoTexto}).\nBarbeiro: *${barbeiroFinal}*\n\n❌ *Se eu precisar desmarcar, clicarei neste link:*\n${linkCancelamento}`;
+                        const linkCancelamentoFinal = dataRes.link_cancelamento || linkCancelamento;
+                        const msgWhatsFinal = `Olá! Meu nome é ${nome}.\nAcabei de agendar: *${nomesServicos}*\nDia *${dataFmt}* às *${hora}* (${duracaoTexto}).\nBarbeiro: *${barbeiroFinal}*\n\n❌ *Se eu precisar desmarcar, clicarei neste link:*\n${linkCancelamentoFinal}`;
                         const urlWhatsFinal = `https://wa.me/${telFinal}?text=${encodeURIComponent(msgWhatsFinal)}`;
 
                         if (USAR_VERSAO_BANNER_TOPO) {
