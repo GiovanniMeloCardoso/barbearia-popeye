@@ -2247,8 +2247,7 @@
 
                             <div class="service-bottom">
                                 <span class="service-price">R$ {{ servico.preco|floatformat:2 }}</span>
-                                <span class="service-duration"><i class="fa-regular fa-clock"></i> {{
-                                    servico.duracao_minutos }} min</span>
+                                <span class="service-duration"><i class="fa-regular fa-clock"></i> {{ servico.duracao_minutos }} min</span>
                             </div>
                         </div>
                         {% endfor %}
@@ -2297,7 +2296,7 @@
                                     </div>
                                     <div class="barber-select-info">
                                         <div class="barber-select-name">{{ b.nome }}</div>
-                                        <div class="barber-select-role">{{ b.cargo }}</div>
+                                        <div class="barber-select-role">{{ b.cargo }}{% if b.horario_inicio and b.horario_fim %} • {{ b.horario_inicio|time:"H:i" }} às {{ b.horario_fim|time:"H:i" }}{% endif %}</div>
                                     </div>
                                     <div class="barber-check-badge"><i class="fa-solid fa-check"></i></div>
                                 </div>
