@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 
 from pathlib import Path
 import dj_database_url
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -78,8 +79,6 @@ WSGI_APPLICATION = 'setup.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
-import os
-
 # Database configuration (Supabase PostgreSQL / Environment Variable)
 DEFAULT_DB_URL = 'postgresql://postgres.pagowsgiybynlnwbmstm:HggYo885T%40_@aws-0-us-east-1.pooler.supabase.com:6543/postgres'
 DATABASE_URL = os.environ.get('DATABASE_URL', DEFAULT_DB_URL)
@@ -126,6 +125,16 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [
     BASE_DIR / 'agendamento' / 'static',
 ]
+
+# Configuração do WhiteNoise para gerenciar o CSS e arquivos estáticos no Vercel
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+    },
+}
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'

@@ -1385,10 +1385,12 @@
                 box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7);
                 border-color: var(--primary-gold);
             }
+
             50% {
                 box-shadow: 0 0 0 10px rgba(212, 175, 55, 0);
                 border-color: var(--primary-gold);
             }
+
             100% {
                 box-shadow: 0 0 0 0 rgba(212, 175, 55, 0);
             }
@@ -1397,6 +1399,211 @@
         .highlight-attention {
             animation: pulse-attention 1.4s ease-in-out 2 !important;
             border-color: var(--primary-gold) !important;
+        }
+
+        /* ========================================================
+           BANNER DE SUCESSO PÓS-AGENDAMENTO (TOPO DO SITE)
+           ======================================================== */
+        .booking-success-banner-wrap {
+            max-width: 1200px;
+            margin: 24px auto 0;
+            padding: 0 20px;
+            width: 100%;
+            box-sizing: border-box;
+            animation: bannerSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes bannerSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-24px) scale(0.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .success-banner-card {
+            background: linear-gradient(145deg, #161b24 0%, #10131a 100%);
+            border: 2px solid #22c55e;
+            border-radius: var(--radius-lg);
+            padding: 24px 28px;
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.7), 0 0 30px rgba(34, 197, 94, 0.25);
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            position: relative;
+        }
+
+        .success-banner-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .success-banner-icon {
+            width: 52px;
+            height: 52px;
+            min-width: 52px;
+            min-height: 52px;
+            border-radius: 50% !important;
+            aspect-ratio: 1 / 1 !important;
+            background: rgba(34, 197, 94, 0.15);
+            border: 2px solid #22c55e;
+            color: #22c55e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            flex-shrink: 0;
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.35);
+        }
+
+        .success-banner-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 4px;
+            line-height: 1.3;
+        }
+
+        .success-banner-subtitle {
+            font-size: 0.92rem;
+            color: #d1d5db;
+            line-height: 1.4;
+        }
+
+        .success-banner-details {
+            background: var(--bg-surface-elevated);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 16px 18px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+        }
+
+        .banner-detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .banner-detail-item.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .banner-detail-label {
+            font-size: 0.76rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+        }
+
+        .banner-detail-label i {
+            color: var(--primary-gold);
+        }
+
+        .banner-detail-val {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .success-banner-action {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn-whatsapp-banner {
+            background: linear-gradient(135deg, #25d366 0%, #1ea952 100%);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 16px 22px;
+            font-family: inherit;
+            font-size: 1.05rem;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-decoration: none;
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.45);
+            transition: var(--transition);
+            text-align: center;
+            letter-spacing: 0.3px;
+        }
+
+        .btn-whatsapp-banner:hover {
+            background: linear-gradient(135deg, #29e26e 0%, #20b859 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.6);
+            color: #fff;
+        }
+
+        .btn-banner-reset {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-decoration: underline;
+            cursor: pointer;
+            text-align: center;
+            padding: 6px;
+            transition: var(--transition);
+        }
+
+        .btn-banner-reset:hover {
+            color: #fff;
+        }
+
+        @media (max-width: 640px) {
+            .booking-success-banner-wrap {
+                margin: 16px auto 0;
+                padding: 0 12px;
+            }
+
+            .success-banner-card {
+                padding: 18px 14px;
+                gap: 14px;
+                border-radius: var(--radius-md);
+            }
+
+            .success-banner-icon {
+                width: 44px;
+                height: 44px;
+                min-width: 44px;
+                min-height: 44px;
+                font-size: 1.4rem;
+            }
+
+            .success-banner-title {
+                font-size: 1.12rem;
+            }
+
+            .success-banner-subtitle {
+                font-size: 0.84rem;
+            }
+
+            .success-banner-details {
+                grid-template-columns: 1fr;
+                padding: 12px;
+                gap: 10px;
+            }
+
+            .btn-whatsapp-banner {
+                font-size: 0.95rem;
+                padding: 14px 16px;
+            }
         }
 
         /* Tablets e Telas Médias (<= 980px) */
@@ -1909,6 +2116,38 @@
         </div>
     </section>
 
+    <!-- BANNER DE SUCESSO PÓS-AGENDAMENTO (APARECE NO TOPO APÓS CONFIRMAR NO BANCO) -->
+    <div id="banner-sucesso-agendamento" class="booking-success-banner-wrap" style="display: none;">
+        <div class="success-banner-card">
+            <div class="success-banner-header">
+                <div class="success-banner-icon">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <div>
+                    <h3 class="success-banner-title">🎉 Parabéns, seu agendamento foi <span>concluído!</span></h3>
+                    <p class="success-banner-subtitle">
+                        Seu horário foi reservado com sucesso no sistema da Barbearia Popeye.
+                    </p>
+                </div>
+            </div>
+
+            <div class="success-banner-details" id="banner-detalhes-agendamento">
+                <!-- Preenchido dinamicamente pelo JavaScript -->
+            </div>
+
+            <div class="success-banner-action">
+                <a href="#" id="banner-btn-whatsapp" target="_blank" rel="noopener noreferrer"
+                    class="btn-whatsapp-banner">
+                    <i class="fa-brands fa-whatsapp" style="font-size: 1.35rem;"></i>
+                    <span>Clique aqui para Informar ao Barbeiro no WhatsApp</span>
+                </a>
+                <button type="button" class="btn-banner-reset" onclick="resetarAgendamento()">
+                    <i class="fa-solid fa-calendar-plus"></i> Agendar outro horário
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Mensagens de Retorno do Servidor -->
     <div class="system-alerts" id="mensagens-sistema">
         {% if messages %}
@@ -2008,7 +2247,8 @@
 
                             <div class="service-bottom">
                                 <span class="service-price">R$ {{ servico.preco|floatformat:2 }}</span>
-                                <span class="service-duration"><i class="fa-regular fa-clock"></i> {{ servico.duracao_minutos }} min</span>
+                                <span class="service-duration"><i class="fa-regular fa-clock"></i> {{
+                                    servico.duracao_minutos }} min</span>
                             </div>
                         </div>
                         {% endfor %}
@@ -2031,9 +2271,10 @@
                                 <i class="fa-solid fa-user-tie" style="color: var(--primary-gold);"></i>
                                 Selecione o Barbeiro
                             </label>
-                            
+
                             <div class="barber-selection-grid" id="grid-barbeiros-selecao">
-                                <div class="barber-select-card selected" onclick="selecionarBarbeiro(this, 'qualquer', 'Qualquer Barbeiro', '', '34991395770')">
+                                <div class="barber-select-card selected"
+                                    onclick="selecionarBarbeiro(this, 'qualquer', 'Qualquer Barbeiro', '', '34991395770')">
                                     <div class="barber-select-photo">
                                         <i class="fa-solid fa-users"></i>
                                     </div>
@@ -2045,12 +2286,13 @@
                                 </div>
 
                                 {% for b in barbeiros %}
-                                <div class="barber-select-card" onclick="selecionarBarbeiro(this, '{{ b.id }}', '{{ b.nome|escapejs }}', '{{ b.foto_url|default:'' }}', '{{ b.telefone|default:'34991395770'|escapejs }}')">
+                                <div class="barber-select-card"
+                                    onclick="selecionarBarbeiro(this, '{{ b.id }}', '{{ b.nome|escapejs }}', '{{ b.foto_url|default:'' }}', '{{ b.telefone|default:'34991395770'|escapejs }}')">
                                     <div class="barber-select-photo">
                                         {% if b.foto %}
-                                            <img src="{{ b.foto_url }}" alt="{{ b.nome }}">
+                                        <img src="{{ b.foto_url }}" alt="{{ b.nome }}">
                                         {% else %}
-                                            <img src="/static/img/henrique.jpg" alt="{{ b.nome }}">
+                                        <img src="/static/img/henrique.jpg" alt="{{ b.nome }}">
                                         {% endif %}
                                     </div>
                                     <div class="barber-select-info">
@@ -2235,7 +2477,8 @@
 
             <!-- ETAPA 2: AGENDADO COM SUCESSO & AVISO PARA ENVIAR NO WHATSAPP -->
             <div id="modal-step-success" style="display: none;">
-                <div class="modal-success-icon" style="background: rgba(34, 197, 94, 0.2); border-color: #22c55e; color: #22c55e;">
+                <div class="modal-success-icon"
+                    style="background: rgba(34, 197, 94, 0.2); border-color: #22c55e; color: #22c55e;">
                     <i class="fa-solid fa-check"></i>
                 </div>
                 <h3 class="modal-title" style="color: #22c55e;">Agendamento Confirmado!</h3>
@@ -2257,7 +2500,8 @@
                 </div>
 
                 <div class="modal-buttons">
-                    <a href="#" id="modal-btn-enviar-whats" target="_blank" rel="noopener noreferrer" class="btn-whatsapp-send">
+                    <a href="#" id="modal-btn-enviar-whats" target="_blank" rel="noopener noreferrer"
+                        class="btn-whatsapp-send">
                         <i class="fa-brands fa-whatsapp" style="font-size: 1.25rem;"></i>
                         Enviar no WhatsApp
                     </a>
@@ -2313,6 +2557,17 @@
 
     <!-- Scripts de Interação do Frontend -->
     <script>
+        // =========================================================================
+        // CONTROLE DE VERSÃO DA CONFIRMAÇÃO DO AGENDAMENTO:
+        // true  = VERSÃO 2 (Solicitada pelo usuário: fecha o pop-up na 1ª confirmação e mostra banner no topo do site)
+        // false = VERSÃO 1 (Mantém a 2ª etapa no pop-up - agora segura contra cancelamento pelo WhatsApp)
+        // =========================================================================
+        const USAR_VERSAO_BANNER_TOPO = false;
+
+        function resetarAgendamento() {
+            window.location.reload();
+        }
+
         const servicosSelecionados = [];
         let horaSelecionada = null;
         let barbeiroSelecionadoId = 'qualquer';
@@ -2986,11 +3241,61 @@
                         const barbeiroFinal = dataRes.barbeiro_nome || barbeiroSelecionadoNome;
                         const telFinal = limparNumTel(dataRes.barbeiro_telefone || barbeiroSelecionadoTelefone);
                         const msgWhatsFinal = `Olá! Meu nome é ${nome}.\nAcabei de agendar: *${nomesServicos}*\nDia *${dataFmt}* às *${hora}* (${duracaoTexto}).\nBarbeiro: *${barbeiroFinal}*\n\n❌ *Se eu precisar desmarcar, clicarei neste link:*\n${linkCancelamento}`;
-                        btnEnviarWhats.href = `https://wa.me/${telFinal}?text=${encodeURIComponent(msgWhatsFinal)}`;
+                        const urlWhatsFinal = `https://wa.me/${telFinal}?text=${encodeURIComponent(msgWhatsFinal)}`;
 
-                        // Exibir a etapa 2 com sucesso e botão do WhatsApp
-                        document.getElementById('modal-step-review').style.display = 'none';
-                        document.getElementById('modal-step-success').style.display = 'block';
+                        if (USAR_VERSAO_BANNER_TOPO) {
+                            // ========================================================
+                            // VERSÃO 2: Fecha o modal na 1ª confirmação e mostra o
+                            // Banner de Sucesso no topo do site (sem o 2º pop-up)
+                            // ========================================================
+                            const modal = document.getElementById('modal-agendamento');
+                            modal.classList.remove('active');
+                            document.body.style.overflow = '';
+
+                            const bannerDetailsHtml = `
+                                <div class="banner-detail-item">
+                                    <span class="banner-detail-label"><i class="fa-regular fa-user"></i> Cliente</span>
+                                    <span class="banner-detail-val">${nome}</span>
+                                </div>
+                                <div class="banner-detail-item">
+                                    <span class="banner-detail-label"><i class="fa-solid fa-user-tie"></i> Barbeiro</span>
+                                    <span class="banner-detail-val">${barbeiroFinal}</span>
+                                </div>
+                                <div class="banner-detail-item">
+                                    <span class="banner-detail-label"><i class="fa-regular fa-calendar"></i> Data</span>
+                                    <span class="banner-detail-val">${dataFmt} (${diaSemanaTexto})</span>
+                                </div>
+                                <div class="banner-detail-item">
+                                    <span class="banner-detail-label"><i class="fa-regular fa-clock"></i> Horário</span>
+                                    <span class="banner-detail-val" style="color: var(--primary-gold); font-size: 1.05rem;">${hora}</span>
+                                </div>
+                                <div class="banner-detail-item full-width">
+                                    <span class="banner-detail-label"><i class="fa-solid fa-scissors"></i> Serviços Agendados</span>
+                                    <span class="banner-detail-val">${nomesServicos}</span>
+                                </div>
+                            `;
+                            document.getElementById('banner-detalhes-agendamento').innerHTML = bannerDetailsHtml;
+                            document.getElementById('banner-btn-whatsapp').href = urlWhatsFinal;
+
+                            const banner = document.getElementById('banner-sucesso-agendamento');
+                            banner.style.display = 'block';
+                            banner.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                            mostrarNotificacao({
+                                titulo: 'Agendamento Concluído!',
+                                mensagem: 'Seu horário foi confirmado! Clique no botão verde no topo para avisar o barbeiro.',
+                                tipo: 'success',
+                                icone: '<i class="fa-solid fa-circle-check"></i>',
+                                duracao: 6000
+                            });
+                        } else {
+                            // ========================================================
+                            // VERSÃO 1: Mantém o fluxo com o 2º pop-up
+                            // ========================================================
+                            btnEnviarWhats.href = urlWhatsFinal;
+                            document.getElementById('modal-step-review').style.display = 'none';
+                            document.getElementById('modal-step-success').style.display = 'block';
+                        }
                     } else {
                         mostrarNotificacao({
                             titulo: 'Não foi possível agendar',

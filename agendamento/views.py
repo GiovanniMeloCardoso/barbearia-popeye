@@ -423,9 +423,19 @@ def cancelar_agendamento(request, id):
 
 def cancelar_cliente(request, token):
     agendamento = Agendamento.objects.filter(token=token).first()
-    if agendamento:
+    if not agendamento:
+        messages.error(request, 'Agendamento não encontrado ou já foi cancelado anteriormente.')
+        return redirect('index')
+
+    # Proteção essencial contra WhatsApp Crawler / Link Preview:
+    # Robôs do WhatsApp/redes sociais fazem GET para gerar preview do link.
+    # O cancelamento DEVE ser confirmado via POST!
+    if request.method == 'POST':
+        cliente = agendamento.nome_cliente
         agendamento.delete()
-        messages.success(request, 'Seu agendamento foi CANCELADO com sucesso. O horário foi liberado.')
-    else:
-        messages.error(request, 'Agendamento não encontrado ou já foi cancelado.')
-    return redirect('index')
+        messages.success(request, f'Olá, {cliente}! Seu agendamento foi cancelado com sucesso e o horário foi liberado.')
+        return redirect('index')
+
+    return render(request, 'agendamento/cancelar_confirmacao.html', {
+        'agendamento': agendamento
+    })
