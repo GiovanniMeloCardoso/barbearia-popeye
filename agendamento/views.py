@@ -9,6 +9,7 @@ from zoneinfo import ZoneInfo
 from django.contrib.auth.decorators import login_required
 import secrets
 import re
+import json
 from .models import Servico, Agendamento, Barbeiro
 
 # Fuso horário oficial do negócio (São Paulo / Brasília)
@@ -383,6 +384,46 @@ def painel_barbeiro(request):
             'futuro': qtd_futuro,
             'total': qtd_hoje + qtd_futuro
         }
+
+    # Dados completos estruturados para o Google Agenda (janela de -15 dias a +60 dias)
+    agendamentos_cal = Agendamento.objects.filter(
+        data__gte=hoje - timedelta(days=15),
+        data__lte=hoje + timedelta(days=60)
+    ).select_related('barbeiro').prefetch_related('servicos').order_by('data', 'hora')
+
+    eventos_cal_lista = []
+    for ag in agendamentos_cal:
+        eventos_cal_lista.append({
+            'id': ag.id,
+            'cliente': ag.nome_cliente,
+            'telefone': ag.telefone,
+            'barbeiro_id': ag.barbeiro.id if ag.barbeiro else None,
+            'barbeiro_nome': ag.barbeiro.nome if ag.barbeiro else 'Sem preferência',
+            'data': ag.data.strftime('%Y-%m-%d'),
+            'hora_inicio': ag.hora.strftime('%H:%M'),
+            'hora_fim': ag.hora_fim.strftime('%H:%M'),
+            'duracao': ag.duracao_minutos,
+            'servicos': [s.nome for s in ag.servicos.all()],
+            'total': float(ag.total()),
+            'total_formatado': f"R$ {ag.total():.2f}".replace('.', ','),
+            'cancel_url': reverse('cancelar_agendamento', args=[ag.id]),
+        })
+
+    barbeiros_cal_lista = []
+    for b in barbeiros:
+        barbeiros_cal_lista.append({
+            'id': b.id,
+            'nome': b.nome,
+            'cargo': b.cargo,
+            'telefone': b.telefone or '',
+            'foto_url': b.foto_url,
+            'horario_inicio': b.horario_inicio.strftime('%H:%M') if b.horario_inicio else '09:00',
+            'horario_fim': b.horario_fim.strftime('%H:%M') if b.horario_fim else '20:00',
+            'ativo': b.ativo,
+        })
+
+    agendamentos_calendario_json = json.dumps(eventos_cal_lista)
+    barbeiros_calendario_json = json.dumps(barbeiros_cal_lista)
         
     return render(request, 'agendamento/painel.html', {
         'agendamentos_hoje': agendamentos_hoje,
@@ -394,6 +435,8 @@ def painel_barbeiro(request):
         'contagem_por_barbeiro': contagem_por_barbeiro,
         'faturamento_hoje': faturamento_hoje,
         'hoje': hoje,
+        'agendamentos_calendario_json': agendamentos_calendario_json,
+        'barbeiros_calendario_json': barbeiros_calendario_json,
     })
 
 @login_required

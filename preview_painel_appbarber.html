@@ -2,27 +2,28 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel do Barbeiro | Gestão Barbearia Popeye</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Painel do Barbeiro | Barbearia Popeye</title>
     
     <!-- Tipografia e Iconografia -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
+
     <style>
         :root {
-            --bg-body: #0d0e12;
-            --bg-surface: #14161d;
-            --bg-surface-elevated: #1a1e27;
-            --bg-card: #181b24;
-            --bg-card-hover: #212634;
+            --bg-body: #0a0b0f;
+            --bg-surface: #12141c;
+            --bg-surface-elevated: #181b26;
+            --bg-card: #151822;
+            --bg-card-hover: #1e2230;
             --primary-gold: #d4af37;
             --primary-gold-hover: #f3c94b;
             --primary-gold-subtle: rgba(212, 175, 55, 0.12);
             --border-subtle: rgba(255, 255, 255, 0.08);
             --border-gold: rgba(212, 175, 55, 0.4);
+            --border-gold-subtle: rgba(212, 175, 55, 0.2);
             --text-main: #f3f4f6;
             --text-muted: #9ca3af;
             --accent-green: #22c55e;
@@ -33,13 +34,21 @@
             --radius-lg: 20px;
             --shadow-card: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
             --shadow-gold: 0 0 20px rgba(212, 175, 55, 0.25);
-            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            max-width: 100vw;
+            overflow-x: hidden;
+            position: relative;
         }
 
         body {
@@ -52,36 +61,39 @@
             flex-direction: column;
         }
 
-        /* Barra de Navegação */
+        /* 1. Barra de Navegação */
         header.top-nav {
-            background-color: rgba(20, 22, 29, 0.9);
+            background-color: rgba(18, 20, 28, 0.96);
             backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border-subtle);
             position: sticky;
             top: 0;
             z-index: 50;
+            width: 100%;
         }
 
         .nav-container {
-            max-width: 1280px;
+            max-width: 1320px;
             margin: 0 auto;
-            padding: 14px 24px;
+            padding: 12px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 12px;
         }
 
         .brand-group {
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 12px;
             text-decoration: none;
             color: inherit;
+            flex-shrink: 0;
         }
 
         .brand-logo-wrap {
-            width: 42px;
-            height: 42px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             border: 2px solid var(--primary-gold);
             background: #000;
@@ -89,19 +101,21 @@
             align-items: center;
             justify-content: center;
             box-shadow: var(--shadow-gold);
+            flex-shrink: 0;
         }
 
         .brand-logo-wrap i {
             color: var(--primary-gold);
-            font-size: 1.2rem;
+            font-size: 1.15rem;
         }
 
         .brand-name {
             font-family: 'Cinzel', serif;
-            font-size: 1.2rem;
+            font-size: 1.18rem;
             font-weight: 700;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             color: #fff;
+            white-space: nowrap;
         }
 
         .brand-name span {
@@ -112,29 +126,32 @@
             background: rgba(212, 175, 55, 0.15);
             color: var(--primary-gold);
             border: 1px solid var(--border-gold);
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             font-weight: 700;
             text-transform: uppercase;
-            padding: 2px 8px;
+            padding: 3px 8px;
             border-radius: 6px;
             margin-left: 8px;
+            letter-spacing: 0.5px;
+            display: inline-block;
         }
 
         .user-nav-actions {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 10px;
+            flex-shrink: 0;
         }
 
         .barber-avatar-pill {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             background: var(--bg-surface-elevated);
             border: 1px solid var(--border-subtle);
-            padding: 6px 14px 6px 8px;
+            padding: 5px 12px 5px 6px;
             border-radius: 9999px;
-            font-size: 0.88rem;
+            font-size: 0.84rem;
         }
 
         .avatar-circle {
@@ -148,15 +165,37 @@
             align-items: center;
             justify-content: center;
             font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+
+        .btn-admin {
+            background: var(--bg-surface-elevated);
+            color: #fff;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            padding: 6px 12px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .btn-admin:hover {
+            border-color: var(--primary-gold);
+            color: var(--primary-gold);
         }
 
         .btn-logout {
             background: rgba(239, 68, 68, 0.12);
             color: #f87171;
-            border: 1px solid rgba(239, 68, 68, 0.3);
+            border: 1px solid rgba(239, 68, 68, 0.35);
             border-radius: var(--radius-sm);
-            padding: 8px 14px;
-            font-size: 0.85rem;
+            padding: 6px 12px;
+            font-size: 0.82rem;
             font-weight: 600;
             cursor: pointer;
             display: inline-flex;
@@ -171,20 +210,21 @@
             color: #fff;
         }
 
-        /* Container Principal do Painel */
+        /* Container Principal */
         .painel-container {
-            max-width: 1280px;
-            margin: 32px auto;
-            padding: 0 24px;
+            max-width: 1320px;
+            margin: 24px auto;
+            padding: 0 20px;
             flex: 1;
             width: 100%;
         }
 
+        /* 2. Cabeçalho do Painel */
         .painel-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
-            margin-bottom: 28px;
+            margin-bottom: 22px;
             flex-wrap: wrap;
             gap: 16px;
         }
@@ -194,16 +234,45 @@
             font-size: 1.8rem;
             font-weight: 700;
             color: #fff;
+            letter-spacing: 0.5px;
+            line-height: 1.25;
         }
 
         .painel-subtitle {
             color: var(--text-muted);
-            font-size: 0.95rem;
+            font-size: 0.92rem;
+            margin-top: 4px;
         }
 
         .painel-actions {
             display: flex;
+            align-items: center;
             gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-gold-action {
+            background: linear-gradient(135deg, #f3c94b 0%, #d4af37 100%);
+            color: #000;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 10px 18px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.35);
+            transition: var(--transition);
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .btn-gold-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+            filter: brightness(1.05);
         }
 
         .btn-quick {
@@ -211,15 +280,16 @@
             color: #fff;
             border: 1px solid var(--border-subtle);
             border-radius: var(--radius-sm);
-            padding: 9px 16px;
-            font-size: 0.88rem;
+            padding: 9px 15px;
+            font-size: 0.86rem;
             font-weight: 600;
             cursor: pointer;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 8px;
             transition: var(--transition);
             text-decoration: none;
+            white-space: nowrap;
         }
 
         .btn-quick:hover {
@@ -227,39 +297,75 @@
             color: var(--primary-gold);
         }
 
-        /* Cards de Métricas */
+        /* BOTÃO DE DESTAQUE: ALTERNAR AGENDA */
+        .btn-alternar-agenda {
+            background: linear-gradient(135deg, #1e2230 0%, #151822 100%);
+            color: var(--primary-gold);
+            border: 1.5px solid var(--border-gold);
+            border-radius: var(--radius-sm);
+            padding: 9px 16px;
+            font-size: 0.86rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            white-space: nowrap;
+        }
+
+        .btn-alternar-agenda:hover {
+            background: rgba(212, 175, 55, 0.15);
+            color: #fff;
+            border-color: var(--primary-gold-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-alternar-agenda i {
+            font-size: 1rem;
+            color: var(--primary-gold);
+            transition: transform 0.3s ease;
+        }
+
+        .btn-alternar-agenda:hover i {
+            transform: rotate(180deg);
+        }
+
+        /* 3. Cards de Métricas */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 20px;
-            margin-bottom: 32px;
+            gap: 18px;
+            margin-bottom: 24px;
         }
 
         .stat-card {
             background: var(--bg-card);
             border: 1px solid var(--border-subtle);
             border-radius: var(--radius-md);
-            padding: 22px;
+            padding: 20px;
             display: flex;
             align-items: center;
-            gap: 18px;
-            transition: var(--transition);
+            gap: 16px;
             box-shadow: var(--shadow-card);
+            transition: var(--transition);
         }
 
         .stat-card:hover {
-            border-color: rgba(212, 175, 55, 0.3);
+            border-color: var(--border-gold-subtle);
             transform: translateY(-2px);
         }
 
         .stat-icon-wrap {
-            width: 52px;
-            height: 52px;
+            width: 50px;
+            height: 50px;
             border-radius: var(--radius-md);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.4rem;
+            flex-shrink: 0;
         }
 
         .stat-icon-gold {
@@ -283,20 +389,22 @@
         .stat-info {
             display: flex;
             flex-direction: column;
+            overflow: hidden;
         }
 
         .stat-label {
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             color: var(--text-muted);
             font-weight: 500;
         }
 
         .stat-value {
-            font-size: 1.65rem;
+            font-size: 1.55rem;
             font-weight: 800;
             color: #fff;
             line-height: 1.2;
             margin: 2px 0;
+            white-space: nowrap;
         }
 
         .stat-detail {
@@ -304,27 +412,27 @@
             color: var(--text-muted);
         }
 
-        /* Tabelas */
-        .section-box {
+        /* 4. Equipe de Barbeiros */
+        .section-barbers {
             background: var(--bg-card);
             border: 1px solid var(--border-subtle);
             border-radius: var(--radius-lg);
-            padding: 24px;
-            margin-bottom: 30px;
+            padding: 20px 22px;
+            margin-bottom: 24px;
             box-shadow: var(--shadow-card);
         }
 
-        .section-header {
+        .barbers-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--border-subtle);
-            padding-bottom: 14px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
-        .section-title {
-            font-size: 1.2rem;
+        .barbers-title {
+            font-size: 1.1rem;
             font-weight: 700;
             color: #fff;
             display: flex;
@@ -332,22 +440,830 @@
             gap: 10px;
         }
 
-        .section-title i {
+        .barbers-title i {
             color: var(--primary-gold);
         }
 
-        .count-pill {
-            background: var(--bg-surface-elevated);
+        .barbers-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pill-count {
+            background: var(--bg-surface);
             color: var(--primary-gold);
-            padding: 2px 10px;
+            padding: 3px 10px;
             border-radius: 9999px;
             font-size: 0.78rem;
             font-weight: 700;
             border: 1px solid var(--border-subtle);
         }
 
-        .table-responsive {
+        .btn-small-gold {
+            background: var(--primary-gold);
+            color: #000;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+        }
+
+        .btn-small-gold:hover {
+            background: var(--primary-gold-hover);
+        }
+
+        .barbers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+            gap: 14px;
+        }
+
+        .barber-team-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            transition: var(--transition);
+        }
+
+        .barber-team-card:hover {
+            border-color: var(--border-gold-subtle);
+            background: var(--bg-surface-elevated);
+        }
+
+        .barber-card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .barber-card-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .barber-letter-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 2px solid var(--primary-gold);
+            background: #1e222d;
+            color: var(--primary-gold);
+            font-weight: 800;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .barber-name-wrap h4 {
+            font-size: 0.98rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .barber-name-wrap span {
+            font-size: 0.76rem;
+            color: var(--text-muted);
+        }
+
+        .barber-card-icons {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-icon-action {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-icon-action:hover {
+            color: #fff;
+            border-color: var(--primary-gold);
+        }
+
+        .barber-card-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .badge-status-active {
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .badge-status-active::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: #22c55e;
+            border-radius: 50%;
+        }
+
+        .badge-hours {
+            background: rgba(212, 175, 55, 0.12);
+            color: var(--primary-gold);
+            border: 1px solid var(--border-gold);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .badge-phone {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            color: #22c55e;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 0.76rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        /* ========================================================= */
+        /* 5. GOOGLE AGENDA EM MODO ESCURO (NOVO MODELO)             */
+        /* ========================================================= */
+        .gcal-dark-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-card);
+            overflow: hidden;
+            color: var(--text-main);
+            margin-bottom: 36px;
+            position: relative;
+        }
+
+        .gcal-control-header {
+            background: linear-gradient(180deg, #181b26 0%, #12141c 100%);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 14px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .agenda-mode-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .agenda-mode-badge {
+            background: rgba(212, 175, 55, 0.15);
+            color: var(--primary-gold);
+            border: 1px solid var(--border-gold-subtle);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .view-mode-tabs {
+            display: flex;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            padding: 3px;
+            gap: 3px;
+        }
+
+        .btn-view-tab {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+        }
+
+        .btn-view-tab:hover {
+            color: #fff;
+        }
+
+        .btn-view-tab.active {
+            background: var(--primary-gold);
+            color: #000;
+            box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
+        }
+
+        .gcal-top-bar {
+            padding: 14px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-subtle);
+            background: var(--bg-surface-elevated);
+            gap: 12px;
+        }
+
+        .gcal-top-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-gcal-nav {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            background: transparent;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .btn-gcal-nav:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+        }
+
+        .btn-gcal-today {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-gcal-today:hover {
+            border-color: var(--primary-gold);
+            color: var(--primary-gold);
+        }
+
+        .gcal-month-title {
+            font-family: 'Roboto', 'Plus Jakarta Sans', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: capitalize;
+        }
+
+        .gcal-top-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .gcal-date-box {
+            border: 2px solid #8ab4f8;
+            border-radius: 8px;
+            padding: 2px 9px;
+            font-size: 0.88rem;
+            font-weight: 800;
+            color: #8ab4f8;
+            background: rgba(138, 180, 248, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 32px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .gcal-avatar-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #1e222d;
+            border: 2px solid var(--primary-gold);
+            color: var(--primary-gold);
+            font-weight: 800;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        /* SELETOR INDIVIDUAL DE BARBEIROS */
+        .gcal-barbers-bar {
+            background: #0e1017;
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            gap: 8px;
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .gcal-barbers-bar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .gcal-barbers-bar-label {
+            font-size: 0.74rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--text-muted);
+            white-space: nowrap;
+            margin-right: 4px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .gcal-barber-chip {
+            background: var(--bg-surface-elevated);
+            border: 1px solid var(--border-subtle);
+            color: #d1d5db;
+            border-radius: 9999px;
+            padding: 5px 12px 5px 6px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .gcal-barber-chip:hover {
+            border-color: var(--border-gold-subtle);
+            color: #fff;
+        }
+
+        .gcal-barber-chip.active {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.22) 0%, rgba(212, 175, 55, 0.1) 100%);
+            border-color: var(--primary-gold);
+            color: #fff;
+            box-shadow: 0 0 12px rgba(212, 175, 55, 0.2);
+        }
+
+        .chip-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-gold-subtle);
+            color: var(--primary-gold);
+            font-size: 0.72rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .chip-badge {
+            background: rgba(0, 0, 0, 0.4);
+            color: var(--primary-gold);
+            padding: 1px 6px;
+            border-radius: 10px;
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+
+        /* Strip de Dias */
+        .gcal-days-strip {
+            display: flex;
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--border-subtle);
+            background: var(--bg-surface);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            gap: 8px;
+            justify-content: space-between;
+        }
+
+        .gcal-days-strip::-webkit-scrollbar {
+            display: none;
+        }
+
+        .gcal-day-cell {
+            flex: 1;
+            min-width: 48px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            padding: 6px 4px;
+            border-radius: 12px;
+            transition: var(--transition);
+            user-select: none;
+        }
+
+        .gcal-day-cell:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .gcal-day-name {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .gcal-day-number {
+            font-size: 1.05rem;
+            font-weight: 700;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #e5e7eb;
+            transition: var(--transition);
+        }
+
+        .gcal-day-cell.active .gcal-day-name {
+            color: #8ab4f8;
+            font-weight: 700;
+        }
+
+        .gcal-day-cell.active .gcal-day-number {
+            background: #1a73e8;
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(26, 115, 232, 0.4);
+        }
+
+        .gcal-day-subbar {
+            display: flex;
+            border-bottom: 1px solid var(--border-subtle);
+            background: var(--bg-surface-elevated);
+        }
+
+        .gcal-time-column-header {
+            width: 76px;
+            min-width: 76px;
+            padding: 10px 0 10px 20px;
+            border-right: 1px solid var(--border-subtle);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .day-header-dow {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+
+        .day-header-num {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.1;
+        }
+
+        .gcal-day-details-header {
+            flex: 1;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .count-text {
+            font-size: 0.88rem;
+            color: #cbd5e1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .total-pill {
+            background: rgba(212, 175, 55, 0.15);
+            color: var(--primary-gold);
+            border: 1px solid var(--border-gold-subtle);
+            font-size: 0.82rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+
+        .gcal-timeline-body {
+            position: relative;
+            background: #0f1118;
+            min-height: 988px;
+            overflow-y: auto;
+        }
+
+        .gcal-time-row {
+            height: 76px;
+            display: flex;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            position: relative;
+        }
+
+        .gcal-hour-label {
+            width: 76px;
+            min-width: 76px;
+            padding: 0 10px 0 20px;
+            font-size: 0.76rem;
+            font-weight: 500;
+            color: #64748b;
+            position: relative;
+            top: -9px;
+            user-select: none;
+            border-right: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .gcal-hour-slot {
+            flex: 1;
+            position: relative;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .gcal-hour-slot:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .gcal-current-time-line {
+            position: absolute;
+            left: 68px;
+            right: 0;
+            height: 2px;
+            background: #ea4335;
+            z-index: 20;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .gcal-current-time-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ea4335;
+            position: absolute;
+            left: -5px;
+            box-shadow: 0 0 8px rgba(234, 67, 53, 0.8);
+        }
+
+        .gcal-event-card {
+            position: absolute;
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #ffffff;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+            transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
+            z-index: 15;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            overflow: hidden;
+            border-left: 4px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .gcal-event-card:hover {
+            transform: scale(1.006);
+            filter: brightness(1.1);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
+            z-index: 18;
+        }
+
+        .event-theme-gold {
+            background: linear-gradient(135deg, #c59b27 0%, #8c6b12 100%) !important;
+            border-left-color: #ffd54f !important;
+        }
+
+        .event-theme-blue {
+            background: linear-gradient(135deg, #1a73e8 0%, #1557b0 100%) !important;
+            border-left-color: #82b1ff !important;
+        }
+
+        .event-theme-green {
+            background: linear-gradient(135deg, #16a34a 0%, #15803d 100%) !important;
+            border-left-color: #86efac !important;
+        }
+
+        .event-theme-red {
+            background: linear-gradient(135deg, #d93025 0%, #b71c1c 100%) !important;
+            border-left-color: #ff8a80 !important;
+        }
+
+        .event-title {
+            font-size: 0.92rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            line-height: 1.2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .event-barber-tag {
+            font-size: 0.72rem;
+            font-weight: 700;
+            opacity: 0.9;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 1px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .event-time-row {
+            font-size: 0.78rem;
+            font-weight: 600;
+            opacity: 0.95;
+            margin-top: 3px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .event-duration-badge {
+            background: rgba(0, 0, 0, 0.35);
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        .event-services-summary {
+            font-size: 0.74rem;
+            margin-top: 4px;
+            opacity: 0.9;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .gcal-fab {
+            position: absolute;
+            bottom: 24px;
+            right: 24px;
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #f3c94b 0%, #d4af37 100%);
+            color: #000;
+            border: none;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+            cursor: pointer;
+            z-index: 30;
+            transition: var(--transition);
+        }
+
+        .gcal-fab:hover {
+            transform: scale(1.08) rotate(90deg);
+        }
+
+        .gcal-empty-day-banner {
+            position: absolute;
+            top: 180px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(18, 20, 28, 0.85);
+            border: 1px dashed var(--border-gold-subtle);
+            border-radius: var(--radius-md);
+            padding: 24px 32px;
+            text-align: center;
+            color: var(--text-muted);
+            max-width: 400px;
+            width: 85%;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .gcal-empty-day-banner i {
+            font-size: 2.2rem;
+            color: var(--primary-gold);
+            margin-bottom: 10px;
+            display: block;
+            opacity: 0.75;
+        }
+
+        /* 6. TABELAS TRADICIONAIS */
+        #container-agenda-tradicional {
+            display: none;
+        }
+
+        .section-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 22px;
+            margin-bottom: 26px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .section-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title i {
+            color: var(--primary-gold);
+        }
+
+        .count-pill {
+            background: var(--bg-surface);
+            color: var(--primary-gold);
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         table.app-table {
@@ -355,34 +1271,25 @@
             border-collapse: separate;
             border-spacing: 0 8px;
             text-align: left;
+            min-width: 680px;
         }
 
         table.app-table th {
             color: var(--text-muted);
-            font-size: 0.8rem;
-            font-weight: 700;
+            font-size: 0.76rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            padding: 10px 16px;
-            border: none;
-        }
-
-        table.app-table tbody tr {
-            background: var(--bg-surface);
-            transition: var(--transition);
-        }
-
-        table.app-table tbody tr:hover {
-            background: var(--bg-card-hover);
-            transform: scale([1.002]);
+            padding: 8px 14px;
+            font-weight: 700;
         }
 
         table.app-table td {
-            padding: 14px 16px;
-            font-size: 0.92rem;
+            background: var(--bg-surface);
+            padding: 14px;
             border-top: 1px solid var(--border-subtle);
             border-bottom: 1px solid var(--border-subtle);
             vertical-align: middle;
+            font-size: 0.9rem;
         }
 
         table.app-table td:first-child {
@@ -404,10 +1311,36 @@
             background: var(--primary-gold-subtle);
             color: var(--primary-gold);
             border: 1px solid var(--border-gold);
-            padding: 5px 12px;
+            padding: 4px 10px;
             border-radius: 6px;
             font-weight: 800;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
+        }
+
+        .duration-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(56, 189, 248, 0.1);
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.74rem;
+            font-weight: 700;
+            margin-left: 4px;
+        }
+
+        .barber-tag-table {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--bg-surface-elevated);
+            border: 1px solid var(--border-subtle);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
         }
 
         .client-info {
@@ -440,7 +1373,7 @@
             background: var(--bg-surface-elevated);
             border: 1px solid var(--border-subtle);
             color: #d1d5db;
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             padding: 3px 8px;
             border-radius: 4px;
         }
@@ -448,21 +1381,15 @@
         .price-text {
             font-weight: 800;
             color: var(--primary-gold);
-            font-size: 1rem;
-        }
-
-        .actions-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            font-size: 0.95rem;
         }
 
         .btn-action-whats {
             background: rgba(34, 197, 94, 0.12);
             color: #22c55e;
             border: 1px solid rgba(34, 197, 94, 0.3);
-            width: 36px;
-            height: 36px;
+            width: 34px;
+            height: 34px;
             border-radius: 50%;
             display: inline-flex;
             align-items: center;
@@ -471,18 +1398,12 @@
             transition: var(--transition);
         }
 
-        .btn-action-whats:hover {
-            background: #22c55e;
-            color: #fff;
-            box-shadow: 0 0 10px rgba(34, 197, 94, 0.4);
-        }
-
         .btn-action-delete {
             background: rgba(239, 68, 68, 0.12);
             color: #ef4444;
             border: 1px solid rgba(239, 68, 68, 0.3);
-            width: 36px;
-            height: 36px;
+            width: 34px;
+            height: 34px;
             border-radius: 50%;
             display: inline-flex;
             align-items: center;
@@ -491,274 +1412,243 @@
             transition: var(--transition);
         }
 
-        .btn-action-delete:hover {
-            background: #ef4444;
-            color: #fff;
-            box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+        /* Modais */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.82);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            padding: 16px;
         }
 
-        /* Rodapé */
+        .modal-overlay.active {
+            display: flex;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-gold);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 480px;
+            padding: 24px;
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.85);
+            color: #fff;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border-subtle);
+            padding-bottom: 12px;
+        }
+
+        .modal-close {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.4rem;
+            cursor: pointer;
+            padding: 4px;
+            line-height: 1;
+        }
+
+        .modal-badge-time {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--primary-gold-subtle);
+            color: var(--primary-gold);
+            border: 1px solid var(--border-gold);
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+
+        .modal-field {
+            margin-bottom: 14px;
+        }
+
+        .modal-field-label {
+            font-size: 0.74rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .modal-field-value {
+            font-size: 0.98rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .modal-services-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 5px;
+        }
+
+        .modal-service-tag {
+            background: var(--bg-surface-elevated);
+            border: 1px solid var(--border-subtle);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            color: #e2e8f0;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .btn-modal-whats {
+            flex: 1;
+            background: #25d366;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 0.92rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .btn-modal-cancel {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
         footer.app-footer {
             background-color: #08090c;
             border-top: 1px solid var(--border-subtle);
             color: var(--text-muted);
-            padding: 24px 20px;
-            margin-top: 40px;
+            padding: 18px 24px;
+            margin-top: auto;
+            font-size: 0.84rem;
         }
 
-        .footer-content {
-            max-width: 1280px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.85rem;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .footer-content strong {
+        footer.app-footer strong {
             color: var(--primary-gold);
         }
 
-        /* ========================================================
-           RESPONSIVIDADE TOTAL PARA CELULARES (GALAXY, IPHONE, ETC)
-           ======================================================== */
-        html, body {
-            width: 100%;
-            max-width: 100vw;
-            overflow-x: hidden !important;
-            position: relative;
-        }
-
-        *, *::before, *::after {
-            box-sizing: border-box;
-        }
-
-        /* Garante que NENHUM ícone redondo fique oval em nenhuma tela */
-        .brand-logo-wrap {
-            width: 40px !important;
-            height: 40px !important;
-            min-width: 40px !important;
-            min-height: 40px !important;
-            flex-shrink: 0 !important;
-            aspect-ratio: 1 / 1 !important;
-            border-radius: 50% !important;
-        }
-
-        .avatar-circle {
-            width: 28px !important;
-            height: 28px !important;
-            min-width: 28px !important;
-            min-height: 28px !important;
-            flex-shrink: 0 !important;
-            aspect-ratio: 1 / 1 !important;
-            border-radius: 50% !important;
-        }
-
-        .client-avatar {
-            width: 32px !important;
-            height: 32px !important;
-            min-width: 32px !important;
-            min-height: 32px !important;
-            flex-shrink: 0 !important;
-            aspect-ratio: 1 / 1 !important;
-            border-radius: 50% !important;
-        }
-
-        .btn-action-whats,
-        .btn-action-delete {
-            width: 36px !important;
-            height: 36px !important;
-            min-width: 36px !important;
-            min-height: 36px !important;
-            flex-shrink: 0 !important;
-            aspect-ratio: 1 / 1 !important;
-            border-radius: 50% !important;
-        }
-
-        .stat-icon-wrap {
-            width: 50px !important;
-            height: 50px !important;
-            min-width: 50px !important;
-            min-height: 50px !important;
-            flex-shrink: 0 !important;
-            aspect-ratio: 1 / 1 !important;
-            border-radius: 12px !important;
-        }
-
+        /* Responsividade */
         @media (max-width: 768px) {
-            .nav-container {
-                padding: 10px 14px;
-                flex-wrap: wrap;
-                gap: 10px;
-                width: 100%;
-                box-sizing: border-box;
-            }
-
-            .brand-group {
-                gap: 10px;
-                flex-shrink: 0;
-            }
-
-            .brand-name {
-                font-size: 1rem;
-            }
-
-            .badge-painel {
-                display: none;
-            }
-
-            .user-nav-actions {
-                gap: 8px;
-                flex-shrink: 0;
-            }
-
-            .barber-avatar-pill {
-                padding: 5px 10px 5px 6px;
-                font-size: 0.8rem;
-                gap: 6px;
-                max-width: 170px;
-            }
-
-            .barber-avatar-pill span {
-                max-width: 110px;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-
-            .btn-logout {
-                padding: 6px 10px;
-                font-size: 0.8rem;
-            }
-
             .painel-container {
+                margin: 14px auto;
                 padding: 0 12px;
-                margin: 18px auto;
-                width: 100%;
-                max-width: 100%;
-                box-sizing: border-box;
-                overflow-x: hidden;
             }
 
             .painel-header {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 14px;
-                margin-bottom: 20px;
-                width: 100%;
-            }
-
-            .painel-title {
-                font-size: 1.35rem;
-                line-height: 1.25;
-            }
-
-            .painel-subtitle {
-                font-size: 0.85rem;
+                gap: 12px;
             }
 
             .painel-actions {
-                flex-direction: column;
                 width: 100%;
+                display: grid;
+                grid-template-columns: 1fr;
                 gap: 8px;
             }
 
+            .btn-gold-action,
+            .btn-alternar-agenda,
             .btn-quick {
                 width: 100%;
                 justify-content: center;
-                padding: 11px;
-                font-size: 0.86rem;
             }
 
             .stats-grid {
                 grid-template-columns: 1fr;
-                gap: 12px;
-                margin-bottom: 22px;
-                width: 100%;
             }
 
-            .stat-card {
-                padding: 16px;
-                border-radius: var(--radius-sm);
-                width: 100%;
-                box-sizing: border-box;
+            .barbers-grid {
+                grid-template-columns: 1fr;
             }
 
-            .section-box {
-                padding: 16px 12px;
-                border-radius: var(--radius-md);
-                margin-bottom: 20px;
-                width: 100%;
-                box-sizing: border-box;
-                overflow-x: hidden;
-            }
-
-            .section-header {
-                margin-bottom: 14px;
-                padding-bottom: 10px;
-            }
-
-            .section-title {
-                font-size: 1.05rem;
-            }
-
-            .table-responsive {
-                width: 100%;
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-                border-radius: var(--radius-sm);
-            }
-
-            table.app-table {
-                min-width: 580px;
-            }
-
-            table.app-table th, 
-            table.app-table td {
-                padding: 10px 12px;
-                font-size: 0.85rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .nav-container {
-                padding: 8px 10px;
-                justify-content: space-between;
-            }
-
-            .brand-logo-wrap {
-                width: 36px !important;
-                height: 36px !important;
-                min-width: 36px !important;
-                min-height: 36px !important;
-            }
-
-            .brand-name {
-                font-size: 0.92rem;
-            }
-
-            .barber-avatar-pill {
-                max-width: 140px;
-            }
-
-            .barber-avatar-pill span {
-                max-width: 85px;
-            }
-
-            .footer-content {
+            .gcal-control-header {
+                padding: 12px 14px;
                 flex-direction: column;
-                text-align: center;
-                gap: 6px;
-                font-size: 0.8rem;
+                align-items: flex-start;
+            }
+
+            .view-mode-tabs {
+                width: 100%;
+            }
+
+            .btn-view-tab {
+                flex: 1;
+                justify-content: center;
+            }
+
+            .gcal-time-column-header,
+            .gcal-hour-label {
+                width: 54px;
+                min-width: 54px;
+                padding-left: 8px;
+                padding-right: 6px;
+                font-size: 0.72rem;
+            }
+
+            .gcal-event-card {
+                left: 64px !important;
+                right: 10px !important;
+            }
+
+            .modal-actions {
+                flex-direction: column;
+            }
+
+            .btn-modal-whats,
+            .btn-modal-cancel {
+                width: 100%;
+                justify-content: center;
             }
         }
     </style>
 </head>
 <body>
 
-    <!-- Navegação Superior -->
+    <!-- 1. Barra de Navegação -->
     <header class="top-nav">
         <div class="nav-container">
             <a href="#" class="brand-group">
@@ -774,38 +1664,47 @@
             <div class="user-nav-actions">
                 <div class="barber-avatar-pill">
                     <div class="avatar-circle">H</div>
-                    <span>Henrique (Barbeiro Chefe)</span>
+                    <span>Henrique (Barbeiro)</span>
                 </div>
-                <button class="btn-logout" onclick="alert('Sessão encerrada.');">
-                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                    Sair
+                <a href="#" class="btn-admin" title="Painel Admin">
+                    <i class="fa-solid fa-gear"></i> <span class="d-none-sm">Admin</span>
+                </a>
+                <button class="btn-logout" title="Sair" onclick="alert('Sessão finalizada.');">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> <span class="d-none-sm">Sair</span>
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- Conteúdo do Painel -->
+    <!-- Conteúdo Principal -->
     <main class="painel-container">
 
-        <!-- Cabeçalho -->
+        <!-- 2. Cabeçalho do Painel -->
         <div class="painel-header">
             <div>
-                <h1 class="painel-title">Agenda & Controle de Atendimento</h1>
-                <p class="painel-subtitle" id="data-cabecalho">Carregando data de hoje...</p>
+                <h1 class="painel-title">AGENDA & CONTROLE DE ATENDIMENTO</h1>
+                <p class="painel-subtitle" id="data-cabecalho">Quinta-feira, 22 de Outubro de 2026</p>
             </div>
             <div class="painel-actions">
-                <a href="preview_appbarber.html" target="_blank" class="btn-quick">
-                    <i class="fa-solid fa-globe"></i>
-                    Acessar Página de Agendamento
-                </a>
-                <button class="btn-quick" onclick="window.location.reload();">
+                <!-- BOTÃO SOLICITADO: ALTERNAR AGENDA -->
+                <button type="button" class="btn-alternar-agenda" id="btn-toggle-agenda" onclick="alternarModeloAgendaToggle()" title="Alternar entre o Google Agenda e a Agenda Tradicional">
                     <i class="fa-solid fa-arrows-rotate"></i>
-                    Atualizar Agenda
+                    <span id="txt-toggle-agenda">Alternar Agenda (Ver Tradicional)</span>
+                </button>
+                
+                <button type="button" class="btn-gold-action" onclick="alert('Adicionar Novo Barbeiro');">
+                    <i class="fa-solid fa-user-plus"></i> Adicionar Novo Barbeiro
+                </button>
+                <a href="preview_appbarber.html" target="_blank" class="btn-quick">
+                    <i class="fa-solid fa-globe"></i> Ver Site do Cliente
+                </a>
+                <button type="button" class="btn-quick" onclick="window.location.reload();">
+                    <i class="fa-solid fa-arrows-rotate"></i> Atualizar
                 </button>
             </div>
         </div>
 
-        <!-- Cards de Estatísticas -->
+        <!-- 3. Cards de Métricas -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon-wrap stat-icon-gold">
@@ -813,7 +1712,7 @@
                 </div>
                 <div class="stat-info">
                     <span class="stat-label">Agendamentos de Hoje</span>
-                    <span class="stat-value">6 clientes</span>
+                    <span class="stat-value">3 clientes</span>
                     <span class="stat-detail">Horários confirmados no sistema</span>
                 </div>
             </div>
@@ -824,191 +1723,706 @@
                 </div>
                 <div class="stat-info">
                     <span class="stat-label">Faturamento Previsto Hoje</span>
-                    <span class="stat-value" style="color: var(--accent-green);">R$ 290,00</span>
+                    <span class="stat-value" style="color: var(--accent-green);">R$ 265,00</span>
                     <span class="stat-detail">Estimado com base nas reservas</span>
                 </div>
             </div>
 
             <div class="stat-card">
                 <div class="stat-icon-wrap stat-icon-blue">
-                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    <i class="fa-solid fa-users"></i>
                 </div>
                 <div class="stat-info">
-                    <span class="stat-label">Próximos Dias</span>
-                    <span class="stat-value">14 agendamentos</span>
-                    <span class="stat-detail">Distribuídos na agenda futura</span>
+                    <span class="stat-label">Barbeiros Cadastrados</span>
+                    <span class="stat-value">2 profissionais</span>
+                    <span class="stat-detail">Disponíveis para agendamento online</span>
                 </div>
             </div>
         </div>
 
-        <!-- Seção: Horários de Hoje -->
-        <section class="section-box">
-            <div class="section-header">
-                <h2 class="section-title">
-                    <i class="fa-regular fa-clock"></i>
-                    Horários de Hoje
-                </h2>
-                <span class="count-pill">6 agendado(s)</span>
+        <!-- 4. Seção: Equipe de Barbeiros -->
+        <section class="section-barbers">
+            <div class="barbers-header">
+                <h3 class="barbers-title">
+                    <i class="fa-solid fa-id-card"></i> Equipe de Barbeiros da Popeye
+                </h3>
+                <div class="barbers-header-actions">
+                    <span class="pill-count">2 barbeiro(s)</span>
+                    <button type="button" class="btn-small-gold" onclick="alert('Novo Barbeiro');">
+                        <i class="fa-solid fa-plus"></i> Novo Barbeiro
+                    </button>
+                </div>
             </div>
 
-            <div class="table-responsive">
-                <table class="app-table">
-                    <thead>
-                        <tr>
-                            <th>Horário</th>
-                            <th>Cliente</th>
-                            <th>WhatsApp</th>
-                            <th>Serviços Selecionados</th>
-                            <th>Total Previsto</th>
-                            <th style="text-align: center;">Ações Rápidas</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><span class="time-badge"><i class="fa-regular fa-clock"></i> 09:00</span></td>
-                            <td>
-                                <div class="client-info">
-                                    <div class="client-avatar">M</div>
-                                    <strong>Matheus Oliveira</strong>
-                                </div>
-                            </td>
-                            <td>(34) 99123-4567</td>
-                            <td>
-                                <div class="service-tags">
-                                    <span class="service-tag">Corte</span>
-                                    <span class="service-tag">Barba</span>
-                                </div>
-                            </td>
-                            <td><span class="price-text">R$ 75,00</span></td>
-                            <td style="text-align: center;">
-                                <div class="actions-group" style="justify-content: center;">
-                                    <a href="https://wa.me/5534991234567" target="_blank" class="btn-action-whats" title="Chamar no WhatsApp">
-                                        <i class="fa-brands fa-whatsapp"></i>
-                                    </a>
-                                    <button class="btn-action-delete" title="Cancelar Agendamento" onclick="confirm('Deseja desmarcar este cliente?')">
-                                        <i class="fa-solid fa-trash-can"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
+            <div class="barbers-grid">
+                <div class="barber-team-card">
+                    <div class="barber-card-top">
+                        <div class="barber-card-profile">
+                            <div class="barber-letter-avatar">H</div>
+                            <div class="barber-name-wrap">
+                                <h4>Henrique</h4>
+                                <span>Barbeiro Chefe</span>
+                            </div>
+                        </div>
+                        <div class="barber-card-icons">
+                            <button type="button" class="btn-icon-action" title="Editar"><i class="fa-regular fa-pen-to-square"></i></button>
+                            <button type="button" class="btn-icon-action" title="Remover"><i class="fa-regular fa-trash-can"></i></button>
+                        </div>
+                    </div>
+                    <div class="barber-card-badges">
+                        <span class="badge-status-active">ATIVO</span>
+                        <span class="badge-hours"><i class="fa-regular fa-clock"></i> 09:00 ÀS 20:00</span>
+                    </div>
+                    <div>
+                        <a href="https://wa.me/5534991395770" target="_blank" class="badge-phone">
+                            <i class="fa-brands fa-whatsapp"></i> 34 99139-5770
+                        </a>
+                    </div>
+                </div>
 
-                        <tr>
-                            <td><span class="time-badge"><i class="fa-regular fa-clock"></i> 10:30</span></td>
-                            <td>
-                                <div class="client-info">
-                                    <div class="client-avatar">L</div>
-                                    <strong>Lucas Ferreira</strong>
-                                </div>
-                            </td>
-                            <td>(34) 99888-1122</td>
-                            <td>
-                                <div class="service-tags">
-                                    <span class="service-tag">Corte</span>
-                                    <span class="service-tag">Sobrancelhas</span>
-                                </div>
-                            </td>
-                            <td><span class="price-text">R$ 50,00</span></td>
-                            <td style="text-align: center;">
-                                <div class="actions-group" style="justify-content: center;">
-                                    <a href="https://wa.me/5534998881122" target="_blank" class="btn-action-whats" title="Chamar no WhatsApp">
-                                        <i class="fa-brands fa-whatsapp"></i>
-                                    </a>
-                                    <button class="btn-action-delete" title="Cancelar Agendamento" onclick="confirm('Deseja desmarcar este cliente?')">
-                                        <i class="fa-solid fa-trash-can"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td><span class="time-badge"><i class="fa-regular fa-clock"></i> 14:00</span></td>
-                            <td>
-                                <div class="client-info">
-                                    <div class="client-avatar">R</div>
-                                    <strong>Rodrigo Mendes</strong>
-                                </div>
-                            </td>
-                            <td>(34) 99777-3344</td>
-                            <td>
-                                <div class="service-tags">
-                                    <span class="service-tag">Selagem</span>
-                                    <span class="service-tag">Acabamento</span>
-                                </div>
-                            </td>
-                            <td><span class="price-text">R$ 65,00</span></td>
-                            <td style="text-align: center;">
-                                <div class="actions-group" style="justify-content: center;">
-                                    <a href="https://wa.me/5534997773344" target="_blank" class="btn-action-whats" title="Chamar no WhatsApp">
-                                        <i class="fa-brands fa-whatsapp"></i>
-                                    </a>
-                                    <button class="btn-action-delete" title="Cancelar Agendamento" onclick="confirm('Deseja desmarcar este cliente?')">
-                                        <i class="fa-solid fa-trash-can"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="barber-team-card">
+                    <div class="barber-card-top">
+                        <div class="barber-card-profile">
+                            <div class="barber-letter-avatar">T</div>
+                            <div class="barber-name-wrap">
+                                <h4>Teste2</h4>
+                                <span>Barbeiro Profissional</span>
+                            </div>
+                        </div>
+                        <div class="barber-card-icons">
+                            <button type="button" class="btn-icon-action" title="Editar"><i class="fa-regular fa-pen-to-square"></i></button>
+                            <button type="button" class="btn-icon-action" title="Remover"><i class="fa-regular fa-trash-can"></i></button>
+                        </div>
+                    </div>
+                    <div class="barber-card-badges">
+                        <span class="badge-status-active">ATIVO</span>
+                        <span class="badge-hours"><i class="fa-regular fa-clock"></i> 09:00 ÀS 21:00</span>
+                    </div>
+                    <div>
+                        <a href="https://wa.me/5523232323223" target="_blank" class="badge-phone">
+                            <i class="fa-brands fa-whatsapp"></i> 23 23232-3223
+                        </a>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <!-- Seção: Próximos Dias -->
-        <section class="section-box">
-            <div class="section-header">
-                <h2 class="section-title">
-                    <i class="fa-regular fa-calendar-days"></i>
-                    Próximos Dias
-                </h2>
-                <span class="count-pill">Agenda Futura</span>
+        <!-- ========================================================= -->
+        <!-- 5. GOOGLE AGENDA EM MODO ESCURO (NOVO MODELO)             -->
+        <!-- ========================================================= -->
+        <section class="gcal-dark-container" id="container-google-agenda">
+            
+            <div class="gcal-control-header">
+                <div class="agenda-mode-indicator">
+                    <span class="agenda-mode-badge">
+                        <i class="fa-solid fa-calendar-check"></i> Calendário Interativo Google
+                    </span>
+                    <span style="font-size: 0.8rem; color: var(--text-muted);">
+                        Agenda individual por barbeiro com grade horária
+                    </span>
+                </div>
+
+                <div class="view-mode-tabs">
+                    <button type="button" class="btn-view-tab active" id="tab-opt-google" onclick="definirModeloAgenda('google')">
+                        <i class="fa-solid fa-calendar-days"></i> Calendário Google
+                    </button>
+                    <button type="button" class="btn-view-tab" id="tab-opt-tradicional" onclick="definirModeloAgenda('tabela')">
+                        <i class="fa-solid fa-list-check"></i> Modo Tradicional
+                    </button>
+                </div>
             </div>
 
-            <div class="table-responsive">
-                <table class="app-table">
-                    <thead>
-                        <tr>
-                            <th>Data</th>
-                            <th>Horário</th>
-                            <th>Cliente</th>
-                            <th>Serviços</th>
-                            <th>Total Previsto</th>
-                            <th style="text-align: center;">Ações Rápidas</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>Amanhã (Sábado)</strong></td>
-                            <td><span class="time-badge">09:30</span></td>
-                            <td><strong>Danilo Costa</strong></td>
-                            <td><span class="service-tag">Corte</span> + <span class="service-tag">Barba</span></td>
-                            <td><span class="price-text">R$ 75,00</span></td>
-                            <td style="text-align: center;">
-                                <div class="actions-group" style="justify-content: center;">
-                                    <a href="#" class="btn-action-whats" title="Chamar no WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
-                                    <button class="btn-action-delete" title="Cancelar"><i class="fa-solid fa-trash-can"></i></button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <!-- Barra Superior do Google Agenda -->
+            <div class="gcal-top-bar">
+                <div class="gcal-top-left">
+                    <button class="btn-gcal-nav" title="Dia Anterior" onclick="gcalPrevDay()">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <button class="btn-gcal-today" title="Ir para hoje" onclick="gcalGoToday()">
+                        Hoje
+                    </button>
+                    <button class="btn-gcal-nav" title="Próximo Dia" onclick="gcalNextDay()">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                    <div class="gcal-month-title">
+                        <span id="gcal-month-name">Outubro</span>
+                        <span id="gcal-year-num" style="color: var(--text-muted); font-size: 1rem; font-weight: 400; margin-left: 4px;">2026</span>
+                    </div>
+                </div>
+
+                <div class="gcal-top-right">
+                    <div class="gcal-date-box" id="gcal-badge-day" title="Dia Selecionado" onclick="gcalGoToday()">
+                        22
+                    </div>
+                    <div class="gcal-avatar-circle" id="gcal-top-avatar" title="Barbeiro em Destaque">
+                        H
+                    </div>
+                </div>
             </div>
+
+            <!-- SELEÇÃO INDIVIDUAL DE BARBEIROS -->
+            <div class="gcal-barbers-bar" id="gcal-barbers-selector">
+                <span class="gcal-barbers-bar-label">
+                    <i class="fa-solid fa-id-badge"></i> Barbeiros:
+                </span>
+                
+                <button type="button" class="gcal-barber-chip active" data-barber-id="todos" onclick="selecionarBarbeiroAgenda('todos')">
+                    <div class="chip-avatar"><i class="fa-solid fa-users"></i></div>
+                    <span>Todos os Barbeiros</span>
+                    <span class="chip-badge" id="badge-count-todos">3</span>
+                </button>
+
+                <button type="button" class="gcal-barber-chip" data-barber-id="1" onclick="selecionarBarbeiroAgenda('1')">
+                    <div class="chip-avatar">H</div>
+                    <span>Henrique</span>
+                    <span class="chip-badge" id="badge-count-1">2</span>
+                </button>
+
+                <button type="button" class="gcal-barber-chip" data-barber-id="2" onclick="selecionarBarbeiroAgenda('2')">
+                    <div class="chip-avatar">T</div>
+                    <span>Teste2</span>
+                    <span class="chip-badge" id="badge-count-2">1</span>
+                </button>
+            </div>
+
+            <!-- Strip Horizontal Deslizável -->
+            <div class="gcal-days-strip" id="gcal-days-strip"></div>
+
+            <!-- Subcabeçalho do Dia -->
+            <div class="gcal-day-subbar">
+                <div class="gcal-time-column-header">
+                    <span class="day-header-dow" id="header-dow">HOJE</span>
+                    <span class="day-header-num" id="header-num">22</span>
+                </div>
+                <div class="gcal-day-details-header">
+                    <div class="count-text">
+                        <i class="fa-regular fa-calendar-check"></i>
+                        <span id="header-count-text"><strong>3 agendamentos</strong> para Todos os Barbeiros</span>
+                    </div>
+                    <span class="total-pill" id="header-total-pill">Total: R$ 265,00</span>
+                </div>
+            </div>
+
+            <!-- Grade Horária Vertical -->
+            <div class="gcal-timeline-body" id="timeline-body">
+                <div class="gcal-current-time-line" id="current-time-line" title="Horário atual">
+                    <div class="gcal-current-time-dot"></div>
+                </div>
+
+                <div class="gcal-time-row" data-hour="8"><div class="gcal-hour-label">08:00</div><div class="gcal-hour-slot"></div></div>
+                <div class="gcal-time-row" data-hour="9"><div class="gcal-hour-label">09:00</div><div class="gcal-hour-slot"></div></div>
+                <div class="gcal-time-row" data-hour="10"><div class="gcal-hour-label">10:00</div><div class="gcal-hour-slot"></div></div>
+                <div class="gcal-time-row" data-hour="11"><div class="gcal-hour-label">11:00</div><div class="gcal-hour-slot"></div></div>
+                <div class="gcal-time-row" data-hour="12"><div class="gcal-hour-label">12:00</div><div class="gcal-hour-slot"></div></div>
+                <div class="gcal-time-row" data-hour="13"><div class="gcal-hour-label">13:00</div><div class="gcal-hour-slot"></div></div>
+                <div class="gcal-time-row" data-hour="14"><div class="gcal-hour-label">14:00</div><div class="gcal-hour-slot"></div></div>
+                <div class="gcal-time-row" data-hour="15"><div class="gcal-hour-label">15:00</div><div class="gcal-hour-slot"></div></div>
+                <div class="gcal-time-row" data-hour="16"><div class="gcal-hour-label">16:00</div><div class="gcal-hour-slot"></div></div>
+                <div class="gcal-time-row" data-hour="17"><div class="gcal-hour-label">17:00</div><div class="gcal-hour-slot"></div></div>
+                <div class="gcal-time-row" data-hour="18"><div class="gcal-hour-label">18:00</div><div class="gcal-hour-slot"></div></div>
+                <div class="gcal-time-row" data-hour="19"><div class="gcal-hour-label">19:00</div><div class="gcal-hour-slot"></div></div>
+                <div class="gcal-time-row" data-hour="20"><div class="gcal-hour-label">20:00</div><div class="gcal-hour-slot"></div></div>
+
+                <!-- Camada de Eventos -->
+                <div id="timeline-events-layer"></div>
+
+                <div class="gcal-empty-day-banner" id="gcal-empty-banner" style="display: none;">
+                    <i class="fa-regular fa-calendar"></i>
+                    <h4 style="color: #fff; font-size: 1.05rem; margin-bottom: 4px;">Nenhum agendamento</h4>
+                    <p style="font-size: 0.82rem;">A agenda deste barbeiro está livre para este dia.</p>
+                </div>
+            </div>
+
+            <button type="button" class="gcal-fab" title="Novo Agendamento Manual" onclick="alert('Criar agendamento manual');">
+                <i class="fa-solid fa-plus"></i>
+            </button>
         </section>
+
+        <!-- 6. AGENDA TRADICIONAL (TABELAS) -->
+        <div id="container-agenda-tradicional">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+                <div style="font-size: 1.1rem; font-weight: 700; color: #fff;">
+                    <i class="fa-solid fa-table-list" style="color: var(--primary-gold);"></i> Modelo de Tabela Tradicional
+                </div>
+                <button type="button" class="btn-quick" onclick="definirModeloAgenda('google')" style="background: rgba(212, 175, 55, 0.15); border-color: var(--border-gold);">
+                    <i class="fa-solid fa-calendar-days"></i> Voltar para o Google Agenda
+                </button>
+            </div>
+
+            <section class="section-box">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fa-regular fa-clock"></i> Horários de Hoje
+                    </h2>
+                    <span class="count-pill">3 agendado(s)</span>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="app-table">
+                        <thead>
+                            <tr>
+                                <th>Horário</th>
+                                <th>Barbeiro</th>
+                                <th>Cliente</th>
+                                <th>WhatsApp</th>
+                                <th>Serviços</th>
+                                <th>Total</th>
+                                <th style="text-align: center;">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="time-badge">09:00</span> <span class="duration-badge">50 min</span></td>
+                                <td><div class="barber-tag-table">Henrique</div></td>
+                                <td><div class="client-info"><div class="client-avatar">G</div><strong>Giovanni</strong></div></td>
+                                <td>(34) 99123-4567</td>
+                                <td><span class="service-tag">Corte Degradê</span> <span class="service-tag">Barba Terapia</span></td>
+                                <td><span class="price-text">R$ 75,00</span></td>
+                                <td style="text-align: center;"><a href="#" class="btn-action-whats"><i class="fa-brands fa-whatsapp"></i></a></td>
+                            </tr>
+                            <tr>
+                                <td><span class="time-badge">11:00</span> <span class="duration-badge">45 min</span></td>
+                                <td><div class="barber-tag-table">Henrique</div></td>
+                                <td><div class="client-info"><div class="client-avatar">L</div><strong>Lucas Ferreira</strong></div></td>
+                                <td>(34) 99888-1122</td>
+                                <td><span class="service-tag">Corte Social</span></td>
+                                <td><span class="price-text">R$ 50,00</span></td>
+                                <td style="text-align: center;"><a href="#" class="btn-action-whats"><i class="fa-brands fa-whatsapp"></i></a></td>
+                            </tr>
+                            <tr>
+                                <td><span class="time-badge">14:00</span> <span class="duration-badge">115 min</span></td>
+                                <td><div class="barber-tag-table">Teste2</div></td>
+                                <td><div class="client-info"><div class="client-avatar">R</div><strong>Rodrigo Mendes</strong></div></td>
+                                <td>(34) 99777-3344</td>
+                                <td><span class="service-tag">Selagem Orgânica</span> <span class="service-tag">Barboterapia</span></td>
+                                <td><span class="price-text">R$ 140,00</span></td>
+                                <td style="text-align: center;"><a href="#" class="btn-action-whats"><i class="fa-brands fa-whatsapp"></i></a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
 
     </main>
 
+    <!-- MODAL DE DETALHES -->
+    <div class="modal-overlay" id="event-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div>
+                    <span class="modal-badge-time" id="modal-time-badge">
+                        <i class="fa-regular fa-clock"></i> <span id="modal-time-text">09:00 - 09:50</span>
+                    </span>
+                    <h3 id="modal-client-name" style="font-size: 1.35rem; font-weight: 800; color: #fff;">Giovanni</h3>
+                </div>
+                <button type="button" class="modal-close" onclick="closeModal()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="modal-field">
+                <div class="modal-field-label">Barbeiro Designado</div>
+                <div class="modal-field-value" id="modal-barber-name">Henrique</div>
+            </div>
+
+            <div class="modal-field">
+                <div class="modal-field-label">Data do Agendamento</div>
+                <div class="modal-field-value" id="modal-date-text">22/10/2026</div>
+            </div>
+
+            <div class="modal-field">
+                <div class="modal-field-label">Serviços Contratados</div>
+                <div class="modal-services-list" id="modal-services-container">
+                    <span class="modal-service-tag">Corte Degradê</span>
+                    <span class="modal-service-tag">Barba Terapia</span>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; margin-bottom: 14px; gap: 10px;">
+                <div class="modal-field">
+                    <div class="modal-field-label">Duração Estimada</div>
+                    <div class="modal-field-value" id="modal-duration-text" style="color: var(--accent-blue);">50 min</div>
+                </div>
+                <div class="modal-field">
+                    <div class="modal-field-label">Valor Total</div>
+                    <div class="modal-field-value" id="modal-price-text" style="color: var(--primary-gold); font-size: 1.25rem;">R$ 75,00</div>
+                </div>
+            </div>
+
+            <div class="modal-field">
+                <div class="modal-field-label">Telefone / WhatsApp</div>
+                <div class="modal-field-value" id="modal-phone-text">(34) 99123-4567</div>
+            </div>
+
+            <div class="modal-actions">
+                <a href="#" target="_blank" class="btn-modal-whats" id="modal-whats-btn">
+                    <i class="fa-brands fa-whatsapp fa-lg"></i> Conversar no WhatsApp
+                </a>
+                <button type="button" class="btn-modal-cancel" onclick="alert('Agendamento desmarcado.'); closeModal();">
+                    <i class="fa-solid fa-trash-can"></i> Desmarcar
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Rodapé -->
     <footer class="app-footer">
-        <div class="footer-content">
-            <span>&copy; 2026 Barbearia Popeye &bull; Sistema de Gestão Interna</span>
+        <div style="max-width: 1320px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+            <span>&copy; 2026 Barbearia Popeye &bull; Painel de Gestão</span>
             <span>Desenvolvido por <strong>Giovanni de Melo Cardoso</strong></span>
         </div>
     </footer>
 
     <script>
+        // Dados simulados para visualização estática
+        const TODAY = new Date();
+        const y = TODAY.getFullYear();
+        const m = String(TODAY.getMonth() + 1).padStart(2, '0');
+        const d = String(TODAY.getDate()).padStart(2, '0');
+        const TODAY_STR = `${y}-${m}-${d}`;
+
+        const GCAL_BARBERS = [
+            { id: 1, nome: 'Henrique', cargo: 'Barbeiro Chefe', foto_url: '' },
+            { id: 2, nome: 'Teste2', cargo: 'Barbeiro Profissional', foto_url: '' }
+        ];
+
+        const GCAL_EVENTS = [
+            {
+                id: 101,
+                cliente: 'GIOVANNI',
+                telefone: '(34) 99123-4567',
+                barbeiro_id: 1,
+                barbeiro_nome: 'Henrique',
+                data: TODAY_STR,
+                hora_inicio: '09:00',
+                hora_fim: '09:50',
+                duracao: 50,
+                servicos: ['Corte Degradê', 'Barba Terapia'],
+                total: 75.0,
+                total_formatado: 'R$ 75,00'
+            },
+            {
+                id: 102,
+                cliente: 'LUCAS FERREIRA',
+                telefone: '(34) 99888-1122',
+                barbeiro_id: 1,
+                barbeiro_nome: 'Henrique',
+                data: TODAY_STR,
+                hora_inicio: '11:00',
+                hora_fim: '11:45',
+                duracao: 45,
+                servicos: ['Corte Social'],
+                total: 50.0,
+                total_formatado: 'R$ 50,00'
+            },
+            {
+                id: 103,
+                cliente: 'RODRIGO MENDES',
+                telefone: '(34) 99777-3344',
+                barbeiro_id: 2,
+                barbeiro_nome: 'Teste2',
+                data: TODAY_STR,
+                hora_inicio: '14:00',
+                hora_fim: '15:55',
+                duracao: 115,
+                servicos: ['Selagem Orgânica', 'Barboterapia Completa'],
+                total: 140.0,
+                total_formatado: 'R$ 140,00'
+            }
+        ];
+
+        let activeDate = new Date();
+        let selectedBarberId = 'todos';
+        let agendaMode = localStorage.getItem('popeye_agenda_view_mode') || 'google';
+
+        const BARBER_THEMES = ['event-theme-gold', 'event-theme-blue', 'event-theme-green', 'event-theme-red'];
+
+        function getBarberThemeClass(barberId) {
+            const index = Math.abs(parseInt(barberId, 10)) % BARBER_THEMES.length;
+            return BARBER_THEMES[index];
+        }
+
+        function formatISODate(dt) {
+            const y = dt.getFullYear();
+            const m = String(dt.getMonth() + 1).padStart(2, '0');
+            const day = String(dt.getDate()).padStart(2, '0');
+            return `${y}-${m}-${day}`;
+        }
+
+        function definirModeloAgenda(modo) {
+            agendaMode = modo;
+            localStorage.setItem('popeye_agenda_view_mode', modo);
+
+            const containerGoogle = document.getElementById('container-google-agenda');
+            const containerTrad = document.getElementById('container-agenda-tradicional');
+            const txtBtn = document.getElementById('txt-toggle-agenda');
+            const tabGoogle = document.getElementById('tab-opt-google');
+            const tabTrad = document.getElementById('tab-opt-tradicional');
+
+            if (modo === 'google') {
+                containerGoogle.style.display = 'block';
+                containerTrad.style.display = 'none';
+                if (txtBtn) txtBtn.textContent = 'Alternar Agenda (Ver Tradicional)';
+                if (tabGoogle) tabGoogle.classList.add('active');
+                if (tabTrad) tabTrad.classList.remove('active');
+                renderTimeline();
+            } else {
+                containerGoogle.style.display = 'none';
+                containerTrad.style.display = 'block';
+                if (txtBtn) txtBtn.textContent = 'Alternar Agenda (Ver Calendário Google)';
+                if (tabGoogle) tabGoogle.classList.remove('active');
+                if (tabTrad) tabTrad.classList.add('active');
+            }
+        }
+
+        function alternarModeloAgendaToggle() {
+            definirModeloAgenda(agendaMode === 'google' ? 'tabela' : 'google');
+        }
+
+        const MONTH_NAMES = [
+            'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+            'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+        ];
+        const DOW_NAMES_SHORT = ['DOM.', 'SEG.', 'TER.', 'QUA.', 'QUI.', 'SEX.', 'SÁB.'];
+
+        function renderDaysStrip() {
+            const strip = document.getElementById('gcal-days-strip');
+            if (!strip) return;
+            strip.innerHTML = '';
+
+            for (let i = -3; i <= 3; i++) {
+                const d = new Date(activeDate);
+                d.setDate(activeDate.getDate() + i);
+
+                const dStr = formatISODate(d);
+                const isActive = (dStr === formatISODate(activeDate));
+
+                const cell = document.createElement('div');
+                cell.className = `gcal-day-cell ${isActive ? 'active' : ''}`;
+                cell.onclick = () => goToDate(d);
+
+                const dow = DOW_NAMES_SHORT[d.getDay()];
+                const num = d.getDate();
+
+                cell.innerHTML = `
+                    <span class="gcal-day-name">${dow}</span>
+                    <span class="gcal-day-number">${num}</span>
+                `;
+
+                strip.appendChild(cell);
+
+                if (isActive) {
+                    setTimeout(() => {
+                        cell.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+                    }, 50);
+                }
+            }
+
+            document.getElementById('gcal-month-name').textContent = MONTH_NAMES[activeDate.getMonth()];
+            document.getElementById('gcal-year-num').textContent = activeDate.getFullYear();
+            document.getElementById('gcal-badge-day').textContent = activeDate.getDate();
+            document.getElementById('header-dow').textContent = DOW_NAMES_SHORT[activeDate.getDay()];
+            document.getElementById('header-num').textContent = activeDate.getDate();
+        }
+
+        function goToDate(d) {
+            activeDate = new Date(d);
+            renderDaysStrip();
+            updateBarberCounts();
+            renderTimeline();
+        }
+
+        function gcalPrevDay() {
+            const d = new Date(activeDate);
+            d.setDate(d.getDate() - 1);
+            goToDate(d);
+        }
+
+        function gcalNextDay() {
+            const d = new Date(activeDate);
+            d.setDate(d.getDate() + 1);
+            goToDate(d);
+        }
+
+        function gcalGoToday() {
+            goToDate(new Date());
+        }
+
+        function selecionarBarbeiroAgenda(barberId) {
+            selectedBarberId = barberId;
+            document.querySelectorAll('.gcal-barber-chip').forEach(btn => {
+                if (btn.getAttribute('data-barber-id') == barberId) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            const topAvatar = document.getElementById('gcal-top-avatar');
+            if (barberId === 'todos') {
+                topAvatar.innerHTML = '<i class="fa-solid fa-users"></i>';
+            } else {
+                const b = GCAL_BARBERS.find(item => String(item.id) === String(barberId));
+                if (b) topAvatar.textContent = b.nome.charAt(0).toUpperCase();
+            }
+
+            renderTimeline();
+        }
+
+        function updateBarberCounts() {
+            const dateStr = formatISODate(activeDate);
+            const eventsDia = GCAL_EVENTS.filter(e => e.data === dateStr);
+
+            document.getElementById('badge-count-todos').textContent = eventsDia.length;
+            GCAL_BARBERS.forEach(b => {
+                const count = eventsDia.filter(e => String(e.barbeiro_id) === String(b.id)).length;
+                const badge = document.getElementById(`badge-count-${b.id}`);
+                if (badge) badge.textContent = count;
+            });
+        }
+
+        function renderTimeline() {
+            const dateStr = formatISODate(activeDate);
+            const layer = document.getElementById('timeline-events-layer');
+            const emptyBanner = document.getElementById('gcal-empty-banner');
+            if (!layer) return;
+
+            layer.innerHTML = '';
+
+            let events = GCAL_EVENTS.filter(e => e.data === dateStr);
+            if (selectedBarberId !== 'todos') {
+                events = events.filter(e => String(e.barbeiro_id) === String(selectedBarberId));
+            }
+
+            const totalFaturado = events.reduce((sum, e) => sum + (e.total || 0), 0);
+            document.getElementById('header-total-pill').textContent = `Total: R$ ${totalFaturado.toFixed(2).replace('.', ',')}`;
+
+            let barberNameDisplay = 'Todos os Barbeiros';
+            if (selectedBarberId !== 'todos') {
+                const b = GCAL_BARBERS.find(item => String(item.id) === String(selectedBarberId));
+                if (b) barberNameDisplay = b.nome;
+            }
+
+            const headerCountText = document.getElementById('header-count-text');
+            if (events.length === 0) {
+                headerCountText.innerHTML = `<strong>Nenhum agendamento</strong> para ${barberNameDisplay}`;
+                emptyBanner.style.display = 'block';
+            } else {
+                headerCountText.innerHTML = `<strong>${events.length} agendamento(s)</strong> para ${barberNameDisplay}`;
+                emptyBanner.style.display = 'none';
+            }
+
+            const HOUR_HEIGHT = 76;
+            const BASE_HOUR = 8;
+
+            events.forEach((ev) => {
+                const [hIni, mIni] = ev.hora_inicio.split(':').map(Number);
+                const minutesFromBase = (hIni - BASE_HOUR) * 60 + mIni;
+
+                const topPx = Math.max(0, (minutesFromBase / 60) * HOUR_HEIGHT);
+                const heightPx = Math.max(48, (ev.duracao / 60) * HOUR_HEIGHT);
+
+                const card = document.createElement('div');
+                const themeClass = getBarberThemeClass(ev.barbeiro_id);
+                card.className = `gcal-event-card ${themeClass}`;
+                
+                const isMobile = window.innerWidth <= 768;
+                card.style.top = `${topPx}px`;
+                card.style.height = `${heightPx}px`;
+                card.style.left = isMobile ? '64px' : '86px';
+                card.style.right = isMobile ? '10px' : '18px';
+
+                const servicosStr = ev.servicos.join(', ');
+
+                card.innerHTML = `
+                    <span class="event-title">${ev.cliente}</span>
+                    <div class="event-barber-tag">
+                        <i class="fa-solid fa-scissors"></i> ${ev.barbeiro_nome} &bull; ${ev.total_formatado}
+                    </div>
+                    <div class="event-time-row">
+                        <span>${ev.hora_inicio} - ${ev.hora_fim}</span>
+                        <span class="event-duration-badge">${ev.duracao} min</span>
+                    </div>
+                    ${heightPx > 80 ? `<div class="event-services-summary"><i class="fa-solid fa-check"></i> ${servicosStr}</div>` : ''}
+                `;
+
+                card.onclick = () => openEventDetails(ev);
+                layer.appendChild(card);
+            });
+
+            updateCurrentTimeLine();
+        }
+
+        function updateCurrentTimeLine() {
+            const timeLine = document.getElementById('current-time-line');
+            if (!timeLine) return;
+
+            const isToday = (formatISODate(activeDate) === formatISODate(new Date()));
+            if (!isToday) {
+                timeLine.style.display = 'none';
+                return;
+            }
+
+            const now = new Date();
+            const currentHour = now.getHours();
+            const currentMin = now.getMinutes();
+            const BASE_HOUR = 8;
+            const HOUR_HEIGHT = 76;
+
+            if (currentHour < BASE_HOUR || currentHour > 21) {
+                timeLine.style.display = 'none';
+                return;
+            }
+
+            const minutesFromBase = (currentHour - BASE_HOUR) * 60 + currentMin;
+            timeLine.style.display = 'flex';
+            timeLine.style.top = `${(minutesFromBase / 60) * HOUR_HEIGHT}px`;
+        }
+
+        function openEventDetails(ev) {
+            document.getElementById('modal-client-name').textContent = ev.cliente;
+            document.getElementById('modal-time-text').textContent = `${ev.hora_inicio} - ${ev.hora_fim}`;
+            document.getElementById('modal-duration-text').textContent = `${ev.duracao} min`;
+            document.getElementById('modal-price-text').textContent = ev.total_formatado;
+            document.getElementById('modal-phone-text').textContent = ev.telefone;
+            document.getElementById('modal-barber-name').textContent = ev.barbeiro_nome;
+
+            const [y, m, d] = ev.data.split('-');
+            document.getElementById('modal-date-text').textContent = `${d}/${m}/${y}`;
+
+            const telLimpo = ev.telefone.replace(/\D/g, '');
+            document.getElementById('modal-whats-btn').href = `https://wa.me/55${telLimpo}`;
+
+            const servContainer = document.getElementById('modal-services-container');
+            servContainer.innerHTML = '';
+            ev.servicos.forEach(s => {
+                const tag = document.createElement('span');
+                tag.className = 'modal-service-tag';
+                tag.textContent = s;
+                servContainer.appendChild(tag);
+            });
+
+            document.getElementById('event-modal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('event-modal').classList.remove('active');
+        }
+
+        window.onclick = function(event) {
+            const evModal = document.getElementById('event-modal');
+            if (event.target === evModal) closeModal();
+        };
+
         document.addEventListener('DOMContentLoaded', () => {
-            const hoje = new Date();
-            const opcoes = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-            const dataFmt = hoje.toLocaleDateString('pt-BR', opcoes);
-            document.getElementById('data-cabecalho').textContent = dataFmt.charAt(0).toUpperCase() + dataFmt.slice(1);
+            definirModeloAgenda(agendaMode);
+            renderDaysStrip();
+            updateBarberCounts();
+            renderTimeline();
+
+            const timeline = document.getElementById('timeline-body');
+            if (timeline) timeline.scrollTop = 70;
         });
     </script>
 </body>
