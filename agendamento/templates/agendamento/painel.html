@@ -1122,7 +1122,33 @@
             overflow-y: auto;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
+            overscroll-behavior-x: contain;
+            overscroll-behavior-y: auto;
             max-height: 840px;
+        }
+
+        .gcal-timeline-body.single-barber-mode {
+            overflow-x: hidden !important;
+        }
+
+        .gcal-timeline-body.single-barber-mode .gcal-timeline-main-grid,
+        .gcal-timeline-body.single-barber-mode .gcal-barbers-header-row {
+            width: 100% !important;
+            min-width: 100% !important;
+        }
+
+        .gcal-timeline-body.single-barber-mode .gcal-barbers-columns-track,
+        .gcal-timeline-body.single-barber-mode .gcal-barbers-header-cols {
+            width: calc(100% - 76px) !important;
+            min-width: calc(100% - 76px) !important;
+        }
+
+        .gcal-timeline-body.single-barber-mode .gcal-barber-column,
+        .gcal-timeline-body.single-barber-mode .gcal-barber-col-header {
+            width: 100% !important;
+            min-width: 100% !important;
+            max-width: 100% !important;
+            flex: 1 !important;
         }
 
         /* Dica visual de rolagem horizontal em telas menores */
@@ -2277,9 +2303,39 @@
 
             /* Timeline e Colunas de Barbeiros no Celular */
             .gcal-timeline-body {
-                scroll-snap-type: x proximity;
+                overflow-x: auto;
                 -webkit-overflow-scrolling: touch;
+                overscroll-behavior-x: contain;
+                overscroll-behavior-y: auto;
                 max-height: 720px;
+                touch-action: pan-x pan-y;
+            }
+
+            /* Quando é apenas 1 barbeiro ou está filtrado para 1: 100% estático, sem qualquer balanço lateral */
+            .gcal-timeline-body.single-barber-mode {
+                overflow-x: hidden !important;
+            }
+
+            .gcal-timeline-body.single-barber-mode .gcal-timeline-main-grid,
+            .gcal-timeline-body.single-barber-mode .gcal-barbers-header-row {
+                width: 100% !important;
+                min-width: 100% !important;
+                max-width: 100% !important;
+            }
+
+            .gcal-timeline-body.single-barber-mode .gcal-barbers-columns-track,
+            .gcal-timeline-body.single-barber-mode .gcal-barbers-header-cols {
+                width: calc(100% - 52px) !important;
+                min-width: calc(100% - 52px) !important;
+                max-width: calc(100% - 52px) !important;
+            }
+
+            .gcal-timeline-body.single-barber-mode .gcal-barber-column,
+            .gcal-timeline-body.single-barber-mode .gcal-barber-col-header {
+                width: 100% !important;
+                min-width: 100% !important;
+                max-width: 100% !important;
+                flex: 1 1 100% !important;
             }
 
             .gcal-mobile-scroll-hint {
@@ -2314,24 +2370,20 @@
                 min-width: calc(100% - 52px);
             }
 
-            /* Múltiplos barbeiros no celular: o primeiro barbeiro ocupa foco principal e o próximo fica visível sumindo suavemente para o canto direito */
-            .gcal-barber-column {
-                min-width: calc(100vw - 128px);
-                max-width: calc(100vw - 128px);
-                scroll-snap-align: start;
+            /* Múltiplos barbeiros no celular: largura estável, sem puxar e sem balanços ao movimentar a tela */
+            .gcal-timeline-body:not(.single-barber-mode) .gcal-barber-column {
+                min-width: 255px;
+                max-width: 265px;
+                width: 260px;
+                flex-shrink: 0;
             }
 
-            .gcal-barber-col-header {
-                min-width: calc(100vw - 128px);
-                max-width: calc(100vw - 128px);
+            .gcal-timeline-body:not(.single-barber-mode) .gcal-barber-col-header {
+                min-width: 255px;
+                max-width: 265px;
+                width: 260px;
+                flex-shrink: 0;
                 padding: 8px 10px;
-            }
-
-            /* Barbeiro único selecionado no celular: 100% da largura útil */
-            .gcal-barber-column.single-barber,
-            .gcal-barber-col-header.single-barber {
-                min-width: calc(100% - 2px) !important;
-                max-width: 100% !important;
             }
 
             .gcal-col-header-avatar {
@@ -3402,6 +3454,8 @@
                 }
             }
 
+            const tb = document.getElementById('timeline-body');
+            if (tb) tb.scrollLeft = 0;
             renderTimeline();
         }
 
@@ -3544,6 +3598,14 @@
             }
             const edgeFade = document.getElementById('gcal-edge-fade');
             const timelineBodyEl = document.getElementById('timeline-body');
+            if (timelineBodyEl) {
+                if (visibleBarbers.length === 1) {
+                    timelineBodyEl.classList.add('single-barber-mode');
+                    timelineBodyEl.scrollLeft = 0;
+                } else {
+                    timelineBodyEl.classList.remove('single-barber-mode');
+                }
+            }
             if (edgeFade && timelineBodyEl) {
                 if (visibleBarbers.length > 1) {
                     edgeFade.style.display = 'block';

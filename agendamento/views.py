@@ -80,8 +80,8 @@ def verificar_conflito(data_obj, hora_inicio, duracao_minutos, barbeiro):
     return False
 
 def index(request):
-    servicos = Servico.objects.all()
-    barbeiros = Barbeiro.objects.filter(ativo=True)
+    servicos = Servico.objects.all().order_by('ordem', 'id')
+    barbeiros = Barbeiro.objects.filter(ativo=True).order_by('id')
     
     if request.method == 'POST':
         is_ajax = request.headers.get('x-requested-with') == 'XMLHttpRequest' or 'application/json' in request.headers.get('accept', '')
@@ -353,7 +353,7 @@ def horarios_disponiveis(request):
 @login_required
 def painel_barbeiro(request):
     hoje = datetime.now(SP_TZ).date()
-    barbeiros = Barbeiro.objects.all().order_by('nome')
+    barbeiros = Barbeiro.objects.all().order_by('id')
     barbeiro_filtro_id = request.GET.get('barbeiro_id') or request.GET.get('barbeiro')
     
     agendamentos_hoje_todos = Agendamento.objects.filter(data=hoje).select_related('barbeiro').prefetch_related('servicos').order_by('hora')

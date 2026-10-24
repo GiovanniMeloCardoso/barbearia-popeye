@@ -2283,7 +2283,7 @@
                         {% for servico in servicos %}
                         <div class="service-card" data-id="{{ servico.id }}" data-nome="{{ servico.nome }}"
                             data-preco="{{ servico.preco }}" data-duracao="{{ servico.duracao_minutos }}"
-                            data-cat="{% if 'Barba' in servico.nome %}barba{% elif 'Corte' in servico.nome or 'Acabamento' in servico.nome %}cabelo{% else %}estetica{% endif %}"
+                            data-cat="{% if 'Corte' in servico.nome or 'Acabamento' in servico.nome %}cabelo{% elif 'Barba' in servico.nome %}barba{% else %}estetica{% endif %}"
                             onclick="toggleServicoCard(this)">
 
                             <input type="checkbox" name="servicos" value="{{ servico.id }}"
@@ -2291,10 +2291,10 @@
 
                             <div class="service-top">
                                 <div class="service-icon-wrap">
-                                    {% if 'Barba' in servico.nome %}
-                                    <i class="fa-solid fa-user-tie"></i>
-                                    {% elif 'Corte' in servico.nome %}
+                                    {% if 'Corte' in servico.nome or 'Acabamento' in servico.nome %}
                                     <i class="fa-solid fa-scissors"></i>
+                                    {% elif 'Barba' in servico.nome %}
+                                    <i class="fa-solid fa-user-tie"></i>
                                     {% elif 'Sobrancelhas' in servico.nome %}
                                     <i class="fa-regular fa-eye"></i>
                                     {% elif 'Selagem' in servico.nome or 'Alisamento' in servico.nome %}

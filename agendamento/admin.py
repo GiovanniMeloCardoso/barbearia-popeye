@@ -7,6 +7,7 @@ class BarbeiroAdmin(admin.ModelAdmin):
     list_display = ('foto_preview', 'nome', 'cargo', 'telefone', 'horario_inicio', 'horario_fim', 'ativo', 'criado_em')
     list_filter = ('ativo',)
     search_fields = ('nome', 'cargo', 'telefone')
+    ordering = ('id',)
 
     def foto_preview(self, obj):
         if obj.foto:
@@ -16,8 +17,11 @@ class BarbeiroAdmin(admin.ModelAdmin):
 
 @admin.register(Servico)
 class ServicoAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'preco', 'duracao_minutos')
+    list_display = ('ordem', 'nome', 'preco', 'duracao_minutos')
+    list_display_links = ('nome',)
+    list_editable = ('ordem',)
     search_fields = ('nome',)
+    ordering = ('ordem', 'id')
 
 @admin.register(Agendamento)
 class AgendamentoAdmin(admin.ModelAdmin):

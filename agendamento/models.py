@@ -17,7 +17,7 @@ class Barbeiro(models.Model):
     class Meta:
         verbose_name = 'Barbeiro'
         verbose_name_plural = 'Barbeiros'
-        ordering = ['nome']
+        ordering = ['id']
 
     def __str__(self):
         return f"{self.nome} ({self.cargo})"
@@ -66,11 +66,12 @@ class Servico(models.Model):
     nome = models.CharField(max_length=100)
     preco = models.DecimalField(max_digits=6, decimal_places=2)
     duracao_minutos = models.IntegerField(default=30, verbose_name="Duração (minutos)")
+    ordem = models.PositiveIntegerField(default=10, verbose_name="Ordem de Exibição")
 
     class Meta:
         verbose_name = 'Serviço'
         verbose_name_plural = 'Serviços'
-        ordering = ['id']
+        ordering = ['ordem', 'id']
 
     def __str__(self):
         return f"{self.nome} - R$ {self.preco} ({self.duracao_minutos} min)"
