@@ -1096,53 +1096,279 @@
             white-space: nowrap;
         }
 
-        /* Grade da Linha do Tempo (Timeline em Modo Escuro) */
+        /* Grade da Linha do Tempo com Colunas Separadas por Barbeiro */
+        .gcal-timeline-scroll-wrap {
+            position: relative;
+            overflow: hidden;
+            border-radius: 0 0 var(--radius-md) var(--radius-md);
+        }
+
+        /* Efeito de fade suave no canto direito indicando mais colunas de barbeiro */
+        .gcal-timeline-edge-fade {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 38px;
+            background: linear-gradient(to right, transparent 0%, rgba(11, 13, 19, 0.95) 100%);
+            pointer-events: none;
+            z-index: 38;
+            transition: opacity 0.3s ease;
+        }
+
         .gcal-timeline-body {
             position: relative;
-            background: #0f1118;
-            min-height: 988px; /* 13 slots de 76px */
+            background: #0b0d13;
             overflow-y: auto;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            max-height: 840px;
         }
 
-        .gcal-time-row {
-            height: 76px;
+        /* Dica visual de rolagem horizontal em telas menores */
+        .gcal-mobile-scroll-hint {
+            display: none;
+            background: rgba(212, 175, 55, 0.1);
+            border-bottom: 1px solid var(--border-gold-subtle);
+            color: var(--primary-gold);
+            font-size: 0.76rem;
+            font-weight: 600;
+            text-align: center;
+            padding: 6px 12px;
+            letter-spacing: 0.3px;
+        }
+
+        /* Linha de Cabeçalhos dos Barbeiros (Fixa / Sticky no topo da rolagem da timeline) */
+        .gcal-barbers-header-row {
+            position: sticky;
+            top: 0;
+            z-index: 25;
             display: flex;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-            position: relative;
+            background: #121520;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+            min-width: 100%;
+            width: max-content;
         }
 
-        .gcal-hour-label {
+        .gcal-hours-header-spacer {
             width: 76px;
             min-width: 76px;
-            padding: 0 10px 0 20px;
-            font-size: 0.76rem;
-            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 0.72rem;
             color: #64748b;
-            position: relative;
-            top: -9px;
-            user-select: none;
-            border-right: 1px solid rgba(255, 255, 255, 0.04);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: #0f1118;
+            position: sticky;
+            left: 0;
+            z-index: 40;
+            box-shadow: 4px 0 16px rgba(0, 0, 0, 0.75);
         }
 
-        .gcal-hour-slot {
+        .gcal-barbers-header-cols {
+            display: flex;
             flex: 1;
-            position: relative;
-            cursor: pointer;
-            transition: var(--transition);
+            min-width: calc(100% - 76px);
         }
 
-        .gcal-hour-slot:hover {
-            background: rgba(255, 255, 255, 0.02);
+        .gcal-barber-col-header {
+            flex: 1;
+            min-width: 260px;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.015);
+            transition: background 0.2s ease;
+        }
+
+        .gcal-barber-col-header:hover {
+            background: rgba(255, 255, 255, 0.035);
+        }
+
+        .gcal-col-header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .gcal-col-header-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.05rem;
+            flex-shrink: 0;
+            border: 2px solid var(--barber-accent, var(--primary-gold));
+            background: #000;
+            overflow: hidden;
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.6);
+        }
+
+        .gcal-col-header-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .gcal-col-header-name {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #ffffff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .gcal-col-header-role {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-top: 1px;
+        }
+
+        .gcal-col-header-badge {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 3px;
+            flex-shrink: 0;
+        }
+
+        .gcal-col-count-pill {
+            background: rgba(255, 255, 255, 0.08);
+            color: #e2e8f0;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .gcal-col-total-pill {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--primary-gold);
+            white-space: nowrap;
+        }
+
+        /* Grade Principal: Eixo de Horas à Esquerda + Colunas dos Barbeiros */
+        .gcal-timeline-main-grid {
+            display: flex;
+            position: relative;
+            min-width: 100%;
+            width: max-content;
+            min-height: 988px; /* 13 slots x 76px */
+        }
+
+        .gcal-hours-axis {
+            width: 76px;
+            min-width: 76px;
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            background: #0d0f17;
+            position: sticky;
+            left: 0;
+            z-index: 35;
+            box-shadow: 4px 0 16px rgba(0, 0, 0, 0.75);
+        }
+
+        .gcal-hour-axis-cell {
+            height: 76px;
+            box-sizing: border-box;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            padding: 4px 10px 0 16px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #64748b;
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-end;
+            user-select: none;
+        }
+
+        .gcal-barbers-columns-track {
+            display: flex;
+            flex: 1;
+            min-width: calc(100% - 76px);
+            position: relative;
+        }
+
+        .gcal-barber-column {
+            flex: 1;
+            min-width: 260px;
+            position: relative;
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.005);
+        }
+
+        .gcal-barber-column:last-child {
+            border-right: none;
+        }
+
+        .gcal-barber-column .gcal-col-slots {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .gcal-barber-column .gcal-col-slot {
+            height: 76px;
+            box-sizing: border-box;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            cursor: pointer;
+            transition: background 0.15s ease;
+            position: relative;
+        }
+
+        .gcal-barber-column .gcal-col-slot:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .gcal-barber-column .gcal-col-slot:hover::after {
+            content: '+ Horário Livre';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.25);
+            pointer-events: none;
+        }
+
+        .gcal-col-events-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
         }
 
         /* Linha Indicadora do Horário Atual (Tempo Real) */
         .gcal-current-time-line {
             position: absolute;
-            left: 68px;
+            left: 76px;
             right: 0;
             height: 2px;
             background: #ea4335;
-            z-index: 20;
+            z-index: 22;
             pointer-events: none;
             display: flex;
             align-items: center;
@@ -1155,7 +1381,7 @@
             background: #ea4335;
             position: absolute;
             left: -5px;
-            box-shadow: 0 0 8px rgba(234, 67, 53, 0.8);
+            box-shadow: 0 0 10px rgba(234, 67, 53, 0.9);
         }
 
         /* ========================================================= */
@@ -1163,107 +1389,116 @@
         /* ========================================================= */
         .gcal-event-card {
             position: absolute;
-            border-radius: 8px;
-            padding: 8px 12px;
+            border-radius: 9px;
+            padding: 8px 11px;
             color: #ffffff;
             cursor: pointer;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
-            transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
-            z-index: 15;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+            transition: transform 0.18s ease, filter 0.18s ease, box-shadow 0.18s ease;
+            z-index: 18;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
             overflow: hidden;
-            border-left: 4px solid rgba(255, 255, 255, 0.5);
+            border-left: 4px solid var(--card-border, #ffd54f);
+            pointer-events: auto;
+            backdrop-filter: blur(6px);
+            box-sizing: border-box;
         }
 
         .gcal-event-card:hover {
-            transform: scale(1.006);
-            filter: brightness(1.1);
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
-            z-index: 18;
+            transform: scale(1.018);
+            filter: brightness(1.15);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7);
+            z-index: 24;
         }
 
-        /* Temas por Barbeiro / Estilos de Cor */
+        /* Temas por Barbeiro / Estilos de Cor Dinâmicos */
         .event-theme-gold {
-            background: linear-gradient(135deg, #c59b27 0%, #8c6b12 100%) !important;
-            border-left-color: #ffd54f !important;
+            --barber-accent: #f59e0b;
+            --card-border: #ffd54f;
+            background: linear-gradient(135deg, rgba(197, 155, 39, 0.95) 0%, rgba(135, 102, 14, 0.95) 100%) !important;
         }
 
         .event-theme-blue {
-            background: linear-gradient(135deg, #1a73e8 0%, #1557b0 100%) !important;
-            border-left-color: #82b1ff !important;
+            --barber-accent: #38bdf8;
+            --card-border: #82b1ff;
+            background: linear-gradient(135deg, rgba(26, 115, 232, 0.95) 0%, rgba(18, 77, 158, 0.95) 100%) !important;
         }
 
         .event-theme-green {
-            background: linear-gradient(135deg, #16a34a 0%, #15803d 100%) !important;
-            border-left-color: #86efac !important;
+            --barber-accent: #10b981;
+            --card-border: #86efac;
+            background: linear-gradient(135deg, rgba(22, 163, 74, 0.95) 0%, rgba(19, 115, 54, 0.95) 100%) !important;
         }
 
         .event-theme-red {
-            background: linear-gradient(135deg, #d93025 0%, #b71c1c 100%) !important;
-            border-left-color: #ff8a80 !important;
+            --barber-accent: #f87171;
+            --card-border: #ff8a80;
+            background: linear-gradient(135deg, rgba(217, 48, 37, 0.95) 0%, rgba(168, 23, 23, 0.95) 100%) !important;
         }
 
         .event-theme-purple {
-            background: linear-gradient(135deg, #9333ea 0%, #6b21a8 100%) !important;
-            border-left-color: #d8b4fe !important;
+            --barber-accent: #c084fc;
+            --card-border: #d8b4fe;
+            background: linear-gradient(135deg, rgba(147, 51, 234, 0.95) 0%, rgba(99, 28, 158, 0.95) 100%) !important;
         }
 
         .event-theme-cyan {
-            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
-            border-left-color: #7dd3fc !important;
+            --barber-accent: #38bdf8;
+            --card-border: #7dd3fc;
+            background: linear-gradient(135deg, rgba(2, 132, 199, 0.95) 0%, rgba(3, 90, 138, 0.95) 100%) !important;
         }
 
         .event-title {
             font-size: 0.92rem;
             font-weight: 800;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.4px;
             text-transform: uppercase;
             line-height: 1.2;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            margin-bottom: 2px;
         }
 
         .event-barber-tag {
             font-size: 0.72rem;
-            font-weight: 700;
-            opacity: 0.9;
+            font-weight: 600;
+            opacity: 0.92;
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            margin-top: 1px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
         .event-time-row {
-            font-size: 0.78rem;
+            font-size: 0.77rem;
             font-weight: 600;
-            opacity: 0.95;
+            opacity: 0.98;
             margin-top: 3px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             flex-wrap: wrap;
         }
 
         .event-duration-badge {
-            background: rgba(0, 0, 0, 0.35);
+            background: rgba(0, 0, 0, 0.38);
             padding: 1px 6px;
             border-radius: 4px;
-            font-size: 0.7rem;
+            font-size: 0.68rem;
             font-weight: 700;
             letter-spacing: 0.3px;
         }
 
         .event-services-summary {
-            font-size: 0.74rem;
+            font-size: 0.72rem;
             margin-top: 4px;
-            opacity: 0.9;
+            opacity: 0.92;
             font-weight: 500;
             white-space: nowrap;
             overflow: hidden;
@@ -1955,32 +2190,80 @@
             }
 
             .gcal-top-bar {
-                padding: 12px 14px;
+                padding: 10px 12px;
+                gap: 8px;
+            }
+
+            .gcal-top-left {
+                gap: 6px;
+            }
+
+            .btn-gcal-nav {
+                width: 32px;
+                height: 32px;
+                font-size: 0.85rem;
+            }
+
+            .btn-gcal-today {
+                padding: 4px 10px;
+                font-size: 0.78rem;
             }
 
             .gcal-month-title {
-                font-size: 1.15rem;
+                font-size: 1.05rem;
             }
 
             .gcal-barbers-bar {
-                padding: 8px 12px;
+                padding: 8px 10px;
+                gap: 6px;
             }
 
-            .gcal-time-column-header,
-            .gcal-hour-label {
-                width: 54px;
-                min-width: 54px;
-                padding-left: 8px;
-                padding-right: 6px;
-                font-size: 0.72rem;
+            .gcal-barber-chip {
+                padding: 4px 10px 4px 5px;
+                font-size: 0.76rem;
+                gap: 6px;
             }
 
-            .day-header-num {
-                font-size: 1.2rem;
+            .chip-avatar {
+                width: 22px;
+                height: 22px;
+                font-size: 0.65rem;
+            }
+
+            .chip-badge {
+                font-size: 0.66rem;
+                padding: 1px 5px;
+            }
+
+            .gcal-days-strip {
+                padding: 8px 10px;
+                gap: 4px;
+            }
+
+            .gcal-day-cell {
+                min-width: 40px;
+                padding: 4px 2px;
+            }
+
+            .gcal-day-name {
+                font-size: 0.65rem;
+            }
+
+            .gcal-day-number {
+                width: 30px;
+                height: 30px;
+                font-size: 0.92rem;
+            }
+
+            .gcal-day-subbar {
+                flex-direction: column;
+                align-items: stretch;
             }
 
             .gcal-day-details-header {
                 padding: 8px 12px;
+                flex-wrap: wrap;
+                gap: 6px;
             }
 
             .count-text {
@@ -1992,23 +2275,119 @@
                 padding: 3px 10px;
             }
 
+            /* Timeline e Colunas de Barbeiros no Celular */
+            .gcal-timeline-body {
+                scroll-snap-type: x proximity;
+                -webkit-overflow-scrolling: touch;
+                max-height: 720px;
+            }
+
+            .gcal-mobile-scroll-hint {
+                font-size: 0.74rem;
+                padding: 7px 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 6px;
+            }
+
+            .gcal-hours-header-spacer,
+            .gcal-hours-axis {
+                width: 52px;
+                min-width: 52px;
+                box-shadow: 4px 0 14px rgba(0, 0, 0, 0.85);
+            }
+
+            .gcal-hours-header-spacer span {
+                display: none;
+            }
+
+            .gcal-hour-axis-cell {
+                padding: 4px 2px 0 2px;
+                justify-content: center;
+                font-size: 0.68rem;
+                font-weight: 700;
+            }
+
+            .gcal-barbers-columns-track,
+            .gcal-barbers-header-cols {
+                min-width: calc(100% - 52px);
+            }
+
+            /* Múltiplos barbeiros no celular: o primeiro barbeiro ocupa foco principal e o próximo fica visível sumindo suavemente para o canto direito */
+            .gcal-barber-column {
+                min-width: calc(100vw - 128px);
+                max-width: calc(100vw - 128px);
+                scroll-snap-align: start;
+            }
+
+            .gcal-barber-col-header {
+                min-width: calc(100vw - 128px);
+                max-width: calc(100vw - 128px);
+                padding: 8px 10px;
+            }
+
+            /* Barbeiro único selecionado no celular: 100% da largura útil */
+            .gcal-barber-column.single-barber,
+            .gcal-barber-col-header.single-barber {
+                min-width: calc(100% - 2px) !important;
+                max-width: 100% !important;
+            }
+
+            .gcal-col-header-avatar {
+                width: 34px;
+                height: 34px;
+                font-size: 0.9rem;
+            }
+
+            .gcal-col-header-name {
+                font-size: 0.88rem;
+            }
+
+            .gcal-col-header-role {
+                font-size: 0.68rem;
+            }
+
+            .gcal-col-count-pill {
+                font-size: 0.66rem;
+                padding: 1px 6px;
+            }
+
+            .gcal-col-total-pill {
+                font-size: 0.72rem;
+            }
+
+            .gcal-current-time-line {
+                left: 52px;
+            }
+
+            /* Event Cards no Celular */
             .gcal-event-card {
-                border-radius: 6px;
-                padding: 7px 10px;
+                border-radius: 7px;
+                padding: 6px 8px;
             }
 
             .event-title {
-                font-size: 0.86rem;
+                font-size: 0.82rem;
+                letter-spacing: 0.2px;
+            }
+
+            .event-barber-tag {
+                font-size: 0.68rem;
             }
 
             .event-time-row {
-                font-size: 0.74rem;
+                font-size: 0.70rem;
                 gap: 4px;
             }
 
             .event-duration-badge {
-                font-size: 0.68rem;
+                font-size: 0.62rem;
                 padding: 1px 4px;
+            }
+
+            .event-services-summary {
+                font-size: 0.66rem;
             }
 
             .gcal-fab {
@@ -2021,6 +2400,9 @@
 
             .modal-card {
                 padding: 20px 16px;
+                width: 95%;
+                max-width: 440px;
+                margin: auto;
             }
 
             .modal-actions {
@@ -2031,6 +2413,39 @@
             .btn-modal-cancel {
                 width: 100%;
                 justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-container {
+                padding: 10px 12px;
+            }
+
+            .brand-name {
+                font-size: 0.95rem;
+            }
+
+            .btn-view-tab {
+                font-size: 0.76rem;
+                padding: 6px 8px;
+            }
+
+            .gcal-top-bar {
+                flex-wrap: wrap;
+            }
+
+            .gcal-month-title {
+                font-size: 0.95rem;
+            }
+
+            .gcal-barber-column {
+                min-width: calc(100vw - 72px);
+                max-width: calc(100vw - 72px);
+            }
+
+            .gcal-barber-col-header {
+                min-width: calc(100vw - 72px);
+                max-width: calc(100vw - 72px);
             }
         }
     </style>
@@ -2316,39 +2731,67 @@
                 </div>
             </div>
 
-            <!-- Grade Horária Vertical (Timeline) -->
-            <div class="gcal-timeline-body" id="timeline-body">
-                
-                <!-- Linha em tempo real indicando horário atual -->
-                <div class="gcal-current-time-line" id="current-time-line" title="Horário atual">
-                    <div class="gcal-current-time-dot"></div>
+            <!-- Dica de Scroll no Mobile para múltiplos barbeiros -->
+            <div class="gcal-mobile-scroll-hint" id="gcal-mobile-scroll-hint">
+                <i class="fa-solid fa-arrows-left-right"></i> Arraste para o lado para visualizar todos os barbeiros
+            </div>
+
+            <!-- Grade Horária Vertical (Timeline com Colunas por Barbeiro) -->
+            <div class="gcal-timeline-scroll-wrap">
+                <div class="gcal-timeline-edge-fade" id="gcal-edge-fade" title="Arraste para o lado para ver mais barbeiros"></div>
+                <div class="gcal-timeline-body" id="timeline-body">
+                    
+                    <!-- Linha de Cabeçalho Sticky dos Barbeiros -->
+                    <div class="gcal-barbers-header-row" id="gcal-barbers-header-row">
+                        <div class="gcal-hours-header-spacer">
+                            <i class="fa-regular fa-clock"></i>
+                            <span>Hora</span>
+                        </div>
+                        <div class="gcal-barbers-header-cols" id="barbers-header-cols">
+                            <!-- Gerado dinamicamente via JS: cabeçalho individual por barbeiro -->
+                        </div>
+                    </div>
+
+                    <!-- Grade Principal: Eixo de Horas (Esquerda) e Colunas dos Barbeiros (Direita) -->
+                    <div class="gcal-timeline-main-grid" id="timeline-main-grid">
+                        
+                        <!-- Linha em tempo real indicando horário atual -->
+                        <div class="gcal-current-time-line" id="current-time-line" title="Horário atual">
+                            <div class="gcal-current-time-dot"></div>
+                        </div>
+
+                        <!-- Eixo de Horas (08:00 às 20:00) -->
+                        <div class="gcal-hours-axis">
+                            <div class="gcal-hour-axis-cell">08:00</div>
+                            <div class="gcal-hour-axis-cell">09:00</div>
+                            <div class="gcal-hour-axis-cell">10:00</div>
+                            <div class="gcal-hour-axis-cell">11:00</div>
+                            <div class="gcal-hour-axis-cell">12:00</div>
+                            <div class="gcal-hour-axis-cell">13:00</div>
+                            <div class="gcal-hour-axis-cell">14:00</div>
+                            <div class="gcal-hour-axis-cell">15:00</div>
+                            <div class="gcal-hour-axis-cell">16:00</div>
+                            <div class="gcal-hour-axis-cell">17:00</div>
+                            <div class="gcal-hour-axis-cell">18:00</div>
+                            <div class="gcal-hour-axis-cell">19:00</div>
+                            <div class="gcal-hour-axis-cell">20:00</div>
+                        </div>
+
+                        <!-- Trilho das Colunas dos Barbeiros -->
+                        <div class="gcal-barbers-columns-track" id="barbers-columns-track">
+                            <!-- Colunas verticais dinâmicas geradas por renderTimeline() -->
+                        </div>
+
+                    </div>
+
+                    <!-- Banner exibido caso o dia não tenha agendamentos -->
+                    <div class="gcal-empty-day-banner" id="gcal-empty-banner" style="display: none;">
+                        <i class="fa-regular fa-calendar"></i>
+                        <h4 style="color: #fff; font-size: 1.05rem; margin-bottom: 4px;">Nenhum agendamento</h4>
+                        <p style="font-size: 0.82rem;" id="empty-banner-desc">A agenda deste dia está livre.</p>
+                    </div>
+
                 </div>
-
-                <!-- 08:00 às 21:00 slots gerados -->
-                <div class="gcal-time-row" data-hour="8"><div class="gcal-hour-label">08:00</div><div class="gcal-hour-slot" onclick="quickNewSlot(8)"></div></div>
-                <div class="gcal-time-row" data-hour="9"><div class="gcal-hour-label">09:00</div><div class="gcal-hour-slot" onclick="quickNewSlot(9)"></div></div>
-                <div class="gcal-time-row" data-hour="10"><div class="gcal-hour-label">10:00</div><div class="gcal-hour-slot" onclick="quickNewSlot(10)"></div></div>
-                <div class="gcal-time-row" data-hour="11"><div class="gcal-hour-label">11:00</div><div class="gcal-hour-slot" onclick="quickNewSlot(11)"></div></div>
-                <div class="gcal-time-row" data-hour="12"><div class="gcal-hour-label">12:00</div><div class="gcal-hour-slot" onclick="quickNewSlot(12)"></div></div>
-                <div class="gcal-time-row" data-hour="13"><div class="gcal-hour-label">13:00</div><div class="gcal-hour-slot" onclick="quickNewSlot(13)"></div></div>
-                <div class="gcal-time-row" data-hour="14"><div class="gcal-hour-label">14:00</div><div class="gcal-hour-slot" onclick="quickNewSlot(14)"></div></div>
-                <div class="gcal-time-row" data-hour="15"><div class="gcal-hour-label">15:00</div><div class="gcal-hour-slot" onclick="quickNewSlot(15)"></div></div>
-                <div class="gcal-time-row" data-hour="16"><div class="gcal-hour-label">16:00</div><div class="gcal-hour-slot" onclick="quickNewSlot(16)"></div></div>
-                <div class="gcal-time-row" data-hour="17"><div class="gcal-hour-label">17:00</div><div class="gcal-hour-slot" onclick="quickNewSlot(17)"></div></div>
-                <div class="gcal-time-row" data-hour="18"><div class="gcal-hour-label">18:00</div><div class="gcal-hour-slot" onclick="quickNewSlot(18)"></div></div>
-                <div class="gcal-time-row" data-hour="19"><div class="gcal-hour-label">19:00</div><div class="gcal-hour-slot" onclick="quickNewSlot(19)"></div></div>
-                <div class="gcal-time-row" data-hour="20"><div class="gcal-hour-label">20:00</div><div class="gcal-hour-slot" onclick="quickNewSlot(20)"></div></div>
-
-                <!-- Container dinâmico dos eventos -->
-                <div id="timeline-events-layer"></div>
-
-                <!-- Banner exibido caso o dia não tenha agendamentos -->
-                <div class="gcal-empty-day-banner" id="gcal-empty-banner" style="display: none;">
-                    <i class="fa-regular fa-calendar"></i>
-                    <h4 style="color: #fff; font-size: 1.05rem; margin-bottom: 4px;">Nenhum agendamento</h4>
-                    <p style="font-size: 0.82rem;">A agenda deste barbeiro está livre para este dia.</p>
-                </div>
-
             </div>
 
             <!-- Botão Flutuante (+) Estilo Google Agenda -->
@@ -2661,7 +3104,7 @@
                     <h3 style="font-size: 1.25rem; font-weight: 800; color: #fff;">
                         <i class="fa-solid fa-calendar-plus" style="color: var(--primary-gold);"></i> Novo Agendamento
                     </h3>
-                    <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 3px;">Adicione uma reserva manual na agenda</p>
+                    <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 3px;" id="new-modal-subtext">Adicione uma reserva manual na agenda</p>
                 </div>
                 <button type="button" class="modal-close" onclick="closeNewModal()">
                     <i class="fa-solid fa-xmark"></i>
@@ -2669,11 +3112,11 @@
             </div>
 
             <p style="font-size: 0.88rem; color: #cbd5e1; margin-bottom: 16px;">
-                Para cadastrar com validação de horário em tempo real e escolha de serviços, utilize o site do cliente ou selecione o horário desejado:
+                Para cadastrar com validação de horário em tempo real e escolha de serviços, utilize o formulário de agendamento:
             </p>
 
             <div class="modal-actions">
-                <a href="{% url 'index' %}" target="_blank" class="btn-modal-whats" style="background: var(--primary-gold); color: #000;">
+                <a href="{% url 'index' %}" id="new-modal-btn-abrir" target="_blank" class="btn-modal-whats" style="background: var(--primary-gold); color: #000;">
                     <i class="fa-solid fa-calendar-plus"></i> Abrir Tela de Agendamento
                 </a>
                 <button type="button" class="btn-quick" onclick="closeNewModal()">
@@ -2982,88 +3425,309 @@
         // ==========================================
         // 4. RENDERIZAÇÃO DA TIMELINE DO CALENDÁRIO
         // ==========================================
+        // ==========================================
+        // 4. RENDERIZAÇÃO DA TIMELINE DO CALENDÁRIO COM SEPARAÇÃO POR BARBEIRO
+        // ==========================================
+        function layoutBarberEvents(events, baseHour = 8) {
+            if (!events || !events.length) return [];
+
+            const parsed = events.map(e => {
+                const [hI, mI] = (e.hora_inicio || '08:00').split(':').map(Number);
+                const [hF, mF] = (e.hora_fim || '08:45').split(':').map(Number);
+                const startMin = (hI - baseHour) * 60 + mI;
+                const endMin = (hF - baseHour) * 60 + mF;
+                return { ...e, startMin, endMin };
+            }).sort((a, b) => a.startMin - b.startMin || (b.endMin - b.startMin) - (a.endMin - a.startMin));
+
+            const clusters = [];
+            let currentCluster = [];
+            let clusterEnd = -1;
+
+            parsed.forEach(ev => {
+                if (currentCluster.length === 0) {
+                    currentCluster.push(ev);
+                    clusterEnd = ev.endMin;
+                } else if (ev.startMin < clusterEnd) {
+                    currentCluster.push(ev);
+                    clusterEnd = Math.max(clusterEnd, ev.endMin);
+                } else {
+                    clusters.push(currentCluster);
+                    currentCluster = [ev];
+                    clusterEnd = ev.endMin;
+                }
+            });
+            if (currentCluster.length) clusters.push(currentCluster);
+
+            const result = [];
+            clusters.forEach(cluster => {
+                const cols = [];
+                cluster.forEach(ev => {
+                    let placed = false;
+                    for (let c = 0; c < cols.length; c++) {
+                        const last = cols[c][cols[c].length - 1];
+                        if (ev.startMin >= last.endMin) {
+                            cols[c].push(ev);
+                            ev.colIndex = c;
+                            placed = true;
+                            break;
+                        }
+                    }
+                    if (!placed) {
+                        ev.colIndex = cols.length;
+                        cols.push([ev]);
+                    }
+                });
+
+                const totalCols = cols.length;
+                cluster.forEach(ev => {
+                    ev.totalCols = totalCols;
+                    result.push(ev);
+                });
+            });
+
+            return result;
+        }
+
         function renderTimeline() {
             const dateStr = formatISODate(activeDate);
-            const layer = document.getElementById('timeline-events-layer');
+            const headersContainer = document.getElementById('barbers-header-cols');
+            const columnsTrack = document.getElementById('barbers-columns-track');
             const emptyBanner = document.getElementById('gcal-empty-banner');
-            if (!layer) return;
+            const mobileHint = document.getElementById('gcal-mobile-scroll-hint');
+            if (!headersContainer || !columnsTrack) return;
 
-            layer.innerHTML = '';
+            headersContainer.innerHTML = '';
+            columnsTrack.innerHTML = '';
 
-            // Filtrar eventos pelo dia e barbeiro
-            let events = GCAL_EVENTS.filter(e => e.data === dateStr);
-            if (selectedBarberId !== 'todos') {
-                events = events.filter(e => String(e.barbeiro_id) === String(selectedBarberId));
+            // 1. Filtrar agendamentos gerais para a data ativa
+            const allDayEvents = GCAL_EVENTS.filter(e => e.data === dateStr);
+
+            // 2. Determinar a lista de barbeiros que formarão colunas
+            let visibleBarbers = [];
+            if (selectedBarberId === 'todos') {
+                visibleBarbers = GCAL_BARBERS.filter(b => b.ativo !== false);
+                if (!visibleBarbers.length) visibleBarbers = [...GCAL_BARBERS];
+                
+                // Inclui na visualização se houver agendamentos para algum outro barbeiro neste dia
+                allDayEvents.forEach(ev => {
+                    if (ev.barbeiro_id && !visibleBarbers.some(b => String(b.id) === String(ev.barbeiro_id))) {
+                        const extraB = GCAL_BARBERS.find(b => String(b.id) === String(ev.barbeiro_id)) || {
+                            id: ev.barbeiro_id,
+                            nome: ev.barbeiro_nome,
+                            cargo: 'Barbeiro Profissional',
+                            horario_inicio: '09:00',
+                            horario_fim: '20:00',
+                            foto_url: ''
+                        };
+                        visibleBarbers.push(extraB);
+                    }
+                });
+            } else {
+                const targetB = GCAL_BARBERS.find(b => String(b.id) === String(selectedBarberId));
+                if (targetB) {
+                    visibleBarbers = [targetB];
+                } else {
+                    visibleBarbers = [{
+                        id: selectedBarberId,
+                        nome: 'Barbeiro Selecionado',
+                        cargo: 'Profissional',
+                        horario_inicio: '09:00',
+                        horario_fim: '20:00',
+                        foto_url: ''
+                    }];
+                }
             }
 
-            // Atualiza o subcabeçalho de contagem e faturamento
-            const totalFaturado = events.reduce((sum, e) => sum + (e.total || 0), 0);
+            // Exibir/ocultar dica de scroll horizontal no mobile e efeito de fade no canto
+            if (mobileHint) {
+                mobileHint.style.display = (visibleBarbers.length > 1) ? 'block' : 'none';
+            }
+            const edgeFade = document.getElementById('gcal-edge-fade');
+            const timelineBodyEl = document.getElementById('timeline-body');
+            if (edgeFade && timelineBodyEl) {
+                if (visibleBarbers.length > 1) {
+                    edgeFade.style.display = 'block';
+                    edgeFade.style.opacity = '1';
+                    timelineBodyEl.onscroll = () => {
+                        const maxScroll = timelineBodyEl.scrollWidth - timelineBodyEl.clientWidth;
+                        if (maxScroll <= 8 || timelineBodyEl.scrollLeft >= maxScroll - 16) {
+                            edgeFade.style.opacity = '0';
+                        } else {
+                            edgeFade.style.opacity = '1';
+                        }
+                    };
+                } else {
+                    edgeFade.style.display = 'none';
+                    timelineBodyEl.onscroll = null;
+                }
+            }
+
+            // 3. Atualizar Subcabeçalho Superior de Contagem e Total
+            let eventsForHeader = allDayEvents;
+            if (selectedBarberId !== 'todos') {
+                eventsForHeader = allDayEvents.filter(e => String(e.barbeiro_id) === String(selectedBarberId));
+            }
+            const totalFaturado = eventsForHeader.reduce((sum, e) => sum + (e.total || 0), 0);
             const totalFormatado = `Total: R$ ${totalFaturado.toFixed(2).replace('.', ',')}`;
-            document.getElementById('header-total-pill').textContent = totalFormatado;
+            const totalPill = document.getElementById('header-total-pill');
+            if (totalPill) totalPill.textContent = totalFormatado;
 
             let barberNameDisplay = 'Todos os Barbeiros';
-            if (selectedBarberId !== 'todos') {
-                const b = GCAL_BARBERS.find(item => String(item.id) === String(selectedBarberId));
-                if (b) barberNameDisplay = b.nome;
+            if (selectedBarberId !== 'todos' && visibleBarbers[0]) {
+                barberNameDisplay = visibleBarbers[0].nome;
             }
 
             const headerCountText = document.getElementById('header-count-text');
-            if (events.length === 0) {
-                headerCountText.innerHTML = `<strong>Nenhum agendamento</strong> para ${barberNameDisplay}`;
-                emptyBanner.style.display = 'block';
-            } else {
-                headerCountText.innerHTML = `<strong>${events.length} agendamento(s)</strong> para ${barberNameDisplay}`;
-                emptyBanner.style.display = 'none';
+            if (headerCountText) {
+                if (eventsForHeader.length === 0) {
+                    headerCountText.innerHTML = `<strong>Nenhum agendamento</strong> para ${escapeHtml(barberNameDisplay)}`;
+                } else {
+                    headerCountText.innerHTML = `<strong>${eventsForHeader.length} agendamento(s)</strong> para ${escapeHtml(barberNameDisplay)}`;
+                }
             }
 
-            // Mapeamento e cálculo de posições na grade horária
-            // A grade começa às 08:00 (hora 8). Cada hora tem 76px de altura.
+            // Banner caso o dia esteja totalmente vazio
+            if (emptyBanner) {
+                if (allDayEvents.length === 0 && selectedBarberId === 'todos') {
+                    emptyBanner.style.display = 'block';
+                    const descEl = document.getElementById('empty-banner-desc');
+                    if (descEl) descEl.textContent = 'Nenhum agendamento registrado para este dia.';
+                } else if (eventsForHeader.length === 0 && selectedBarberId !== 'todos') {
+                    emptyBanner.style.display = 'block';
+                    const descEl = document.getElementById('empty-banner-desc');
+                    if (descEl) descEl.textContent = `A agenda de ${barberNameDisplay} está livre para este dia.`;
+                } else {
+                    emptyBanner.style.display = 'none';
+                }
+            }
+
             const HOUR_HEIGHT = 76;
             const BASE_HOUR = 8;
+            const isSingle = (visibleBarbers.length === 1);
+            const singleClass = isSingle ? ' single-barber' : '';
 
-            // Se "todos" estiver selecionado e houver múltiplos barbeiros com agendamento,
-            // podemos dividir a largura ou agrupar os cards
-            events.forEach((ev) => {
-                const [hIni, mIni] = ev.hora_inicio.split(':').map(Number);
-                const minutesFromBase = (hIni - BASE_HOUR) * 60 + mIni;
+            // 4. Renderizar cada coluna individual de Barbeiro
+            visibleBarbers.forEach((barber) => {
+                const barberEvents = allDayEvents.filter(e => String(e.barbeiro_id) === String(barber.id));
+                const barberTotal = barberEvents.reduce((acc, ev) => acc + (ev.total || 0), 0);
+                const themeClass = getBarberThemeClass(barber.id);
 
-                // Não renderizar se for antes das 08:00
-                const topPx = Math.max(0, (minutesFromBase / 60) * HOUR_HEIGHT);
-                const heightPx = Math.max(48, (ev.duracao / 60) * HOUR_HEIGHT);
-
-                const card = document.createElement('div');
-                const themeClass = getBarberThemeClass(ev.barbeiro_id);
-                card.className = `gcal-event-card ${themeClass}`;
+                // --- 4.1 Cabeçalho da Coluna do Barbeiro (Sticky no topo) ---
+                const colHeader = document.createElement('div');
+                colHeader.className = `gcal-barber-col-header ${themeClass}${singleClass}`;
                 
-                // Responsividade de posicionamento
-                const isMobile = window.innerWidth <= 768;
-                const leftPos = isMobile ? '64px' : '86px';
-                const rightPos = isMobile ? '10px' : '18px';
+                let avatarContent = '';
+                if (barber.foto_url && !barber.foto_url.includes('placeholder')) {
+                    avatarContent = `<img src="${barber.foto_url}" alt="${escapeHtml(barber.nome)}">`;
+                } else {
+                    avatarContent = (barber.nome || 'B').charAt(0).toUpperCase();
+                }
 
-                card.style.top = `${topPx}px`;
-                card.style.height = `${heightPx}px`;
-                card.style.left = leftPos;
-                card.style.right = rightPos;
-
-                const servicosStr = (ev.servicos && ev.servicos.length) ? ev.servicos.join(', ') : 'Atendimento Barbearia';
-
-                card.innerHTML = `
-                    <span class="event-title">${escapeHtml(ev.cliente)}</span>
-                    <div class="event-barber-tag">
-                        <i class="fa-solid fa-scissors"></i> ${escapeHtml(ev.barbeiro_nome)} &bull; ${escapeHtml(ev.total_formatado)}
+                colHeader.innerHTML = `
+                    <div class="gcal-col-header-left">
+                        <div class="gcal-col-header-avatar">
+                            ${avatarContent}
+                        </div>
+                        <div style="min-width: 0;">
+                            <div class="gcal-col-header-name" title="${escapeHtml(barber.nome)}">
+                                ${escapeHtml(barber.nome)}
+                            </div>
+                            <div class="gcal-col-header-role">
+                                <i class="fa-solid fa-clock" style="font-size: 0.65rem;"></i>
+                                ${barber.horario_inicio || '09:00'} às ${barber.horario_fim || '20:00'}
+                            </div>
+                        </div>
                     </div>
-                    <div class="event-time-row">
-                        <span>${ev.hora_inicio} - ${ev.hora_fim}</span>
-                        <span class="event-duration-badge">${ev.duracao} min</span>
+                    <div class="gcal-col-header-badge">
+                        <span class="gcal-col-count-pill">
+                            ${barberEvents.length} ${barberEvents.length === 1 ? 'cliente' : 'clientes'}
+                        </span>
+                        <span class="gcal-col-total-pill">
+                            R$ ${barberTotal.toFixed(2).replace('.', ',')}
+                        </span>
                     </div>
-                    ${heightPx > 80 ? `<div class="event-services-summary"><i class="fa-solid fa-check"></i> ${escapeHtml(servicosStr)}</div>` : ''}
                 `;
+                headersContainer.appendChild(colHeader);
 
-                card.onclick = () => openEventDetails(ev);
-                layer.appendChild(card);
+                // --- 4.2 Coluna Vertical de Horários e Eventos do Barbeiro ---
+                const barberCol = document.createElement('div');
+                barberCol.className = `gcal-barber-column ${themeClass}${singleClass}`;
+                barberCol.setAttribute('data-barber-id', barber.id);
+
+                // Slots de hora vazios (08:00 a 20:00)
+                const slotsWrapper = document.createElement('div');
+                slotsWrapper.className = 'gcal-col-slots';
+                for (let h = 8; h <= 20; h++) {
+                    const slotDiv = document.createElement('div');
+                    slotDiv.className = 'gcal-col-slot';
+                    slotDiv.setAttribute('data-hour', h);
+                    slotDiv.title = `Clique para agendar às ${String(h).padStart(2, '0')}:00 com ${barber.nome}`;
+                    slotDiv.onclick = () => quickNewSlot(h, barber.id);
+                    slotsWrapper.appendChild(slotDiv);
+                }
+                barberCol.appendChild(slotsWrapper);
+
+                // Camada de Eventos exclusiva desta coluna
+                const eventsLayer = document.createElement('div');
+                eventsLayer.className = 'gcal-col-events-layer';
+
+                // Cálculo de posicionamento e sobreposição intra-coluna
+                const positionedEvents = layoutBarberEvents(barberEvents, BASE_HOUR);
+
+                positionedEvents.forEach(ev => {
+                    const topPx = Math.max(0, (ev.startMin / 60) * HOUR_HEIGHT);
+                    const heightPx = Math.max(46, (ev.duracao / 60) * HOUR_HEIGHT);
+
+                    const card = document.createElement('div');
+                    card.className = `gcal-event-card ${themeClass}`;
+                    
+                    // Cálculo da largura caso haja mais de 1 atendimento sobreposto para o mesmo barbeiro
+                    const totalCols = ev.totalCols || 1;
+                    const colIndex = ev.colIndex || 0;
+                    
+                    if (totalCols > 1) {
+                        const widthPercent = (100 / totalCols) - 1.5;
+                        const leftPercent = colIndex * (100 / totalCols) + 0.75;
+                        card.style.left = `${leftPercent}%`;
+                        card.style.width = `${widthPercent}%`;
+                    } else {
+                        card.style.left = '6px';
+                        card.style.right = '6px';
+                        card.style.width = 'calc(100% - 12px)';
+                    }
+
+                    card.style.top = `${topPx}px`;
+                    card.style.height = `${heightPx}px`;
+
+                    const servicosStr = (ev.servicos && ev.servicos.length) ? ev.servicos.join(', ') : 'Atendimento Barbearia';
+
+                    card.innerHTML = `
+                        <div class="event-title" title="${escapeHtml(ev.cliente)}">
+                            ${escapeHtml(ev.cliente)}
+                        </div>
+                        <div class="event-barber-tag">
+                            <span><i class="fa-solid fa-scissors"></i> ${escapeHtml(servicosStr)}</span>
+                        </div>
+                        <div class="event-time-row">
+                            <span>${ev.hora_inicio} - ${ev.hora_fim}</span>
+                            <span class="event-duration-badge">${ev.duracao} min</span>
+                            <span style="margin-left: auto; font-weight: 700; color: #fef08a;">${escapeHtml(ev.total_formatado)}</span>
+                        </div>
+                        ${heightPx > 80 ? `<div class="event-services-summary"><i class="fa-solid fa-circle-check"></i> ${escapeHtml(ev.barbeiro_nome)}</div>` : ''}
+                    `;
+
+                    card.onclick = (e) => {
+                        e.stopPropagation();
+                        openEventDetails(ev);
+                    };
+                    eventsLayer.appendChild(card);
+                });
+
+                barberCol.appendChild(eventsLayer);
+                columnsTrack.appendChild(barberCol);
             });
 
-            // Linha do horário atual (somente exibida se activeDate for hoje)
+            // 5. Linha indicadora do horário atual em tempo real
             updateCurrentTimeLine();
         }
 
@@ -3150,16 +3814,43 @@
             document.getElementById('event-modal').classList.remove('active');
         }
 
-        function openNewModal(hora = 10) {
-            document.getElementById('new-modal').classList.add('active');
+        function openNewModal(hora = 10, barberId = null) {
+            const nwModal = document.getElementById('new-modal');
+            if (nwModal) {
+                const subTxt = document.getElementById('new-modal-subtext');
+                const btnAbrir = document.getElementById('new-modal-btn-abrir');
+                let targetBarber = null;
+                if (barberId) {
+                    targetBarber = GCAL_BARBERS.find(b => String(b.id) === String(barberId));
+                }
+                const horaStr = String(hora).padStart(2, '0') + ':00';
+                
+                if (subTxt) {
+                    if (targetBarber) {
+                        subTxt.innerHTML = `Horário selecionado: <strong style="color:var(--primary-gold);">${horaStr}</strong> com o barbeiro <strong style="color:#fff;">${escapeHtml(targetBarber.nome)}</strong>.`;
+                    } else {
+                        subTxt.innerHTML = `Horário selecionado: <strong style="color:var(--primary-gold);">${horaStr}</strong>.`;
+                    }
+                }
+                if (btnAbrir) {
+                    let url = "{% url 'index' %}";
+                    if (targetBarber) {
+                        url += `?barbeiro=${targetBarber.id}&hora=${horaStr}`;
+                    } else {
+                        url += `?hora=${horaStr}`;
+                    }
+                    btnAbrir.href = url;
+                }
+                nwModal.classList.add('active');
+            }
         }
 
         function closeNewModal() {
             document.getElementById('new-modal').classList.remove('active');
         }
 
-        function quickNewSlot(hora) {
-            openNewModal(hora);
+        function quickNewSlot(hora, barberId = null) {
+            openNewModal(hora, barberId);
         }
 
         // ==========================================

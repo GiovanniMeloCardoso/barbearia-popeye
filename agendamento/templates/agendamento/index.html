@@ -322,6 +322,62 @@
             color: #4ade80;
         }
 
+        .alert-success-destaque {
+            background: linear-gradient(135deg, rgba(22, 101, 52, 0.45) 0%, rgba(20, 83, 45, 0.25) 100%);
+            border: 1.5px solid #22c55e;
+            color: #f0fdf4;
+            padding: 16px 20px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 25px -4px rgba(34, 197, 94, 0.35), 0 0 15px rgba(34, 197, 94, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            animation: slideDownSuccess 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .alert-icon-circle {
+            background: rgba(34, 197, 94, 0.25);
+            border: 2px solid #22c55e;
+            border-radius: 50%;
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: #22c55e;
+            font-size: 1.35rem;
+            box-shadow: 0 0 12px rgba(34, 197, 94, 0.4);
+        }
+
+        .alert-close-btn {
+            background: none;
+            border: none;
+            color: #86efac;
+            font-size: 1.6rem;
+            cursor: pointer;
+            padding: 0 6px;
+            line-height: 1;
+            transition: color 0.15s ease;
+        }
+
+        .alert-close-btn:hover {
+            color: #ffffff;
+        }
+
+        @keyframes slideDownSuccess {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         .alert-danger {
             background: rgba(239, 68, 68, 0.15);
             border-color: rgba(239, 68, 68, 0.4);
@@ -1396,9 +1452,21 @@
             }
         }
 
+        @keyframes input-error-shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+
         .highlight-attention {
             animation: pulse-attention 1.4s ease-in-out 2 !important;
             border-color: var(--primary-gold) !important;
+        }
+
+        .input-control.highlight-attention {
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.28), 0 0 16px rgba(239, 68, 68, 0.35) !important;
+            animation: input-error-shake 0.4s ease-in-out, pulse-attention 1.4s ease-in-out 2 !important;
         }
 
         /* ========================================================
@@ -1678,6 +1746,24 @@
 
         /* Celulares em Geral (<= 640px) - Inclui Galaxy A55 (384px-412px), iPhones, etc */
         @media (max-width: 640px) {
+            .system-alerts {
+                margin: 12px auto 0;
+                padding: 0 12px;
+            }
+
+            .alert-success-destaque {
+                padding: 12px 14px;
+                gap: 10px;
+                border-radius: 12px;
+                margin-bottom: 14px;
+            }
+
+            .alert-icon-circle {
+                width: 36px;
+                height: 36px;
+                font-size: 1.15rem;
+            }
+
             .nav-container {
                 padding: 10px 12px;
                 width: 100%;
@@ -2163,10 +2249,10 @@
 
     <!-- Fluxo de Agendamento -->
     <main class="main-wrapper">
-        <form id="form-agendamento" method="POST" action="{% url 'index' %}" style="display: contents;">
+        <form id="form-agendamento" method="POST" action="{% url 'index' %}" novalidate style="display: contents;">
             {% csrf_token %}
             <input type="hidden" id="token" name="token">
-            <input type="hidden" id="hora" name="hora" required>
+            <input type="hidden" id="hora" name="hora">
             <input type="hidden" id="barbeiro" name="barbeiro" value="qualquer">
 
             <div class="content-flow">
@@ -2357,7 +2443,7 @@
                                     Nome Completo
                                 </label>
                                 <input type="text" id="nome" name="nome" class="input-control"
-                                    placeholder="Ex: João da Silva" required>
+                                    placeholder="Ex: João da Silva" autocomplete="name">
                             </div>
                             <div class="input-group">
                                 <label class="input-label" for="telefone">
@@ -2365,7 +2451,7 @@
                                     WhatsApp (com DDD)
                                 </label>
                                 <input type="tel" id="telefone" name="telefone" class="input-control"
-                                    placeholder="(34) 90000-0000" maxlength="15" required>
+                                    placeholder="(34) 90000-0000" maxlength="15" autocomplete="tel">
                             </div>
                         </div>
                         <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: -6px;">
@@ -2574,8 +2660,80 @@
         let barbeiroSelecionadoFoto = '';
         let barbeiroSelecionadoTelefone = '34991395770';
 
-        // Inicialização de Datas e Máscaras
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m]);
+        }
+
+        // Inicialização de Datas, Máscaras e Verificação Pós-Agendamento
         document.addEventListener('DOMContentLoaded', () => {
+            // =========================================================================
+            // VERIFICAÇÃO PÓS-AGENDAMENTO (Retorno para a tela inicial)
+            // Rola a tela para o topo e exibe a mensagem verde de confirmação
+            // =========================================================================
+            const urlParams = new URLSearchParams(window.location.search);
+            const veioDeAgendamento = urlParams.get('agendado') === 'sucesso' || sessionStorage.getItem('popeye_agendamento_sucesso') === '1';
+
+            if (veioDeAgendamento) {
+                if ('scrollRestoration' in history) {
+                    history.scrollRestoration = 'manual';
+                }
+                window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+                setTimeout(() => {
+                    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+                }, 60);
+
+                let dados = null;
+                try {
+                    dados = JSON.parse(sessionStorage.getItem('popeye_agendamento_sucesso_dados'));
+                } catch (e) {}
+
+                const containerAlertas = document.getElementById('mensagens-sistema');
+                if (containerAlertas && !document.querySelector('.alert-success-destaque')) {
+                    const alertaDiv = document.createElement('div');
+                    alertaDiv.className = 'alert-box alert-success-destaque';
+
+                    let infoTexto = 'Seu horário foi reservado com sucesso no sistema. Te esperamos na Barbearia Popeye!';
+                    if (dados && dados.nome && dados.hora) {
+                        infoTexto = `Olá <strong>${escapeHtml(dados.nome)}</strong>! Seu agendamento com <strong>${escapeHtml(dados.barbeiro || 'o profissional')}</strong> no dia <strong>${escapeHtml(dados.data || '')}</strong> às <strong>${escapeHtml(dados.hora)}</strong> foi confirmado. Te esperamos!`;
+                    }
+
+                    alertaDiv.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 14px; flex: 1;">
+                            <div class="alert-icon-circle">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 1.05rem; font-weight: 800; color: #4ade80;">Agendamento Realizado com Sucesso!</div>
+                                <div style="font-size: 0.88rem; color: #dcfce7; margin-top: 3px; font-weight: 500;">${infoTexto}</div>
+                            </div>
+                        </div>
+                        <button type="button" class="alert-close-btn" onclick="this.parentElement.remove();" title="Fechar">&times;</button>
+                    `;
+                    containerAlertas.prepend(alertaDiv);
+                }
+
+                setTimeout(() => {
+                    if (typeof mostrarNotificacao === 'function') {
+                        mostrarNotificacao({
+                            titulo: 'Agendamento Confirmado!',
+                            mensagem: 'Seu horário foi reservado com sucesso no sistema. Te esperamos!',
+                            tipo: 'success',
+                            icone: '<i class="fa-solid fa-circle-check"></i>',
+                            duracao: 7000
+                        });
+                    }
+                }, 300);
+
+                sessionStorage.removeItem('popeye_agendamento_sucesso');
+                sessionStorage.removeItem('popeye_agendamento_sucesso_dados');
+                if (window.location.search.includes('agendado=')) {
+                    history.replaceState({}, '', window.location.pathname);
+                }
+            } else if (document.querySelector('.alert-success')) {
+                window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+            }
+
             const dataInput = document.getElementById('data');
             const hoje = new Date();
 
@@ -3059,10 +3217,10 @@
             // 4. Validação do Nome do Cliente
             if (!nome) {
                 mostrarNotificacao({
-                    titulo: 'Nome Completo Obrigatório',
-                    mensagem: 'Por favor, informe o seu nome para que possamos identificar o seu agendamento.',
+                    titulo: 'Preencha seu Nome',
+                    mensagem: 'Por favor, informe o seu nome completo para que possamos identificar o seu agendamento.',
                     tipo: 'warning',
-                    icone: '<i class="fa-regular fa-user"></i>'
+                    icone: '<i class="fa-solid fa-user-pen"></i>'
                 });
                 const nomeInput = document.getElementById('nome');
                 if (nomeInput) {
@@ -3073,11 +3231,28 @@
                 return;
             }
 
-            // 5. Validação do WhatsApp
-            if (tel.replace(/\D/g, '').length < 10) {
+            // 5. Validação do WhatsApp / Telefone
+            const telDigitos = tel.replace(/\D/g, '');
+            if (!tel || telDigitos.length === 0) {
                 mostrarNotificacao({
-                    titulo: 'WhatsApp Inválido',
-                    mensagem: 'Por favor, informe um número de WhatsApp válido com DDD para envio da confirmação.',
+                    titulo: 'Preencha seu WhatsApp',
+                    mensagem: 'Por favor, informe o seu número de WhatsApp com DDD para confirmarmos o seu horário.',
+                    tipo: 'warning',
+                    icone: '<i class="fa-brands fa-whatsapp"></i>'
+                });
+                const telInput = document.getElementById('telefone');
+                if (telInput) {
+                    telInput.focus();
+                    telInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    chamarAtencaoElemento(telInput);
+                }
+                return;
+            }
+
+            if (telDigitos.length < 10) {
+                mostrarNotificacao({
+                    titulo: 'WhatsApp Incompleto',
+                    mensagem: 'Por favor, informe o DDD e o número completo (ex: (34) 99999-9999) para contato.',
                     tipo: 'warning',
                     icone: '<i class="fa-brands fa-whatsapp"></i>'
                 });
@@ -3243,6 +3418,16 @@
                         const msgWhatsFinal = `Olá! Meu nome é ${nome}.\nAcabei de agendar: *${nomesServicos}*\nDia *${dataFmt}* às *${hora}* (${duracaoTexto}).\nBarbeiro: *${barbeiroFinal}*\n\n❌ *Se eu precisar desmarcar, clicarei neste link:*\n${linkCancelamentoFinal}`;
                         const urlWhatsFinal = `https://wa.me/${telFinal}?text=${encodeURIComponent(msgWhatsFinal)}`;
 
+                        // Guarda estado para a tela inicial
+                        sessionStorage.setItem('popeye_agendamento_sucesso', '1');
+                        sessionStorage.setItem('popeye_agendamento_sucesso_dados', JSON.stringify({
+                            nome: nome,
+                            barbeiro: barbeiroFinal,
+                            data: dataFmt,
+                            hora: hora,
+                            servicos: nomesServicos
+                        }));
+
                         if (USAR_VERSAO_BANNER_TOPO) {
                             // ========================================================
                             // VERSÃO 2: Fecha o modal na 1ª confirmação e mostra o
@@ -3335,9 +3520,13 @@
             document.body.style.overflow = 'hidden';
         }
 
+        function redirecionarInicioComSucesso() {
+            window.location.href = window.location.pathname + '?agendado=sucesso';
+        }
+
         function fecharModal() {
             if (agendamentoFoiConfirmado) {
-                window.location.reload();
+                redirecionarInicioComSucesso();
                 return;
             }
             const modal = document.getElementById('modal-agendamento');
@@ -3346,7 +3535,7 @@
         }
 
         function concluirAgendamento() {
-            window.location.reload();
+            redirecionarInicioComSucesso();
         }
 
         // Fechar ao clicar fora da caixa do modal
