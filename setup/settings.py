@@ -63,11 +63,13 @@ else:
         'testserver',
         '.vercel.app',
         'agendamentobarbearia.pythonanywhere.com',
+        '.onrender.com',
     ]
 
 CSRF_TRUSTED_ORIGINS = [
     'https://*.vercel.app',
     'https://agendamentobarbearia.pythonanywhere.com',
+    'https://*.onrender.com',
 ]
 
 # Application definition
@@ -215,4 +217,4 @@ CSRF_COOKIE_SAMESITE = 'Lax'
 if not DEBUG:
     CSRF_COOKIE_SECURE = True
     SESSION_COOKIE_SECURE = True
-    SECURE_SSL_REDIRECT = os.environ.get('SECURE_SSL_REDIRECT', 'True').lower() in ('true', '1', 't')
+    SECURE_SSL_REDIRECT = os.environ.get('SECURE_SSL_REDIRECT', 'True').lower() in ('true', '1', 't')
