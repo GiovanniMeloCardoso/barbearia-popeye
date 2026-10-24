@@ -1301,7 +1301,7 @@
             position: relative;
             min-width: 100%;
             width: max-content;
-            min-height: 988px; /* 13 slots x 76px */
+            min-height: 1066px; /* 13 slots x 82px */
         }
 
         .gcal-hours-axis {
@@ -1316,7 +1316,7 @@
         }
 
         .gcal-hour-axis-cell {
-            height: 76px;
+            height: 82px;
             box-sizing: border-box;
             border-bottom: 1px solid rgba(255, 255, 255, 0.04);
             padding: 4px 10px 0 16px;
@@ -1354,7 +1354,7 @@
         }
 
         .gcal-barber-column .gcal-col-slot {
-            height: 76px;
+            height: 82px;
             box-sizing: border-box;
             border-bottom: 1px solid rgba(255, 255, 255, 0.04);
             cursor: pointer;
@@ -1416,7 +1416,7 @@
         .gcal-event-card {
             position: absolute;
             border-radius: 9px;
-            padding: 8px 11px;
+            padding: 6px 10px;
             color: #ffffff;
             cursor: pointer;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
@@ -1430,10 +1430,11 @@
             pointer-events: auto;
             backdrop-filter: blur(6px);
             box-sizing: border-box;
+            gap: 2px;
         }
 
         .gcal-event-card:hover {
-            transform: scale(1.018);
+            transform: scale(1.015);
             filter: brightness(1.15);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7);
             z-index: 24;
@@ -1476,59 +1477,101 @@
             background: linear-gradient(135deg, rgba(2, 132, 199, 0.95) 0%, rgba(3, 90, 138, 0.95) 100%) !important;
         }
 
+        /* Linha Superior: Nome do Cliente + Preço */
+        .event-card-top-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+            width: 100%;
+            flex-shrink: 0;
+            min-height: 19px;
+        }
+
         .event-title {
-            font-size: 0.92rem;
+            font-size: 0.88rem;
             font-weight: 800;
-            letter-spacing: 0.4px;
+            letter-spacing: 0.3px;
             text-transform: uppercase;
-            line-height: 1.2;
+            line-height: 1.25;
             text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            margin-bottom: 2px;
+            flex: 1;
+            min-width: 0;
+            flex-shrink: 0 !important;
+            margin: 0;
         }
 
-        .event-barber-tag {
+        .event-price-pill {
+            font-size: 0.78rem;
+            font-weight: 800;
+            color: #fef08a;
+            background: rgba(0, 0, 0, 0.35);
+            padding: 1px 7px;
+            border-radius: 6px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            letter-spacing: 0.2px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Linha de Informações Complementares (Serviços + Horário) */
+        .event-card-info-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+            width: 100%;
             font-size: 0.72rem;
             font-weight: 600;
-            opacity: 0.92;
+            opacity: 0.95;
+            white-space: nowrap;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .event-service-tag {
             display: inline-flex;
             align-items: center;
             gap: 4px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            min-width: 0;
+            flex: 1;
         }
 
-        .event-time-row {
-            font-size: 0.77rem;
-            font-weight: 600;
-            opacity: 0.98;
-            margin-top: 3px;
-            display: flex;
+        .event-time-tag {
+            display: inline-flex;
             align-items: center;
-            gap: 5px;
-            flex-wrap: wrap;
+            gap: 4px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            background: rgba(0, 0, 0, 0.28);
+            padding: 1px 6px;
+            border-radius: 5px;
+            font-size: 0.68rem;
         }
 
         .event-duration-badge {
             background: rgba(0, 0, 0, 0.38);
-            padding: 1px 6px;
+            padding: 1px 5px;
             border-radius: 4px;
-            font-size: 0.68rem;
+            font-size: 0.66rem;
             font-weight: 700;
-            letter-spacing: 0.3px;
+            letter-spacing: 0.2px;
         }
 
         .event-services-summary {
-            font-size: 0.72rem;
-            margin-top: 4px;
+            font-size: 0.70rem;
             opacity: 0.92;
             font-weight: 500;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            flex-shrink: 0;
         }
 
         /* Botão Flutuante (+) Estilo Google Agenda */
@@ -2416,30 +2459,47 @@
             /* Event Cards no Celular */
             .gcal-event-card {
                 border-radius: 7px;
-                padding: 6px 8px;
+                padding: 5px 8px;
+                gap: 1px;
+            }
+
+            .event-card-top-row {
+                min-height: 17px;
+                gap: 4px;
             }
 
             .event-title {
                 font-size: 0.82rem;
                 letter-spacing: 0.2px;
+                line-height: 1.25;
             }
 
-            .event-barber-tag {
-                font-size: 0.68rem;
-            }
-
-            .event-time-row {
+            .event-price-pill {
                 font-size: 0.70rem;
+                padding: 1px 5px;
+            }
+
+            .event-card-info-row {
+                font-size: 0.66rem;
                 gap: 4px;
             }
 
-            .event-duration-badge {
+            .event-service-tag {
+                font-size: 0.66rem;
+            }
+
+            .event-time-tag {
                 font-size: 0.62rem;
                 padding: 1px 4px;
             }
 
+            .event-duration-badge {
+                font-size: 0.60rem;
+                padding: 0 3px;
+            }
+
             .event-services-summary {
-                font-size: 0.66rem;
+                font-size: 0.64rem;
             }
 
             .gcal-fab {
@@ -2631,8 +2691,9 @@
                     <div class="barber-card-top">
                         <div class="barber-card-profile">
                             <div class="barber-letter-avatar">
-                                {% if b.foto %}
-                                    <img src="{{ b.foto_url }}" alt="{{ b.nome }}">
+                                {% if b.foto_url %}
+                                    <img src="{{ b.foto_url }}" alt="{{ b.nome }}" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';">
+                                    <span class="avatar-letter-fallback" style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; font-weight: 700; color: #111; background: #d4af37;">{{ b.nome|first|upper }}</span>
                                 {% else %}
                                     {{ b.nome|first|upper }}
                                 {% endif %}
@@ -2751,8 +2812,9 @@
                 {% for b in barbeiros %}
                 <button type="button" class="gcal-barber-chip" data-barber-id="{{ b.id }}" onclick="selecionarBarbeiroAgenda('{{ b.id }}')">
                     <div class="chip-avatar">
-                        {% if b.foto %}
-                            <img src="{{ b.foto_url }}" alt="{{ b.nome }}">
+                        {% if b.foto_url %}
+                            <img src="{{ b.foto_url }}" alt="{{ b.nome }}" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';">
+                            <span class="avatar-letter-fallback" style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; font-weight: 700; color: #111; background: #d4af37;">{{ b.nome|first|upper }}</span>
                         {% else %}
                             {{ b.nome|first|upper }}
                         {% endif %}
@@ -2876,8 +2938,9 @@
                 </a>
                 {% for b in barbeiros %}
                 <a href="?barbeiro={{ b.id }}" class="btn-filter-tab {% if barbeiro_ativo_filtro and barbeiro_ativo_filtro.id == b.id %}active{% endif %}">
-                    {% if b.foto %}
-                        <img src="{{ b.foto_url }}" class="tab-avatar" alt="{{ b.nome }}">
+                    {% if b.foto_url %}
+                        <img src="{{ b.foto_url }}" class="tab-avatar" alt="{{ b.nome }}" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';">
+                        <div class="tab-avatar-fallback" style="display: none;">{{ b.nome|first|upper }}</div>
                     {% else %}
                         <div class="tab-avatar-fallback">{{ b.nome|first|upper }}</div>
                     {% endif %}
@@ -3663,7 +3726,7 @@
                 }
             }
 
-            const HOUR_HEIGHT = 76;
+            const HOUR_HEIGHT = 82;
             const BASE_HOUR = 8;
             const isSingle = (visibleBarbers.length === 1);
             const singleClass = isSingle ? ' single-barber' : '';
@@ -3679,10 +3742,14 @@
                 colHeader.className = `gcal-barber-col-header ${themeClass}${singleClass}`;
                 
                 let avatarContent = '';
+                const fallbackInitial = (barber.nome || 'B').charAt(0).toUpperCase();
                 if (barber.foto_url && !barber.foto_url.includes('placeholder')) {
-                    avatarContent = `<img src="${barber.foto_url}" alt="${escapeHtml(barber.nome)}">`;
+                    avatarContent = `
+                        <img src="${barber.foto_url}" alt="${escapeHtml(barber.nome)}" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';">
+                        <span class="avatar-letter-fallback" style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; font-weight: 700; color: #111; background: #d4af37;">${fallbackInitial}</span>
+                    `;
                 } else {
-                    avatarContent = (barber.nome || 'B').charAt(0).toUpperCase();
+                    avatarContent = fallbackInitial;
                 }
 
                 colHeader.innerHTML = `
@@ -3738,7 +3805,7 @@
 
                 positionedEvents.forEach(ev => {
                     const topPx = Math.max(0, (ev.startMin / 60) * HOUR_HEIGHT);
-                    const heightPx = Math.max(46, (ev.duracao / 60) * HOUR_HEIGHT);
+                    const heightPx = Math.max(48, (ev.duracao / 60) * HOUR_HEIGHT);
 
                     const card = document.createElement('div');
                     card.className = `gcal-event-card ${themeClass}`;
@@ -3763,20 +3830,41 @@
 
                     const servicosStr = (ev.servicos && ev.servicos.length) ? ev.servicos.join(', ') : 'Atendimento Barbearia';
 
-                    card.innerHTML = `
-                        <div class="event-title" title="${escapeHtml(ev.cliente)}">
-                            ${escapeHtml(ev.cliente)}
-                        </div>
-                        <div class="event-barber-tag">
-                            <span><i class="fa-solid fa-scissors"></i> ${escapeHtml(servicosStr)}</span>
-                        </div>
-                        <div class="event-time-row">
-                            <span>${ev.hora_inicio} - ${ev.hora_fim}</span>
-                            <span class="event-duration-badge">${ev.duracao} min</span>
-                            <span style="margin-left: auto; font-weight: 700; color: #fef08a;">${escapeHtml(ev.total_formatado)}</span>
-                        </div>
-                        ${heightPx > 80 ? `<div class="event-services-summary"><i class="fa-solid fa-circle-check"></i> ${escapeHtml(ev.barbeiro_nome)}</div>` : ''}
-                    `;
+                    if (heightPx < 70) {
+                        card.innerHTML = `
+                            <div class="event-card-top-row">
+                                <span class="event-title" title="${escapeHtml(ev.cliente)}">${escapeHtml(ev.cliente)}</span>
+                                <span class="event-price-pill">${escapeHtml(ev.total_formatado)}</span>
+                            </div>
+                            <div class="event-card-info-row">
+                                <span class="event-service-tag" title="${escapeHtml(servicosStr)}">
+                                    <i class="fa-solid fa-scissors"></i> ${escapeHtml(servicosStr)}
+                                </span>
+                                <span class="event-time-tag">
+                                    ${ev.hora_inicio} - ${ev.hora_fim} <span class="event-duration-badge">${ev.duracao}m</span>
+                                </span>
+                            </div>
+                        `;
+                    } else {
+                        card.innerHTML = `
+                            <div class="event-card-top-row">
+                                <span class="event-title" title="${escapeHtml(ev.cliente)}">${escapeHtml(ev.cliente)}</span>
+                                <span class="event-price-pill">${escapeHtml(ev.total_formatado)}</span>
+                            </div>
+                            <div class="event-card-info-row" style="margin-top: 2px;">
+                                <span class="event-service-tag" title="${escapeHtml(servicosStr)}">
+                                    <i class="fa-solid fa-scissors"></i> ${escapeHtml(servicosStr)}
+                                </span>
+                            </div>
+                            <div class="event-card-info-row" style="margin-top: 3px;">
+                                <span class="event-time-tag">
+                                    <i class="fa-regular fa-clock" style="font-size: 0.65rem;"></i> ${ev.hora_inicio} - ${ev.hora_fim}
+                                </span>
+                                <span class="event-duration-badge">${ev.duracao} min</span>
+                                ${heightPx > 95 ? `<span style="font-size: 0.68rem; opacity: 0.85; margin-left: auto;"><i class="fa-solid fa-circle-check"></i> ${escapeHtml(ev.barbeiro_nome)}</span>` : ''}
+                            </div>
+                        `;
+                    }
 
                     card.onclick = (e) => {
                         e.stopPropagation();
@@ -3807,7 +3895,7 @@
             const currentHour = now.getHours();
             const currentMin = now.getMinutes();
             const BASE_HOUR = 8;
-            const HOUR_HEIGHT = 76;
+            const HOUR_HEIGHT = 82;
 
             if (currentHour < BASE_HOUR || currentHour > 21) {
                 timeLine.style.display = 'none';

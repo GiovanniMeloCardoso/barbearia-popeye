@@ -1,10 +1,53 @@
+import os
 from django.db import models
 from datetime import datetime, timedelta, date, time
+
+def converter_imagem_para_base64(imagem_arquivo):
+    """
+    Converte um arquivo de imagem para Data URI Base64 otimizada (JPEG 360x360).
+    Garante persistência permanente de fotos em ambientes com filesystem efêmero (como Render free tier).
+    """
+    try:
+        from PIL import Image, ImageOps
+        import io, base64
+
+        if hasattr(imagem_arquivo, 'path') and not os.path.exists(imagem_arquivo.path):
+            return None
+
+        if hasattr(imagem_arquivo, 'seek'):
+            imagem_arquivo.seek(0)
+            img = Image.open(imagem_arquivo)
+        elif hasattr(imagem_arquivo, 'file'):
+            imagem_arquivo.file.seek(0)
+            img = Image.open(imagem_arquivo.file)
+        elif hasattr(imagem_arquivo, 'path'):
+            img = Image.open(imagem_arquivo.path)
+        else:
+            img = Image.open(imagem_arquivo)
+
+        img = ImageOps.exif_transpose(img)
+        if img.mode in ('RGBA', 'P'):
+            img = img.convert('RGB')
+        elif img.mode != 'RGB':
+            img = img.convert('RGB')
+
+        img.thumbnail((360, 360), Image.Resampling.LANCZOS)
+        buf = io.BytesIO()
+        img.save(buf, format='JPEG', quality=85, optimize=True)
+        b64 = base64.b64encode(buf.getvalue()).decode('utf-8')
+
+        if hasattr(imagem_arquivo, 'seek'):
+            imagem_arquivo.seek(0)
+
+        return f"data:image/jpeg;base64,{b64}"
+    except Exception:
+        return None
 
 class Barbeiro(models.Model):
     nome = models.CharField(max_length=120)
     cargo = models.CharField(max_length=100, default='Barbeiro Profissional')
     foto = models.ImageField(upload_to='barbeiros/', null=True, blank=True)
+    foto_base64 = models.TextField(null=True, blank=True, verbose_name="Foto em Base64 (Persistente no Banco)")
     telefone = models.CharField(max_length=20, null=True, blank=True)
     horario_inicio = models.TimeField(default=time(9, 0), verbose_name="Horário de Início")
     horario_fim = models.TimeField(default=time(20, 0), verbose_name="Horário de Término")
@@ -22,13 +65,27 @@ class Barbeiro(models.Model):
     def __str__(self):
         return f"{self.nome} ({self.cargo})"
 
+    def save(self, *args, **kwargs):
+        if self.foto:
+            # Se for novo upload ou ainda não tem base64 gerado
+            if not self.foto_base64 or hasattr(self.foto, 'file'):
+                b64 = converter_imagem_para_base64(self.foto)
+                if b64:
+                    self.foto_base64 = b64
+        else:
+            self.foto_base64 = None
+        super().save(*args, **kwargs)
+
     @property
     def foto_url(self):
+        if self.foto_base64:
+            return self.foto_base64
         if self.foto:
             try:
-                return self.foto.url
-            except (ValueError, Exception):
-                return '/static/img/henrique.jpg'
+                if hasattr(self.foto, 'path') and os.path.exists(self.foto.path):
+                    return self.foto.url
+            except Exception:
+                pass
         return '/static/img/henrique.jpg'
 
     def trabalha_no_dia(self, data_obj):

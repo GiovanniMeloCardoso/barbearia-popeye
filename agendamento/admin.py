@@ -10,8 +10,9 @@ class BarbeiroAdmin(admin.ModelAdmin):
     ordering = ('id',)
 
     def foto_preview(self, obj):
-        if obj.foto:
-            return format_html('<img src="{}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;" />', obj.foto.url)
+        url = obj.foto_url
+        if url:
+            return format_html('<img src="{}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;" onerror="this.style.display=\'none\';" />', url)
         return format_html('<div style="width: 40px; height: 40px; border-radius: 50%; background: #d4af37; color: #000; display: flex; align-items: center; justify-content: center; font-weight: bold;">{}</div>', obj.nome[0] if obj.nome else '?')
     foto_preview.short_description = 'Foto'
 

@@ -2374,8 +2374,8 @@
                                 <div class="barber-select-card"
                                     onclick="selecionarBarbeiro(this, '{{ b.id }}', '{{ b.nome|escapejs }}', '{{ b.foto_url|default:'' }}', '{{ b.telefone|default:'34991395770'|escapejs }}')">
                                     <div class="barber-select-photo">
-                                        {% if b.foto %}
-                                        <img src="{{ b.foto_url }}" alt="{{ b.nome }}">
+                                        {% if b.foto_url %}
+                                        <img src="{{ b.foto_url }}" alt="{{ b.nome }}" onerror="this.src='/static/img/henrique.jpg';">
                                         {% else %}
                                         <img src="/static/img/henrique.jpg" alt="{{ b.nome }}">
                                         {% endif %}
