@@ -1,0 +1,564 @@
+================================================================================
+RELATÓRIO DE ALTERAÇÕES - BARBEARIA POPEYE (CORREÇÃO DE AGENDAMENTO NO CELULAR)
+================================================================================
+
+Data: 17/10/2026
+Objetivo da alteração:
+Resolver o problema no celular em que o agendamento não era salvo no banco de dados
+porque o aplicativo do WhatsApp abria imediatamente e minimizava o navegador, 
+interrompendo a requisição.
+Agora o fluxo foi dividido em 2 etapas:
+1) O cliente clica em "Confirmar Agendamento", salvando na hora no banco via AJAX.
+2) Em seguida, abre a tela de sucesso com a instrução:
+   "Envie uma mensagem ao barbeiro para informá-lo sobre o agendamento",
+   com o botão para abrir o WhatsApp sem risco de perder o agendamento.
+
+================================================================================
+ARQUIVO 1: agendamento/views.py
+================================================================================
+
+Motivo da alteração:
+Garantir que a requisição assíncrona enviada pelo JavaScript receba resposta JSON
+com status de sucesso ou erro (em vez de fazer redirect HTTP 302 que recarregava a tela).
+
+--------------------------------------------------------------------------------
+[COMO ESTAVA ANTES]:
+--------------------------------------------------------------------------------
+def index(request):
+    servicos = Servico.objects.all()
+    
+    if request.method == 'POST':
+        nome = request.POST.get('nome')
+        telefone = request.POST.get('telefone')
+        servicos_ids = request.POST.getlist('servicos')
+        data = request.POST.get('data')
+        hora = request.POST.get('hora')
+        token = request.POST.get('token')
+        
+        try:
+            data_obj = datetime.strptime(data, '%Y-%m-%d').date()
+            hoje = date.today()
+            
+            if data_obj < hoje or data_obj.weekday() == 6:
+                messages.error(request, 'Data inválida ou domingo.')
+                return redirect('index')
+
+            se_ocupado = Agendamento.objects.filter(data=data, hora=hora).exists()
+            
+            if se_ocupado:
+                messages.error(request, 'Este horário acabou de ser reservado. Escolha outro.')
+            else:
+                agendamento = Agendamento.objects.create(
+                    nome_cliente=nome,
+                    telefone=telefone,
+                    data=data,
+                    hora=hora,
+                    token=token
+                )
+                for s_id in servicos_ids:
+                    agendamento.servicos.add(s_id)
+                    
+                messages.success(request, 'Agendamento realizado com sucesso! Te esperamos.')
+            return redirect('index')
+        except Exception as e:
+            messages.error(request, 'Ocorreu um erro ao agendar. Tente novamente.')
+
+    return render(request, 'agendamento/index.html', {'servicos': servicos})
+
+
+--------------------------------------------------------------------------------
+[COMO FICOU DEPOIS]:
+--------------------------------------------------------------------------------
+def index(request):
+    servicos = Servico.objects.all()
+    
+    if request.method == 'POST':
+        nome = request.POST.get('nome')
+        telefone = request.POST.get('telefone')
+        servicos_ids = request.POST.getlist('servicos')
+        data = request.POST.get('data')
+        hora = request.POST.get('hora')
+        token = request.POST.get('token')
+        
+        # Identifica se é uma requisição assíncrona (AJAX/Fetch)
+        is_ajax = request.headers.get('x-requested-with') == 'XMLHttpRequest' or 'application/json' in request.headers.get('accept', '')
+        
+        try:
+            data_obj = datetime.strptime(data, '%Y-%m-%d').date()
+            hoje = date.today()
+            
+            if data_obj < hoje or data_obj.weekday() == 6:
+                if is_ajax:
+                    return JsonResponse({'sucesso': False, 'mensagem': 'Data inválida ou domingo.'}, status=400)
+                messages.error(request, 'Data inválida ou domingo.')
+                return redirect('index')
+
+            se_ocupado = Agendamento.objects.filter(data=data, hora=hora).exists()
+            
+            if se_ocupado:
+                if is_ajax:
+                    return JsonResponse({'sucesso': False, 'mensagem': 'Este horário acabou de ser reservado. Escolha outro.'}, status=400)
+                messages.error(request, 'Este horário acabou de ser reservado. Escolha outro.')
+            else:
+                agendamento = Agendamento.objects.create(
+                    nome_cliente=nome,
+                    telefone=telefone,
+                    data=data,
+                    hora=hora,
+                    token=token
+                )
+                for s_id in servicos_ids:
+                    agendamento.servicos.add(s_id)
+                    
+                if is_ajax:
+                    return JsonResponse({'sucesso': True, 'mensagem': 'Agendamento realizado com sucesso! Te esperamos.'})
+                messages.success(request, 'Agendamento realizado com sucesso! Te esperamos.')
+            return redirect('index')
+        except Exception as e:
+            if is_ajax:
+                return JsonResponse({'sucesso': False, 'mensagem': 'Ocorreu um erro ao agendar. Tente novamente.'}, status=500)
+            messages.error(request, 'Ocorreu um erro ao agendar. Tente novamente.')
+
+    return render(request, 'agendamento/index.html', {'servicos': servicos})
+
+
+================================================================================
+ARQUIVO 2: agendamento/Templates/agendamento/index.html
+================================================================================
+
+--------------------------------------------------------------------------------
+TRECHO A: ESTILOS CSS (Por volta da linha 1150)
+--------------------------------------------------------------------------------
+
+[COMO ESTAVA ANTES]:
+--------------------------------------------------------------------------------
+        .btn-whatsapp-send:active {
+            transform: translateY(0);
+        }
+
+        .btn-modal-close {
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-muted);
+            border-radius: var(--radius-sm);
+            padding: 11px;
+            font-weight: 600;
+            font-size: 0.88rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+        }
+
+
+[COMO FICOU DEPOIS]:
+--------------------------------------------------------------------------------
+        .btn-whatsapp-send:active {
+            transform: translateY(0);
+        }
+
+        .btn-confirm-modal {
+            background: linear-gradient(135deg, #d4af37 0%, #f3c94b 100%);
+            color: #0b0c10;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            font-weight: 800;
+            font-size: 0.98rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.35);
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .btn-confirm-modal:hover {
+            background: linear-gradient(135deg, #e5bd3b 0%, #ffd65d 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+        }
+
+        .btn-confirm-modal:active {
+            transform: translateY(0);
+        }
+
+        .btn-confirm-modal:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .modal-whatsapp-instruction {
+            background: rgba(37, 211, 102, 0.1);
+            border: 1px solid rgba(37, 211, 102, 0.35);
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-align: left;
+        }
+
+        .modal-whatsapp-instruction .instruction-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(37, 211, 102, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: #25d366;
+            flex-shrink: 0;
+        }
+
+        .modal-whatsapp-instruction .instruction-text {
+            font-size: 0.94rem;
+            color: #f3f4f6;
+            line-height: 1.45;
+            font-weight: 600;
+        }
+
+        .btn-modal-close {
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-muted);
+            border-radius: var(--radius-sm);
+            padding: 11px;
+            font-weight: 600;
+            font-size: 0.88rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+        }
+
+
+--------------------------------------------------------------------------------
+TRECHO B: ESTRUTURA HTML DO MODAL (Por volta da linha 1870)
+--------------------------------------------------------------------------------
+
+[COMO ESTAVA ANTES]:
+--------------------------------------------------------------------------------
+    <!-- Modal de Confirmação de Agendamento -->
+    <div class="modal-overlay" id="modal-agendamento" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
+        <div class="modal-content">
+            <button type="button" class="modal-close-icon" onclick="fecharModal()" title="Fechar">&times;</button>
+            <div class="modal-success-icon">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h3 class="modal-title" id="modal-titulo">Confirmar Agendamento</h3>
+            <p class="modal-subtitle">Revise todos os detalhes abaixo antes de finalizar seu horário.</p>
+
+            <div class="modal-summary-box" id="modal-detalhes-texto">
+                <!-- Preenchido dinamicamente pelo JavaScript -->
+            </div>
+
+            <div class="modal-buttons">
+                <button type="button" id="modal-btn-confirmar-whats" class="btn-whatsapp-send">
+                    <i class="fa-brands fa-whatsapp" style="font-size: 1.25rem;"></i>
+                    Confirmar e Enviar no WhatsApp
+                </button>
+                <button type="button" class="btn-modal-close" onclick="fecharModal()">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    Voltar e Alterar Dados
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+[COMO FICOU DEPOIS]:
+--------------------------------------------------------------------------------
+    <!-- Modal de Confirmação de Agendamento -->
+    <div class="modal-overlay" id="modal-agendamento" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
+        <div class="modal-content">
+            <button type="button" class="modal-close-icon" onclick="fecharModal()" title="Fechar">&times;</button>
+
+            <!-- ETAPA 1: REVISÃO E CONFIRMAÇÃO DO AGENDAMENTO NO BANCO -->
+            <div id="modal-step-review">
+                <div class="modal-success-icon">
+                    <i class="fa-solid fa-calendar-check"></i>
+                </div>
+                <h3 class="modal-title" id="modal-titulo">Confirmar Agendamento</h3>
+                <p class="modal-subtitle">Revise todos os detalhes abaixo antes de finalizar seu horário.</p>
+
+                <div class="modal-summary-box" id="modal-detalhes-texto">
+                    <!-- Preenchido dinamicamente pelo JavaScript -->
+                </div>
+
+                <div class="modal-buttons">
+                    <button type="button" id="modal-btn-confirmar-agendamento" class="btn-confirm-modal">
+                        <i class="fa-solid fa-calendar-check"></i>
+                        Confirmar Agendamento
+                    </button>
+                    <button type="button" class="btn-modal-close" onclick="fecharModal()">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        Voltar e Alterar Dados
+                    </button>
+                </div>
+            </div>
+
+            <!-- ETAPA 2: AGENDADO COM SUCESSO & AVISO PARA ENVIAR NO WHATSAPP -->
+            <div id="modal-step-success" style="display: none;">
+                <div class="modal-success-icon" style="background: rgba(34, 197, 94, 0.2); border-color: #22c55e; color: #22c55e;">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <h3 class="modal-title" style="color: #22c55e;">Agendamento Confirmado!</h3>
+                <p class="modal-subtitle" style="color: #e5e7eb; font-size: 0.92rem; margin-bottom: 14px;">
+                    Seu horário foi reservado com sucesso em nosso sistema.
+                </p>
+
+                <div class="modal-whatsapp-instruction">
+                    <div class="instruction-icon">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </div>
+                    <div class="instruction-text">
+                        Envie uma mensagem ao barbeiro para informá-lo sobre o agendamento
+                    </div>
+                </div>
+
+                <div class="modal-summary-box" id="modal-detalhes-sucesso" style="margin-bottom: 16px;">
+                    <!-- Preenchido dinamicamente pelo JavaScript -->
+                </div>
+
+                <div class="modal-buttons">
+                    <a href="#" id="modal-btn-enviar-whats" target="_blank" rel="noopener noreferrer" class="btn-whatsapp-send">
+                        <i class="fa-brands fa-whatsapp" style="font-size: 1.25rem;"></i>
+                        Enviar no WhatsApp
+                    </a>
+                    <button type="button" class="btn-modal-close" onclick="concluirAgendamento()">
+                        <i class="fa-solid fa-check-double"></i>
+                        Concluir
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+--------------------------------------------------------------------------------
+TRECHO C: JAVASCRIPT DO AGENDAMENTO (Por volta da linha 2180 até o final)
+--------------------------------------------------------------------------------
+
+[COMO ESTAVA ANTES]:
+--------------------------------------------------------------------------------
+            // Geração de token único para link de cancelamento
+            const tokenCancelamento = crypto.randomUUID();
+            document.getElementById('token').value = tokenCancelamento;
+
+            const linkCancelamento = `${window.location.origin}/cancelar-cliente/${tokenCancelamento}/`;
+            const nomesServicos = servicosSelecionados.map(s => s.nome).join(' + ');
+
+            ... (htmlDetalhes montado) ...
+
+            document.getElementById('modal-detalhes-texto').innerHTML = htmlDetalhes;
+
+            // Disparo de mensagem no WhatsApp ao confirmar
+            const mensagemWhats = `Olá! Meu nome é ${nome}.\nAcabei de agendar: *${nomesServicos}*\nDia *${dataFmt}* às *${hora}*.\nBarbeiro: *Henrique*\n\n❌ *Se eu precisar desmarcar, clicarei neste link:*\n${linkCancelamento}`;
+            const numeroBarbeiro = "553491395770";
+            const urlWhats = `https://wa.me/${numeroBarbeiro}?text=${encodeURIComponent(mensagemWhats)}`;
+
+            const btnConfirmarWhats = document.getElementById('modal-btn-confirmar-whats');
+            btnConfirmarWhats.onclick = function () {
+                window.open(urlWhats, '_blank');
+                formAgendamento.submit();
+            };
+
+            // Abrir a tela de confirmação (modal)
+            abrirModal();
+        });
+
+        // Controles de Abertura e Fechamento da Modal
+        function abrirModal() {
+            const modal = document.getElementById('modal-agendamento');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function fecharModal() {
+            const modal = document.getElementById('modal-agendamento');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Fechar ao clicar fora da caixa do modal
+        document.getElementById('modal-agendamento').addEventListener('click', function (e) {
+            if (e.target === this) {
+                fecharModal();
+            }
+        });
+
+        // Fechar ao pressionar a tecla ESC
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                fecharModal();
+            }
+        });
+
+
+[COMO FICOU DEPOIS]:
+--------------------------------------------------------------------------------
+        // Geração segura de UUID para o token de cancelamento (compatível com HTTP e HTTPS)
+        function gerarUUID() {
+            if (window.crypto && window.crypto.randomUUID) {
+                return window.crypto.randomUUID();
+            }
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                const r = Math.random() * 16 | 0;
+                const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        ...
+
+            // Geração de token único para link de cancelamento
+            const tokenCancelamento = gerarUUID();
+            document.getElementById('token').value = tokenCancelamento;
+
+            const linkCancelamento = `${window.location.origin}/cancelar-cliente/${tokenCancelamento}/`;
+            const nomesServicos = servicosSelecionados.map(s => s.nome).join(' + ');
+
+            ... (htmlDetalhes montado) ...
+
+            document.getElementById('modal-detalhes-texto').innerHTML = htmlDetalhes;
+
+            // Preparação do resumo para a tela pós-agendamento (Etapa 2)
+            const htmlSucesso = `
+                <div class="modal-info-grid" style="border-bottom: none; padding-bottom: 0;">
+                    <div class="modal-info-item">
+                        <span class="modal-info-label"><i class="fa-regular fa-user"></i> Cliente</span>
+                        <strong class="modal-info-val">${nome}</strong>
+                    </div>
+                    <div class="modal-info-item">
+                        <span class="modal-info-label"><i class="fa-solid fa-user-tie"></i> Barbeiro</span>
+                        <strong class="modal-info-val">${barbeiroNome}</strong>
+                    </div>
+                    <div class="modal-info-item">
+                        <span class="modal-info-label"><i class="fa-regular fa-calendar"></i> Data</span>
+                        <strong class="modal-info-val">${dataFmt} (${diaSemanaTexto})</strong>
+                    </div>
+                    <div class="modal-info-item">
+                        <span class="modal-info-label"><i class="fa-regular fa-clock"></i> Horário</span>
+                        <strong class="modal-info-val" style="color: var(--primary-gold);">${hora}</strong>
+                    </div>
+                    <div class="modal-info-item full-width">
+                        <span class="modal-info-label"><i class="fa-solid fa-scissors"></i> Serviços</span>
+                        <strong class="modal-info-val">${nomesServicos}</strong>
+                    </div>
+                </div>
+            `;
+            document.getElementById('modal-detalhes-sucesso').innerHTML = htmlSucesso;
+
+            // Disparo de mensagem no WhatsApp após salvar
+            const mensagemWhats = `Olá! Meu nome é ${nome}.\nAcabei de agendar: *${nomesServicos}*\nDia *${dataFmt}* às *${hora}*.\nBarbeiro: *${barbeiroNome}*\n\n❌ *Se eu precisar desmarcar, clicarei neste link:*\n${linkCancelamento}`;
+            const numeroBarbeiro = "553491395770";
+            const urlWhats = `https://wa.me/${numeroBarbeiro}?text=${encodeURIComponent(mensagemWhats)}`;
+
+            const btnEnviarWhats = document.getElementById('modal-btn-enviar-whats');
+            btnEnviarWhats.href = urlWhats;
+
+            const btnConfirmar = document.getElementById('modal-btn-confirmar-agendamento');
+            btnConfirmar.disabled = false;
+            btnConfirmar.innerHTML = '<i class="fa-solid fa-calendar-check"></i> Confirmar Agendamento';
+
+            btnConfirmar.onclick = async function () {
+                const btnOriginalHtml = btnConfirmar.innerHTML;
+                btnConfirmar.disabled = true;
+                btnConfirmar.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Agendando horário...';
+
+                const formData = new FormData(formAgendamento);
+
+                try {
+                    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+                    const response = await fetch(formAgendamento.action || window.location.href, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json',
+                            ...(csrfToken ? { 'X-CSRFToken': csrfToken } : {})
+                        }
+                    });
+
+                    const dataRes = await response.json();
+
+                    if (response.ok && dataRes.sucesso) {
+                        agendamentoFoiConfirmado = true;
+                        // Exibir a etapa 2 com sucesso e botão do WhatsApp
+                        document.getElementById('modal-step-review').style.display = 'none';
+                        document.getElementById('modal-step-success').style.display = 'block';
+                    } else {
+                        alert(dataRes.mensagem || 'Não foi possível confirmar o agendamento.');
+                        btnConfirmar.disabled = false;
+                        btnConfirmar.innerHTML = btnOriginalHtml;
+                    }
+                } catch (err) {
+                    console.error('Erro ao salvar agendamento:', err);
+                    alert('Ocorreu uma falha na conexão ao tentar agendar. Por favor, tente novamente.');
+                    btnConfirmar.disabled = false;
+                    btnConfirmar.innerHTML = btnOriginalHtml;
+                }
+            };
+
+            // Abrir a tela de confirmação (modal)
+            abrirModal();
+        });
+
+        // Controle de estado e fechamento da modal
+        let agendamentoFoiConfirmado = false;
+
+        function abrirModal() {
+            agendamentoFoiConfirmado = false;
+            document.getElementById('modal-step-review').style.display = 'block';
+            document.getElementById('modal-step-success').style.display = 'none';
+            const modal = document.getElementById('modal-agendamento');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function fecharModal() {
+            if (agendamentoFoiConfirmado) {
+                window.location.reload();
+                return;
+            }
+            const modal = document.getElementById('modal-agendamento');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function concluirAgendamento() {
+            window.location.reload();
+        }
+
+        // Fechar ao clicar fora da caixa do modal
+        document.getElementById('modal-agendamento').addEventListener('click', function (e) {
+            if (e.target === this) {
+                fecharModal();
+            }
+        });
+
+        // Fechar ao pressionar a tecla ESC
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                fecharModal();
+            }
+        });
+
+================================================================================
+FIM DO RELATÓRIO
+================================================================================

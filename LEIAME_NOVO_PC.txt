@@ -1,0 +1,57 @@
+========================================================================
+ GUIA RÁPIDO: COMO CONTINUAR O PROJETO EM OUTRO COMPUTADOR
+ Projeto: Barbearia Popeye
+========================================================================
+
+Este backup foi preparado especialmente para você continuar trabalhando exatamente
+de onde parou no último commit, com todo o histórico Git, banco de dados e
+configurações intactos!
+
+------------------------------------------------------------------------
+ PASSO 1: PRÉ-REQUISITO NO NOVO PC
+------------------------------------------------------------------------
+- Ter o Python 3.10 ou superior instalado no novo computador.
+  * Baixe em: https://www.python.org/downloads/
+  * IMPORTANTE: Durante a instalação do Python, marque a caixinha:
+    [X] "Add Python to PATH" (Adicionar Python às variáveis de ambiente)
+
+------------------------------------------------------------------------
+ PASSO 2: EXTRAIR O PROJETO
+------------------------------------------------------------------------
+- Baixe o arquivo ZIP do seu Google Drive.
+- Descompacte a pasta no local de sua preferência (ex: Área de Trabalho ou C:\Projetos).
+
+------------------------------------------------------------------------
+ PASSO 3: CONFIGURAR O AMBIENTE (1 CLIQUE)
+------------------------------------------------------------------------
+- Dê 2 cliques no arquivo:
+    configurar_novo_pc.bat
+
+  Ele irá automaticamente:
+  1. Criar o ambiente virtual isolado (venv) adequado para o novo PC.
+  2. Instalar todas as dependências do 'requirements.txt' (Django, etc).
+  3. Verificar se o sistema está 100% íntegro.
+
+------------------------------------------------------------------------
+ PASSO 4: INICIAR O SERVIDOR
+------------------------------------------------------------------------
+- Dê 2 cliques no arquivo:
+    iniciar_servidor.bat
+
+- Abra o navegador e acesse:
+    http://localhost:8000/
+
+------------------------------------------------------------------------
+ PASSO 5: CONTINUAR O DESENVOLVIMENTO COM GIT
+------------------------------------------------------------------------
+- Abra a pasta do projeto no VS Code, Antigravity IDE ou abra o terminal nela.
+- Todo o repositório Git está configurado e pronto!
+- Para checar o status e o histórico dos commits:
+    git status
+    git log --oneline -n 5
+- O seu último commit estará no topo, pronto para você criar novas branches,
+  fazer novos commits e dar git push normalmente.
+
+========================================================================
+ Pronto para trabalhar! Bons códigos!
+========================================================================
