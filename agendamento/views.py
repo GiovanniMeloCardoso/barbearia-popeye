@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 import secrets
 import re
 import json
-from .models import Servico, Agendamento, Barbeiro
+from .models import Servico, Agendamento, Barbeiro, Cliente
 
 # Fuso horário oficial do negócio (São Paulo / Brasília)
 SP_TZ = ZoneInfo('America/Sao_Paulo')
@@ -208,8 +208,18 @@ def index(request):
                 # 10. Geração de token criptograficamente seguro no backend
                 token_seguro = secrets.token_urlsafe(32)
 
+                # Sincroniza ou cria o Cliente no banco de dados
+                cliente, _ = Cliente.objects.get_or_create(
+                    telefone=tel_digitos,
+                    defaults={'nome': nome}
+                )
+                if cliente.nome != nome:
+                    cliente.nome = nome
+                    cliente.save(update_fields=['nome'])
+
                 # Criar agendamento no banco de dados com lock e token seguro
                 agendamento = Agendamento.objects.create(
+                    cliente=cliente,
                     nome_cliente=nome,
                     telefone=tel_digitos,
                     barbeiro=barbeiro_escolhido,
@@ -425,6 +435,13 @@ def painel_barbeiro(request):
     agendamentos_calendario_json = json.dumps(eventos_cal_lista)
     barbeiros_calendario_json = json.dumps(barbeiros_cal_lista)
         
+    clientes = Cliente.objects.all().order_by('nome')
+    servicos = Servico.objects.all().order_by('ordem', 'id')
+    clientes_json = json.dumps([
+        {'id': c.id, 'nome': c.nome, 'telefone': c.telefone_formatado}
+        for c in clientes
+    ])
+
     return render(request, 'agendamento/painel.html', {
         'agendamentos_hoje': agendamentos_hoje,
         'agendamentos_futuros': agendamentos_futuros,
@@ -437,7 +454,190 @@ def painel_barbeiro(request):
         'hoje': hoje,
         'agendamentos_calendario_json': agendamentos_calendario_json,
         'barbeiros_calendario_json': barbeiros_calendario_json,
+        'clientes': clientes,
+        'clientes_json': clientes_json,
+        'servicos': servicos,
     })
+
+@login_required
+@require_POST
+def cadastrar_cliente_manual(request):
+    """
+    Cadastra um novo cliente no banco de dados e agenda seu horário diretamente pelo painel.
+    Opções: Nome, Telefone, Data, Hora e Serviço (Opcional).
+    """
+    nome = request.POST.get('nome', '').strip()
+    telefone = request.POST.get('telefone', '').strip()
+    data_str = request.POST.get('data', '').strip()
+    hora_str = request.POST.get('hora', '').strip()
+    servico_id = request.POST.get('servico', '').strip()
+    barbeiro_id = request.POST.get('barbeiro', '').strip()
+
+    # 1. Validação do Nome
+    if not nome or len(nome) < 2 or len(nome) > 150:
+        messages.error(request, 'Por favor, informe o nome do cliente (pelo menos 2 caracteres).')
+        return redirect('painel')
+
+    # 2. Validação e sanitização do Telefone
+    tel_digitos = re.sub(r'\D', '', telefone)
+    if len(tel_digitos) < 8 or len(tel_digitos) > 15:
+        messages.error(request, 'Por favor, informe um número de telefone/WhatsApp válido.')
+        return redirect('painel')
+
+    # 3. Validação de Data e Hora
+    try:
+        data_obj = datetime.strptime(data_str, '%Y-%m-%d').date()
+    except (ValueError, TypeError):
+        messages.error(request, 'Data inválida selecionada.')
+        return redirect('painel')
+
+    try:
+        hora_obj = datetime.strptime(hora_str, '%H:%M').time()
+    except (ValueError, TypeError):
+        messages.error(request, 'Horário inválido selecionado.')
+        return redirect('painel')
+
+    # 4. Barbeiro atribuído
+    barbeiro = None
+    if barbeiro_id and str(barbeiro_id).isdigit():
+        barbeiro = Barbeiro.objects.filter(id=int(barbeiro_id)).first()
+    if not barbeiro:
+        barbeiro = Barbeiro.objects.filter(ativo=True).first()
+
+    # 5. Serviço (Opcional)
+    servico_obj = None
+    if servico_id and str(servico_id).isdigit():
+        servico_obj = Servico.objects.filter(id=int(servico_id)).first()
+
+    duracao_minutos = servico_obj.duracao_minutos if servico_obj else 30
+
+    # 6. Verificação de conflito / colisão na agenda do barbeiro
+    if barbeiro and verificar_conflito(data_obj, hora_obj, duracao_minutos, barbeiro):
+        messages.error(
+            request, 
+            f'Conflito na agenda: O barbeiro {barbeiro.nome} já possui outro agendamento neste horário ({hora_obj.strftime("%H:%M")}) no dia {data_obj.strftime("%d/%m/%Y")}. Escolha outro horário.'
+        )
+        return redirect('painel')
+
+    # Formatação visual amigável do telefone
+    if len(tel_digitos) == 11:
+        tel_formatado = f"({tel_digitos[:2]}) {tel_digitos[2:7]}-{tel_digitos[7:]}"
+    elif len(tel_digitos) == 10:
+        tel_formatado = f"({tel_digitos[:2]}) {tel_digitos[2:6]}-{tel_digitos[6:]}"
+    else:
+        tel_formatado = telefone
+
+    # 7. Persistência Atômica do Cliente e do Agendamento
+    with transaction.atomic():
+        cliente = Cliente.objects.filter(telefone=tel_digitos).first() or Cliente.objects.filter(telefone=tel_formatado).first()
+        if not cliente:
+            for c in Cliente.objects.all():
+                c_nums = re.sub(r'\D', '', c.telefone or '')
+                if c_nums and c_nums.endswith(tel_digitos[-9:]):
+                    cliente = c
+                    break
+
+        if cliente:
+            cliente.nome = nome
+            cliente.telefone = tel_formatado
+            cliente.save()
+        else:
+            cliente = Cliente.objects.create(nome=nome, telefone=tel_formatado)
+
+        token_seguro = secrets.token_urlsafe(32)
+        agendamento = Agendamento.objects.create(
+            cliente=cliente,
+            nome_cliente=nome,
+            telefone=tel_formatado,
+            barbeiro=barbeiro,
+            data=data_obj,
+            hora=hora_obj,
+            duracao_minutos=duracao_minutos,
+            token=token_seguro
+        )
+        if servico_obj:
+            agendamento.servicos.add(servico_obj)
+
+    messages.success(
+        request, 
+        f'Cliente "{cliente.nome}" cadastrado com sucesso e horário agendado para {data_obj.strftime("%d/%m/%Y")} às {hora_obj.strftime("%H:%M")}!'
+    )
+    return redirect('painel')
+
+
+@login_required
+@require_POST
+def agendar_cliente_manual(request):
+    """
+    Agenda um horário manualmente selecionando um cliente já cadastrado no banco de dados.
+    """
+    cliente_id = request.POST.get('cliente_id', '').strip()
+    data_str = request.POST.get('data', '').strip()
+    hora_str = request.POST.get('hora', '').strip()
+    servico_id = request.POST.get('servico', '').strip()
+    barbeiro_id = request.POST.get('barbeiro', '').strip()
+
+    if not cliente_id or not str(cliente_id).isdigit():
+        messages.error(request, 'Por favor, selecione um cliente cadastrado.')
+        return redirect('painel')
+
+    cliente = get_object_or_404(Cliente, id=int(cliente_id))
+
+    # Validação de Data e Hora
+    try:
+        data_obj = datetime.strptime(data_str, '%Y-%m-%d').date()
+    except (ValueError, TypeError):
+        messages.error(request, 'Data inválida selecionada.')
+        return redirect('painel')
+
+    try:
+        hora_obj = datetime.strptime(hora_str, '%H:%M').time()
+    except (ValueError, TypeError):
+        messages.error(request, 'Horário inválido selecionado.')
+        return redirect('painel')
+
+    # Barbeiro
+    barbeiro = None
+    if barbeiro_id and str(barbeiro_id).isdigit():
+        barbeiro = Barbeiro.objects.filter(id=int(barbeiro_id)).first()
+    if not barbeiro:
+        barbeiro = Barbeiro.objects.filter(ativo=True).first()
+
+    # Serviço (Opcional)
+    servico_obj = None
+    if servico_id and str(servico_id).isdigit():
+        servico_obj = Servico.objects.filter(id=int(servico_id)).first()
+
+    duracao_minutos = servico_obj.duracao_minutos if servico_obj else 30
+
+    # Verificação de colisão/conflito na agenda do barbeiro
+    if barbeiro and verificar_conflito(data_obj, hora_obj, duracao_minutos, barbeiro):
+        messages.error(
+            request, 
+            f'Conflito na agenda: O barbeiro {barbeiro.nome} já possui outro agendamento neste horário ({hora_obj.strftime("%H:%M")}) no dia {data_obj.strftime("%d/%m/%Y")}. Escolha outro horário.'
+        )
+        return redirect('painel')
+
+    with transaction.atomic():
+        token_seguro = secrets.token_urlsafe(32)
+        agendamento = Agendamento.objects.create(
+            cliente=cliente,
+            nome_cliente=cliente.nome,
+            telefone=cliente.telefone,
+            barbeiro=barbeiro,
+            data=data_obj,
+            hora=hora_obj,
+            duracao_minutos=duracao_minutos,
+            token=token_seguro
+        )
+        if servico_obj:
+            agendamento.servicos.add(servico_obj)
+
+    messages.success(
+        request, 
+        f'Horário agendado com sucesso para "{cliente.nome}" em {data_obj.strftime("%d/%m/%Y")} às {hora_obj.strftime("%H:%M")}!'
+    )
+    return redirect('painel')
 
 @login_required
 def adicionar_barbeiro(request):

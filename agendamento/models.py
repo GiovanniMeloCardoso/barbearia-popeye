@@ -134,10 +134,38 @@ class Servico(models.Model):
         return f"{self.nome} - R$ {self.preco} ({self.duracao_minutos} min)"
 
 
+class Cliente(models.Model):
+    nome = models.CharField(max_length=150, verbose_name="Nome do Cliente")
+    telefone = models.CharField(max_length=30, unique=True, db_index=True, verbose_name="Telefone / WhatsApp")
+    observacao = models.TextField(blank=True, null=True, verbose_name="Observações")
+    criado_em = models.DateTimeField(auto_now_add=True, verbose_name="Cadastrado em")
+
+    class Meta:
+        verbose_name = 'Cliente'
+        verbose_name_plural = 'Clientes'
+        ordering = ['nome']
+
+    def __str__(self):
+        return f"{self.nome} ({self.telefone_formatado})"
+
+    @property
+    def telefone_formatado(self):
+        import re
+        nums = re.sub(r'\D', '', self.telefone or '')
+        if nums.startswith('55') and len(nums) in (12, 13):
+            nums = nums[2:]
+        if len(nums) == 11:
+            return f"({nums[:2]}) {nums[2:7]}-{nums[7:]}"
+        elif len(nums) == 10:
+            return f"({nums[:2]}) {nums[2:6]}-{nums[6:]}"
+        return self.telefone
+
+
 class Agendamento(models.Model):
+    cliente = models.ForeignKey(Cliente, on_delete=models.SET_NULL, null=True, blank=True, related_name='agendamentos')
     nome_cliente = models.CharField(max_length=150)
     telefone = models.CharField(max_length=20)
-    servicos = models.ManyToManyField(Servico)
+    servicos = models.ManyToManyField(Servico, blank=True)
     barbeiro = models.ForeignKey(Barbeiro, on_delete=models.SET_NULL, null=True, blank=True, related_name='agendamentos')
     data = models.DateField()
     hora = models.TimeField()

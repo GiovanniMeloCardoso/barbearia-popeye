@@ -1,6 +1,20 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Servico, Agendamento, Barbeiro
+from .models import Servico, Agendamento, Barbeiro, Cliente
+
+@admin.register(Cliente)
+class ClienteAdmin(admin.ModelAdmin):
+    list_display = ('nome', 'telefone_formatado_display', 'total_agendamentos', 'criado_em')
+    search_fields = ('nome', 'telefone')
+    ordering = ('nome',)
+
+    def telefone_formatado_display(self, obj):
+        return obj.telefone_formatado
+    telefone_formatado_display.short_description = 'Telefone / WhatsApp'
+
+    def total_agendamentos(self, obj):
+        return obj.agendamentos.count()
+    total_agendamentos.short_description = 'Agendamentos'
 
 @admin.register(Barbeiro)
 class BarbeiroAdmin(admin.ModelAdmin):

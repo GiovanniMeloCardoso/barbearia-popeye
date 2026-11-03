@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from datetime import datetime, timedelta, date, time
 from zoneinfo import ZoneInfo
-from agendamento.models import Barbeiro, Servico, Agendamento
+from agendamento.models import Barbeiro, Servico, Agendamento, Cliente
 
 SP_TZ = ZoneInfo('America/Sao_Paulo')
 
@@ -601,4 +601,164 @@ class SiteFullFeaturesTestCase(TestCase):
         # Lista de Agendamentos no admin
         res_agendamentos = self.client.get('/admin/agendamento/agendamento/')
         self.assertEqual(res_agendamentos.status_code, 200)
+
+        # Lista de Clientes no admin
+        res_clientes = self.client.get('/admin/agendamento/cliente/')
+        self.assertEqual(res_clientes.status_code, 200)
+
+
+class ClienteManagementTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username='barbeiro_gestor',
+            password='SenhaSegura123!'
+        )
+        self.barbeiro = Barbeiro.objects.create(
+            nome='Henrique Teste',
+            cargo='Barbeiro Chefe',
+            telefone='(34) 99999-1111',
+            horario_inicio=time(9, 0),
+            horario_fim=time(20, 0),
+            intervalo_inicio=time(12, 0),
+            intervalo_fim=time(13, 0),
+            dias_trabalho='0,1,2,3,4,5',
+            ativo=True
+        )
+        self.servico = Servico.objects.create(
+            nome='Corte Tradicional',
+            preco=45.00,
+            duracao_minutos=45
+        )
+        self.amanha = (datetime.now(SP_TZ).date() + timedelta(days=2))
+        while self.amanha.weekday() == 6:  # Pula domingo
+            self.amanha += timedelta(days=1)
+        self.amanha_str = self.amanha.strftime('%Y-%m-%d')
+
+    def test_01_bloqueio_usuario_deslogado(self):
+        """Endpoints de gestão manual exigem autenticação do barbeiro."""
+        res_cad = self.client.post(reverse('cadastrar_cliente_manual'), {'nome': 'Fulano'})
+        self.assertEqual(res_cad.status_code, 302)
+        self.assertIn('/login/', res_cad.url)
+
+        res_ag = self.client.post(reverse('agendar_cliente_manual'), {'cliente_id': 1})
+        self.assertEqual(res_ag.status_code, 302)
+        self.assertIn('/login/', res_ag.url)
+
+    def test_02_cadastrar_cliente_manual_sucesso(self):
+        """Barbeiro cadastra novo cliente com serviço opcional e cria agendamento."""
+        self.client.force_login(self.user)
+        res = self.client.post(
+            reverse('cadastrar_cliente_manual'),
+            {
+                'nome': 'Marcos Vinicius',
+                'telefone': '(34) 99888-7777',
+                'data': self.amanha_str,
+                'hora': '10:00',
+                'servico': self.servico.id,
+                'barbeiro': self.barbeiro.id
+            }
+        )
+        self.assertEqual(res.status_code, 302)
+        
+        # Verifica se o cliente foi salvo no banco de dados
+        cliente = Cliente.objects.filter(nome='Marcos Vinicius').first()
+        self.assertIsNotNone(cliente)
+        self.assertEqual(cliente.telefone, '(34) 99888-7777')
+
+        # Verifica se o agendamento foi criado no banco
+        ag = Agendamento.objects.filter(cliente=cliente, data=self.amanha, hora=time(10, 0)).first()
+        self.assertIsNotNone(ag)
+        self.assertEqual(ag.barbeiro, self.barbeiro)
+        self.assertEqual(ag.duracao_minutos, 45)
+        self.assertIn(self.servico, ag.servicos.all())
+
+    def test_03_cadastrar_cliente_manual_sem_servico_opcional(self):
+        """Barbeiro cadastra novo cliente sem selecionar serviço (serviço opcional)."""
+        self.client.force_login(self.user)
+        res = self.client.post(
+            reverse('cadastrar_cliente_manual'),
+            {
+                'nome': 'João Sem Servico',
+                'telefone': '34991112222',
+                'data': self.amanha_str,
+                'hora': '14:00',
+                'servico': '',
+                'barbeiro': self.barbeiro.id
+            }
+        )
+        self.assertEqual(res.status_code, 302)
+        cliente = Cliente.objects.filter(nome='João Sem Servico').first()
+        self.assertIsNotNone(cliente)
+        ag = Agendamento.objects.filter(cliente=cliente, data=self.amanha, hora=time(14, 0)).first()
+        self.assertIsNotNone(ag)
+        self.assertEqual(ag.duracao_minutos, 30)
+        self.assertEqual(ag.servicos.count(), 0)
+
+    def test_04_bloqueio_conflito_horario_novo_cliente(self):
+        """Impede colisão de horário no cadastro de cliente manual."""
+        self.client.force_login(self.user)
+        # Cria primeiro agendamento às 10:00
+        self.client.post(
+            reverse('cadastrar_cliente_manual'),
+            {
+                'nome': 'Cliente 1',
+                'telefone': '(34) 99111-0001',
+                'data': self.amanha_str,
+                'hora': '10:00',
+                'servico': self.servico.id,
+                'barbeiro': self.barbeiro.id
+            }
+        )
+        # Tenta cadastrar segundo agendamento no mesmo horário para o mesmo barbeiro
+        res2 = self.client.post(
+            reverse('cadastrar_cliente_manual'),
+            {
+                'nome': 'Cliente 2',
+                'telefone': '(34) 99111-0002',
+                'data': self.amanha_str,
+                'hora': '10:00',
+                'servico': self.servico.id,
+                'barbeiro': self.barbeiro.id
+            }
+        )
+        self.assertEqual(res2.status_code, 302)
+        # Segundo agendamento não deve ser criado
+        self.assertFalse(Agendamento.objects.filter(nome_cliente='Cliente 2').exists())
+
+    def test_05_agendar_cliente_existente_sucesso(self):
+        """Barbeiro seleciona cliente já cadastrado e agenda horário."""
+        self.client.force_login(self.user)
+        cliente = Cliente.objects.create(
+            nome='Lucas Oliveira',
+            telefone='(34) 99777-6666'
+        )
+        res = self.client.post(
+            reverse('agendar_cliente_manual'),
+            {
+                'cliente_id': cliente.id,
+                'data': self.amanha_str,
+                'hora': '16:00',
+                'servico': self.servico.id,
+                'barbeiro': self.barbeiro.id
+            }
+        )
+        self.assertEqual(res.status_code, 302)
+        ag = Agendamento.objects.filter(cliente=cliente, data=self.amanha, hora=time(16, 0)).first()
+        self.assertIsNotNone(ag)
+        self.assertEqual(ag.nome_cliente, 'Lucas Oliveira')
+        self.assertEqual(ag.barbeiro, self.barbeiro)
+
+    def test_06_painel_renderiza_botoes_e_clientes(self):
+        """Verifica se o painel carrega com os novos botões e lista de clientes."""
+        self.client.force_login(self.user)
+        Cliente.objects.create(nome='Cliente Teste Visual', telefone='(34) 99000-0000')
+        res = self.client.get(reverse('painel'))
+        self.assertEqual(res.status_code, 200)
+        self.assertContains(res, 'Cadastrar Novo Cliente')
+        self.assertContains(res, 'Agendar Horário')
+        self.assertContains(res, 'Cliente Teste Visual')
+        # Verifica que o botão flutuante gcal-fab foi removido
+        self.assertNotContains(res, 'class="gcal-fab"')
+
 
