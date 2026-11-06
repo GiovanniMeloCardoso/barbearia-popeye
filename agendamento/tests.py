@@ -761,4 +761,66 @@ class ClienteManagementTestCase(TestCase):
         # Verifica que o botão flutuante gcal-fab foi removido
         self.assertNotContains(res, 'class="gcal-fab"')
 
+    def test_07_duracao_corte_pai_e_filho_90_minutos(self):
+        """Verifica se o serviço 'Corte Pai e Filho' tem duração de 90 minutos e não 45."""
+        from agendamento.views import calcular_duracao_servicos
+        servico_pai_filho = Servico.objects.create(
+            nome='Corte Pai e Filho',
+            preco=80.00,
+            duracao_minutos=90
+        )
+        # 1. Apenas Corte Pai e Filho deve retornar 90 min
+        self.assertEqual(calcular_duracao_servicos([servico_pai_filho]), 90)
+
+        # 2. Corte Pai e Filho + Sobrancelha (5 min) deve retornar 95 min
+        servico_sob = Servico.objects.create(nome='Sobrancelha', preco=10.00, duracao_minutos=5)
+        self.assertEqual(calcular_duracao_servicos([servico_pai_filho, servico_sob]), 95)
+
+        # 3. Corte simples normal continua com 45 min
+        self.assertEqual(calcular_duracao_servicos([self.servico]), 45)
+
+    def test_08_agendamento_corte_pai_e_filho_bloqueia_horario_por_90_minutos(self):
+        """
+        Garante que ao agendar Corte Pai e Filho, o agendamento seja gravado com 90 minutos
+        e um agendamento 1 hora depois (às 11:00) seja bloqueado por colisão.
+        """
+        servico_pai_filho = Servico.objects.create(
+            nome='Corte Pai e Filho',
+            preco=80.00,
+            duracao_minutos=90
+        )
+        # Agendamento às 10:00 (vai das 10:00 até as 11:30)
+        res = self.client.post(
+            reverse('index'),
+            {
+                'nome': 'Pai e Filho Teste',
+                'telefone': '34991112233',
+                'servicos': [servico_pai_filho.id],
+                'data': self.amanha_str,
+                'hora': '10:00',
+                'barbeiro': self.barbeiro.id
+            },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(res.status_code, 200)
+        ag = Agendamento.objects.filter(nome_cliente='Pai e Filho Teste').first()
+        self.assertIsNotNone(ag)
+        self.assertEqual(ag.duracao_minutos, 90)
+
+        # Tentar agendar outro cliente às 11:00 (deve falhar pois 11:00 está dentro de 10:00 a 11:30)
+        res_conflito = self.client.post(
+            reverse('index'),
+            {
+                'nome': 'Outro Cliente',
+                'telefone': '34999998888',
+                'servicos': [self.servico.id],
+                'data': self.amanha_str,
+                'hora': '11:00',
+                'barbeiro': self.barbeiro.id
+            },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(res_conflito.status_code, 400)
+        self.assertIn('já possui outro agendamento neste horário', res_conflito.json()['mensagem'])
+
 

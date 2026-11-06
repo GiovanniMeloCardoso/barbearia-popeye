@@ -2801,6 +2801,7 @@
         }
 
         // Cálculo da Duração Total com Regras Específicas do Barbeiro:
+        // - CORTE PAI E FILHO: 90 minutos (ou duração cadastrada)
         // - CORTE: 45 minutos
         // - BARBA: 30 minutos
         // - CORTE E BARBA: 1 hora (60 minutos)
@@ -2810,11 +2811,22 @@
             if (servicosSelecionados.length === 0) return 45; // Duração padrão
 
             const nomes = servicosSelecionados.map(s => s.nome.toLowerCase());
-            const temCorte = nomes.some(n => n.includes('corte'));
+            const temPaiFilho = nomes.some(n => n.includes('pai') && n.includes('filho'));
+            const temCorteSimples = nomes.some(n => n.includes('corte') && !(n.includes('pai') && n.includes('filho')));
             const temBarba = nomes.some(n => n.includes('barba'));
-            const temComboCorteBarba = nomes.some(n => n.includes('corte e barba') || n.includes('corte + barba'));
+            const temComboCorteBarba = nomes.some(n => (n.includes('corte e barba') || n.includes('corte + barba')) && !(n.includes('pai') && n.includes('filho')));
 
-            if ((temCorte && temBarba) || temComboCorteBarba) {
+            if (temPaiFilho) {
+                const servicoPF = servicosSelecionados.find(s => s.nome.toLowerCase().includes('pai') && s.nome.toLowerCase().includes('filho'));
+                let duracao = (servicoPF && servicoPF.duracao) ? servicoPF.duracao : 90;
+                servicosSelecionados.forEach(s => {
+                    const n = s.nome.toLowerCase();
+                    if (!(n.includes('pai') && n.includes('filho'))) {
+                        duracao += (s.duracao || 5);
+                    }
+                });
+                return duracao;
+            } else if ((temCorteSimples && temBarba) || temComboCorteBarba) {
                 let duracao = 60; // 1 hora para Corte e Barba
                 servicosSelecionados.forEach(s => {
                     const n = s.nome.toLowerCase();
@@ -2823,8 +2835,9 @@
                     }
                 });
                 return duracao;
-            } else if (temCorte) {
-                let duracao = 45; // 45 min para Corte
+            } else if (temCorteSimples) {
+                const corteObj = servicosSelecionados.find(s => s.nome.toLowerCase().includes('corte'));
+                let duracao = (corteObj && corteObj.duracao > 45) ? corteObj.duracao : 45;
                 servicosSelecionados.forEach(s => {
                     const n = s.nome.toLowerCase();
                     if (!n.includes('corte')) {
@@ -2852,7 +2865,7 @@
             if (minutos < 60) return `${minutos} min`;
             const h = Math.floor(minutos / 60);
             const m = minutos % 60;
-            if (m === 0) return `${h}h (1 hora)`;
+            if (m === 0) return `${h}h (${h === 1 ? '1 hora' : h + ' horas'})`;
             return `${h}h ${m}min`;
         }
 

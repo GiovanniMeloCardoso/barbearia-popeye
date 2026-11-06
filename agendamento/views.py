@@ -18,6 +18,7 @@ SP_TZ = ZoneInfo('America/Sao_Paulo')
 def calcular_duracao_servicos(servicos_objs):
     """
     Calcula a duração total em minutos com base nas regras do barbeiro:
+    - CORTE PAI E FILHO: 90 minutos (ou a duração cadastrada no serviço)
     - CORTE: 45 minutos
     - BARBA: 30 minutos
     - CORTE E BARBA: 60 minutos (1 hora)
@@ -28,17 +29,26 @@ def calcular_duracao_servicos(servicos_objs):
         return 45
 
     nomes = [s.nome.lower() for s in servicos_objs]
-    tem_corte = any('corte' in n for n in nomes)
+    tem_pai_filho = any(('pai' in n and 'filho' in n) for n in nomes)
+    tem_corte_simples = any('corte' in n and not ('pai' in n and 'filho' in n) for n in nomes)
     tem_barba = any('barba' in n for n in nomes)
-    tem_combo_corte_barba = any(('corte' in n and 'barba' in n) for n in nomes)
+    tem_combo_corte_barba = any(('corte' in n and 'barba' in n and not ('pai' in n and 'filho' in n)) for n in nomes)
 
-    if (tem_corte and tem_barba) or tem_combo_corte_barba:
+    if tem_pai_filho:
+        # Corte Pai e Filho tem duração de 90 minutos (ou a duração cadastrada no serviço)
+        servico_pf = next((s for s in servicos_objs if 'pai' in s.nome.lower() and 'filho' in s.nome.lower()), None)
+        duracao = servico_pf.duracao_minutos if (servico_pf and servico_pf.duracao_minutos) else 90
+        outros = [s for s in servicos_objs if not ('pai' in s.nome.lower() and 'filho' in s.nome.lower())]
+        duracao += sum(s.duracao_minutos for s in outros)
+        return duracao
+    elif (tem_corte_simples and tem_barba) or tem_combo_corte_barba:
         duracao = 60  # Regra especial: Corte e Barba = 1 hora
         outros = [s for s in servicos_objs if not ('corte' in s.nome.lower() or 'barba' in s.nome.lower())]
         duracao += sum(s.duracao_minutos for s in outros)
         return duracao
-    elif tem_corte:
-        duracao = 45  # Regra especial: Corte = 45 min
+    elif tem_corte_simples:
+        corte_obj = next((s for s in servicos_objs if 'corte' in s.nome.lower()), None)
+        duracao = corte_obj.duracao_minutos if (corte_obj and corte_obj.duracao_minutos and corte_obj.duracao_minutos > 45) else 45
         outros = [s for s in servicos_objs if not 'corte' in s.nome.lower()]
         duracao += sum(s.duracao_minutos for s in outros)
         return duracao

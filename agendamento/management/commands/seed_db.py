@@ -8,6 +8,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         servicos_dados = [
             {'nome': 'Corte', 'preco': 40.00, 'duracao_minutos': 45},
+            {'nome': 'Corte Pai e Filho', 'preco': 80.00, 'duracao_minutos': 90},
             {'nome': 'Barba', 'preco': 35.00, 'duracao_minutos': 30},
             {'nome': 'Corte e Barba', 'preco': 75.00, 'duracao_minutos': 60},
             {'nome': 'Sobrancelhas', 'preco': 10.00, 'duracao_minutos': 5},
